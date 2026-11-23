@@ -183,6 +183,17 @@ def main():
     esiti = r["operazioni"]["esito"].value_counts().to_dict()
     print("\nEsiti:", json.dumps(esiti, ensure_ascii=False))
 
+    # Confronto: cosa succede avvicinando o allontanando il take profit (stessa entrata, stesso stop)
+    print("\nCONFRONTO TAKE PROFIT (stop fisso a 2 ATR):")
+    print(f"{'TP (x stop)':>12}{'Operazioni':>12}{'Win rate':>10}{'Profit f.':>11}{'Risultato':>12}{'Annuo':>8}{'Drawdown':>10}")
+    rr_originale = L.RR
+    for rr in (0.25, 0.4, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0):
+        L.RR = rr
+        x = esegui(dati, float(piano.get("capitale", 1000)), piano)
+        print(f"{rr:>12}{x['n']:>12}{x['win_rate']:>9.1f}%{x['profit_factor']:>11.2f}"
+              f"{x['rendimento_pct']:>11.1f}%{x['annuo_pct']:>7.1f}%{x['max_dd_pct']:>9.1f}%")
+    L.RR = rr_originale
+
 
 if __name__ == "__main__":
     main()
