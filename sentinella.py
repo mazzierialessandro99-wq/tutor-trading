@@ -95,11 +95,28 @@ def scarica_tutti(tickers: list[str], periodo: str = "2y") -> dict[str, pd.DataF
     grezzi = yf.download(tickers, period=periodo, interval="1d", auto_adjust=True, progress=False,
                          group_by="ticker", threads=True)
     dati = {}
+
+    def pulisci(df) -> pd.DataFrame | None:
+        if df is None or df.empty:
+            return None
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+        df = df[["Open", "High", "Low", "Close"]].dropna()
+        df.index = pd.to_datetime(df.index).tz_localize(None)
+        return df if len(df) > L.EMA_PERIODO + 20 else None
+
     for t in tickers:
         try:
-            df = grezzi[t][["Open", "High", "Low", "Close"]].dropna()
-            df.index = pd.to_datetime(df.index).tz_localize(None)
-            if len(df) > L.EMA_PERIODO + 20:
+            df = pulisci(grezzi[t].copy())
+            if df is not None:
+                dati[t] = df
+        except Exception:
+            continue
+    # Riprova uno alla volta i mercati che non sono arrivati (a volte Yahoo ne perde qualcuno)
+    for t in [t for t in tickers if t not in dati]:
+        try:
+            df = pulisci(yf.download(t, period=periodo, interval="1d", auto_adjust=True, progress=False))
+            if df is not None:
                 dati[t] = df
         except Exception:
             continue
