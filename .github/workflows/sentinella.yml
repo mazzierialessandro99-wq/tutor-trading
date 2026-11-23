@@ -23,8 +23,7 @@ jobs:
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: "375765601"
-      CAPITALE: "1000"     # il tuo capitale in euro (per calcolare le quantità)
-      RISCHIO: "1"         # % del capitale rischiata per operazione
+      # Capitale, rischio e orari degli avvisi si cambiano in piano.json
     steps:
       - uses: actions/checkout@v4
 

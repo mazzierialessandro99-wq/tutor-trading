@@ -165,3 +165,25 @@ def piano(capitale: float, rischio_pct: float, ingresso: float, atr: float) -> d
             "impegno": quote * ingresso, "perdita": quote * distanza,
             "guadagno": quote * distanza * RR, "rischio_max": rischio,
             "distanza": distanza, "limitato": limitato}
+
+
+# ------------------------------------------------------------------------------
+# IL MIO PIANO (piano.json): rischio, limiti e orari personali
+# ------------------------------------------------------------------------------
+def carica_piano() -> dict:
+    import json
+    from pathlib import Path
+    f = Path(__file__).with_name("piano.json")
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+
+
+def is_cripto(ticker: str) -> bool:
+    return ticker.endswith("-USD") and "=" not in ticker
+
+
+def rischio_per(ticker: str, piano: dict, rischio_base: float | None = None) -> float:
+    """% di capitale da rischiare su questo mercato: le cripto, più nervose, hanno un rischio ridotto."""
+    base = rischio_base if rischio_base is not None else piano.get("rischio_per_operazione", 1.0)
+    if is_cripto(ticker):
+        return min(base, piano.get("rischio_cripto", base))
+    return base

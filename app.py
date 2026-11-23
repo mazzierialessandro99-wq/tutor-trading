@@ -64,7 +64,9 @@ p, li {line-height: 1.55;}
 /* ---- navigazione ---- */
 .st-key-nav {position: sticky; top: 0; z-index: 50; background: var(--bg); padding: 6px 0 8px;}
 .st-key-nav [data-testid="stButtonGroup"] {width: 100%;}
-.st-key-nav button {flex: 1; border-radius: 12px !important; font-weight: 600; min-height: 42px;}
+.st-key-nav button {flex: 1; border-radius: 12px !important; font-weight: 600; min-height: 42px; padding: 4px 2px !important; min-width: 0 !important;}
+.st-key-nav button p {font-size: .86rem; white-space: nowrap; overflow: visible;}
+.st-key-nav button > div {gap: 3px;}
 
 /* ---- riquadri ---- */
 .card {background: var(--surf); border: 1px solid var(--bordo); border-radius: 18px; padding: 14px 16px;
@@ -266,11 +268,12 @@ def panoramica() -> list[dict]:
 # STATO DELL'APP
 # ==============================================================================
 ss = st.session_state
-ss.setdefault("capitale", 1000.0)
-ss.setdefault("rischio", 1.0)
+PIANO = L.carica_piano()
+ss.setdefault("capitale", float(PIANO.get("capitale", 1000)))
+ss.setdefault("rischio", float(PIANO.get("rischio_per_operazione", 1.0)))
 ss.setdefault("aperto", None)        # (nome, ticker) dell'asset aperto, None = elenco
 
-PAGINE = ["🚦 Segnali", "🎓 Impara", "🧪 Test"]
+PAGINE = ["🚦 Segnali", "📋 Piano", "🎓 Impara", "🧪 Test"]
 
 # ---- barra in alto: nome + impostazioni del conto ----
 with st.container(key="topbar", horizontal=True, vertical_alignment="center"):
@@ -535,11 +538,12 @@ def schermata_dettaglio(nome: str, ticker: str):
     if cambio is None:
         st.warning(f"Non riesco a leggere il cambio euro/{valuta}: i calcoli sono fatti come se 1 € = 1 {valuta}.")
         cambio = 1.0
-    p = L.piano(ss.capitale * cambio, ss.rischio, v["close"], v["atr"])
+    rischio = L.rischio_per(ticker, PIANO, ss.rischio)
+    p = L.piano(ss.capitale * cambio, rischio, v["close"], v["atr"])
 
     if v["colore"] == "VERDE":
         st.markdown('<div class="sezione">✅ Cosa fare, passo per passo</div>', unsafe_allow_html=True)
-        passi_operativi(p, v, nome, valuta, cambio, ss.rischio)
+        passi_operativi(p, v, nome, valuta, cambio, rischio)
     else:
         cosa = ("Niente: **non si compra**. Torna all'elenco e guarda un altro asset, oppure ricontrolla domani."
                 if v["colore"] == "ROSSO" else
@@ -549,10 +553,75 @@ def schermata_dettaglio(nome: str, ticker: str):
         st.markdown(f'<div class="card"><div class="txt">{html_testo(cosa)}</div></div>', unsafe_allow_html=True)
         with st.expander("📘 Esercizio: i numeri se oggi fosse verde"):
             st.caption("Solo per imparare a leggere il riquadro. **Oggi non è un'operazione da fare.**")
-            passi_operativi(p, v, nome, valuta, cambio, ss.rischio)
+            passi_operativi(p, v, nome, valuta, cambio, rischio)
 
     st.markdown('<div class="nota" style="margin-top:18px">Scopo didattico, non è consulenza finanziaria. '
                 'Gli ordini li inserisci tu, sul conto demo.</div>', unsafe_allow_html=True)
+
+
+# ==============================================================================
+# SEZIONE PIANO: il piano personale costruito sulle tue risposte
+# ==============================================================================
+def schermata_piano():
+    P = PIANO
+    cap = ss.capitale
+    st.markdown('<div class="titolo">Il mio piano</div>'
+                '<div class="sottotit">Costruito sulle tue risposte. L\'assistente e la sentinella lo seguono.</div>',
+                unsafe_allow_html=True)
+
+    prof = P.get("profilo", {})
+    righe = "".join(f"<span>{k}</span><span>{v}</span>" for k, v in
+                    [("Tempo", prof.get("tempo", "")), ("Rischio", prof.get("rischio", "")),
+                     ("Obiettivo", prof.get("obiettivo", "")), ("Ordini", prof.get("esecuzione", ""))])
+    st.markdown(f'<div class="card"><div class="tit" style="font-weight:700">👤 Chi sei</div>'
+                f'<div class="campi" style="grid-template-columns:auto 1fr">{righe}</div></div>',
+                unsafe_allow_html=True)
+
+    r, rc = ss.rischio, P.get("rischio_cripto", ss.rischio)
+    voci = [
+        ("Rischio per operazione", f"{fmt_pct(r)}%", f"max {fmt_num(cap * r / 100, 0)} € a operazione"),
+        ("Rischio sulle cripto", f"{fmt_pct(min(r, rc))}%", "sono più nervose: si rischia meno"),
+        ("Operazioni aperte", f"max {P.get('max_posizioni_aperte', 3)}", "mai tutte le uova in un paniere"),
+        ("Stop del giorno", f"−{P.get('stop_giornaliero_pct', 2)}%",
+         f"a −{fmt_num(cap * P.get('stop_giornaliero_pct', 2) / 100, 0)} € si chiude per oggi"),
+        ("Stop della settimana", f"−{P.get('stop_settimanale_pct', 4)}%",
+         f"a −{fmt_num(cap * P.get('stop_settimanale_pct', 4) / 100, 0)} € pausa fino a lunedì"),
+        ("Stop del mese", f"−{P.get('stop_mensile_pct', 8)}%", "sotto il tuo limite del −10%: si ripassa il piano"),
+    ]
+    st.markdown('<div class="sezione">Le tue regole</div>', unsafe_allow_html=True)
+    st.markdown('<div class="tiles" style="grid-template-columns:repeat(2,1fr)">' + "".join(
+        f'<div class="tile"><div class="k">{k}</div><div class="v">{val}</div><div class="s">{s}</div></div>'
+        for k, val, s in voci) + "</div>", unsafe_allow_html=True)
+    dalle, alle = P.get("orari_avvisi", ["00:00", "23:59"])
+    st.markdown(f'<div class="nota">🔔 Avvisi su Telegram dalle {dalle} alle {alle}: di notte la sentinella controlla '
+                'ma non ti sveglia, e ti aggiorna al mattino.</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="sezione">Il tuo percorso</div>', unsafe_allow_html=True)
+    fase = P.get("fase", 1)
+    for i, f in enumerate(P.get("fasi", []), start=1):
+        qui = i == fase
+        stile = f'border:1.5px solid {T["ema"]};' if qui else ("opacity:.75;" if i > fase else "")
+        badge = (f'<span style="background:{T["ema"]};color:#fff;border-radius:999px;padding:2px 9px;'
+                 f'font-size:.7rem;font-weight:800;margin-left:6px">SEI QUI</span>') if qui else ""
+        st.markdown(
+            f'<div class="passo" style="{stile}"><div class="num" style="border-color:{T["ema"]};color:{T["ema"]};'
+            f'background:{T["ema"]}1a">{i}</div><div style="flex:1">'
+            f'<div class="tit">{f["nome"]}{badge}</div><div class="nota" style="margin:0 0 4px">{f["durata"]}</div>'
+            f'<div class="txt">{f["cosa"]}</div>'
+            f'<div class="txt" style="margin-top:6px">🎯 <b>Traguardo:</b> {f["traguardo"]}</div></div></div>',
+            unsafe_allow_html=True)
+
+    buono, ottimo = cap * 0.02, cap * 0.04
+    st.markdown('<div class="sezione">Aspettative oneste</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="card"><div class="txt">Con <b>{fmt_num(cap, 0)} €</b> e rischio {fmt_pct(r)}%, un mese '
+        f'<b>buono</b> per chi è bravo vale circa <b>+{fmt_num(buono, 0)} / +{fmt_num(ottimo, 0)} €</b> (+2/4%), '
+        'e ci saranno anche mesi negativi. Un\'entrata extra vera arriva <b>col tempo</b>: prima si dimostra di '
+        'saper guadagnare in modo costante, poi cresce il capitale, non il rischio.<br><br>'
+        '🚫 La tentazione da evitare: aumentare leva o quantità per “fare prima”. È il modo più veloce '
+        'per svuotare un conto.</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="nota">Vuoi cambiare qualcosa del piano? Dimmelo e lo aggiorno (sta nel file piano.json).</div>',
+                unsafe_allow_html=True)
 
 
 # ==============================================================================
@@ -685,6 +754,8 @@ if pagina == PAGINE[0]:
     else:
         schermata_elenco()
 elif pagina == PAGINE[1]:
+    schermata_piano()
+elif pagina == PAGINE[2]:
     schermata_impara()
 else:
     schermata_test()

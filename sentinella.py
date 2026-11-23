@@ -33,8 +33,10 @@ import logica as L
 ROMA = ZoneInfo("Europe/Rome")
 APP_URL = os.environ.get("APP_URL", "https://tutor-trading-ale.streamlit.app")
 STATO_FILE = Path(os.environ.get("STATO_FILE", "stato_sentinella.json"))
-CAPITALE = float(os.environ.get("CAPITALE", "1000"))     # in euro
-RISCHIO = float(os.environ.get("RISCHIO", "1"))          # % del capitale per operazione
+PIANO = L.carica_piano()                                 # il tuo piano personale (piano.json)
+CAPITALE = float(os.environ.get("CAPITALE") or PIANO.get("capitale", 1000))   # in euro
+RISCHIO = float(os.environ.get("RISCHIO") or PIANO.get("rischio_per_operazione", 1))  # % per operazione
+DALLE, ALLE = PIANO.get("orari_avvisi", ["00:00", "23:59"])
 ORA_RIEPILOGO = int(os.environ.get("ORA_RIEPILOGO", "8"))
 DEMO = os.environ.get("TUTOR_DEMO") == "1"               # dati inventati, solo per prove senza internet
 
@@ -112,12 +114,12 @@ def invia(testo: str, a_secco: bool = False):
 # ------------------------------------------------------------------------------
 # MESSAGGI
 # ------------------------------------------------------------------------------
-def msg_verde(nome: str, valuta: str, v: dict, p: dict, cambio: float) -> str:
+def msg_verde(nome: str, valuta: str, v: dict, p: dict, cambio: float, rischio: float) -> str:
     eur = lambda x: num(x / cambio)
     return (
         f"🟢 <b>{nome}</b>: semaforo <b>VERDE</b>\n"
         f"Trend positivo (sopra la EMA 200) e RSI a {v['rsi']:.0f} in risalita: il ritracciamento sta finendo.\n\n"
-        f"📋 <b>Cosa fare</b> (conto demo · {num(CAPITALE, 0)} € · rischio {num(RISCHIO, 2).rstrip('0').rstrip(',')}%)\n"
+        f"📋 <b>Cosa fare</b> (conto demo · {num(CAPITALE, 0)} € · rischio {num(rischio, 2).rstrip('0').rstrip(',')}%)\n"
         f"1. Quantità: <b>{quote(p['quote'])}</b>\n"
         f"2. Ingresso (ordine limite): <b>{prezzo(p['ingresso'], valuta)}</b>\n"
         f"3. Stop Loss: <b>{prezzo(p['stop'], valuta)}</b>\n"
@@ -171,23 +173,29 @@ def main():
     eurusd = 1.08 if DEMO or "EURUSD=X" not in dati else float(dati["EURUSD=X"]["Close"].iloc[-1])
 
     righe, messaggi = [], []
+    in_orario = DALLE <= f"{ora:%H:%M}" <= ALLE
+    esclusi = set(PIANO.get("mercati_esclusi", []))
     for nome, (ticker, valuta) in L.ASSET.items():
-        if ticker not in dati:
+        if ticker not in dati or nome in esclusi or ticker in esclusi:
             continue
         v = L.valuta(L.aggiungi_indicatori(dati[ticker]))
         righe.append({"nome": nome, "colore": v["colore"], "rsi": v["rsi"]})
         prima = stato["asset"].get(ticker, {})
         cambio = 1.0 if valuta == "EUR" else eurusd
 
+        if not in_orario and not primo_giro:
+            continue    # fuori dagli orari del piano: niente avvisi, ne riparliamo al mattino
         if not primo_giro and v["colore"] == "VERDE" and prima.get("colore") != "VERDE" \
                 and prima.get("avvisato") != oggi:
-            p = L.piano(CAPITALE * cambio, RISCHIO, v["close"], v["atr"])
-            messaggi.append(msg_verde(nome, valuta, v, p, cambio))
+            rischio = L.rischio_per(ticker, PIANO, RISCHIO)
+            p = L.piano(CAPITALE * cambio, rischio, v["close"], v["atr"])
+            messaggi.append(msg_verde(nome, valuta, v, p, cambio, rischio))
             prima["avvisato"] = oggi
         elif not primo_giro and prima.get("colore") == "VERDE" and v["colore"] != "VERDE":
             messaggi.append(msg_non_piu_verde(nome, v["colore"]))
-        prima["colore"] = v["colore"]
-        stato["asset"][ticker] = prima
+        if in_orario or primo_giro:
+            prima["colore"] = v["colore"]
+            stato["asset"][ticker] = prima
 
     if args.prova or primo_giro:
         messaggi.insert(0, msg_riepilogo(

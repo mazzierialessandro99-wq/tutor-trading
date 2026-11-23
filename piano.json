@@ -1,0 +1,38 @@
+{
+  "profilo": {
+    "tempo": "Molto: posso rispondere agli avvisi durante il giorno",
+    "rischio": "Moderato: accetto un -10% in un mese se il piano è sensato",
+    "obiettivo": "Entrata extra nel tempo",
+    "esecuzione": "Conferma con un tocco, solo sul conto demo"
+  },
+  "capitale": 1000,
+  "rischio_per_operazione": 1.0,
+  "rischio_cripto": 0.5,
+  "max_posizioni_aperte": 3,
+  "stop_giornaliero_pct": 2,
+  "stop_settimanale_pct": 4,
+  "stop_mensile_pct": 8,
+  "orari_avvisi": ["07:00", "23:00"],
+  "mercati_esclusi": [],
+  "fase": 1,
+  "fasi": [
+    {
+      "nome": "Palestra",
+      "durata": "settimane 1-4 · conto demo",
+      "cosa": "Segui ogni semaforo verde con il pulsante di conferma, senza saltarne e senza inventarne. Dopo ogni operazione scrivi nel diario perché sei entrato e come ti sei sentito.",
+      "traguardo": "Almeno 20 operazioni con il 100% delle regole rispettate (stop sempre messo, mai spostato, mai oltre il rischio del piano)."
+    },
+    {
+      "nome": "Verifica",
+      "durata": "settimane 5-8 · conto demo",
+      "cosa": "Confronta i tuoi risultati con il backtest. Se sono molto peggiori, cerchiamo insieme il perché prima di andare avanti.",
+      "traguardo": "Almeno 40 operazioni in totale, perdita massima dal picco sotto l'8%, risultato complessivo positivo."
+    },
+    {
+      "nome": "Primi soldi veri",
+      "durata": "dal 3° mese · conto reale piccolo",
+      "cosa": "Solo se le prime due fasi sono superate: un conto reale con una cifra che puoi perdere senza problemi, rischio dimezzato (0,5%) per i primi 2 mesi.",
+      "traguardo": "Stesse regole, stessa disciplina del demo. Si aumenta solo dopo 3 mesi positivi di fila."
+    }
+  ]
+}
