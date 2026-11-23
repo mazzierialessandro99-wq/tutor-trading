@@ -203,3 +203,40 @@ NOMI_CAPITAL = {
 
 def nome_capital(ticker: str, nome: str) -> str:
     return NOMI_CAPITAL.get(ticker, nome)
+
+
+# ------------------------------------------------------------------------------
+# MERCATI AGGIUNTIVI (universo esteso). Scelti a priori con un criterio fisso:
+# i più grandi e scambiati, disponibili su Capital.com, quotati in dollari o euro.
+# NON scelti guardando i risultati del backtest (sarebbe barare).
+# ------------------------------------------------------------------------------
+ASSET_EXTRA = {
+    # Indici
+    "Russell 2000 (USA)": ("^RUT", "USD"), "CAC 40 (Francia)": ("^FCHI", "EUR"),
+    "AEX (Olanda)": ("^AEX", "EUR"), "IBEX 35 (Spagna)": ("^IBEX", "EUR"),
+    # Materie prime e valute
+    "Gas naturale": ("NG=F", "USD"), "Rame": ("HG=F", "USD"), "Platino": ("PL=F", "USD"),
+    "Dollaro australiano / Dollaro": ("AUDUSD=X", "USD"), "Dollaro neozelandese / Dollaro": ("NZDUSD=X", "USD"),
+    # Grandi aziende USA
+    "Broadcom": ("AVGO", "USD"), "JPMorgan": ("JPM", "USD"), "Visa": ("V", "USD"), "Mastercard": ("MA", "USD"),
+    "UnitedHealth": ("UNH", "USD"), "ExxonMobil": ("XOM", "USD"), "Johnson & Johnson": ("JNJ", "USD"),
+    "Procter & Gamble": ("PG", "USD"), "Home Depot": ("HD", "USD"), "Costco": ("COST", "USD"),
+    "Eli Lilly": ("LLY", "USD"), "AbbVie": ("ABBV", "USD"), "Coca-Cola": ("KO", "USD"), "PepsiCo": ("PEP", "USD"),
+    "Walmart": ("WMT", "USD"), "Bank of America": ("BAC", "USD"), "Oracle": ("ORCL", "USD"),
+    "Salesforce": ("CRM", "USD"), "AMD": ("AMD", "USD"), "Netflix": ("NFLX", "USD"), "Adobe": ("ADBE", "USD"),
+    "Intel": ("INTC", "USD"), "Cisco": ("CSCO", "USD"), "Disney": ("DIS", "USD"), "McDonald's": ("MCD", "USD"),
+    "Nike": ("NKE", "USD"), "Boeing": ("BA", "USD"), "Caterpillar": ("CAT", "USD"), "Goldman Sachs": ("GS", "USD"),
+    "IBM": ("IBM", "USD"), "Qualcomm": ("QCOM", "USD"), "Pfizer": ("PFE", "USD"), "Merck": ("MRK", "USD"),
+    "Chevron": ("CVX", "USD"),
+    # Grandi aziende europee
+    "SAP": ("SAP.DE", "EUR"), "ASML": ("ASML.AS", "EUR"), "LVMH": ("MC.PA", "EUR"), "Siemens": ("SIE.DE", "EUR"),
+    "TotalEnergies": ("TTE.PA", "EUR"), "Allianz": ("ALV.DE", "EUR"), "ENI": ("ENI.MI", "EUR"),
+    "Enel": ("ENEL.MI", "EUR"), "Intesa Sanpaolo": ("ISP.MI", "EUR"), "UniCredit": ("UCG.MI", "EUR"),
+    "Ferrari": ("RACE.MI", "EUR"),
+}
+
+
+def mercati(piano: dict | None = None) -> dict:
+    """Mercati sorvegliati secondo il piano: 'base' (20) oppure 'esteso' (base + aggiuntivi)."""
+    piano = piano if piano is not None else {}
+    return ASSET | ASSET_EXTRA if piano.get("universo") == "esteso" else dict(ASSET)

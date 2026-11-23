@@ -62,7 +62,7 @@ def simula_operazione(df: pd.DataFrame, i: int) -> dict | None:
 
 def esegui(dati: dict[str, pd.DataFrame], capitale: float, piano: dict, anni: int = ANNI) -> dict:
     """Simula il portafoglio sui mercati forniti. dati: ticker -> DataFrame giornaliero."""
-    nomi = {t: n for n, (t, _) in L.ASSET.items()}
+    nomi = {t: n for n, (t, _) in (L.ASSET | L.ASSET_EXTRA).items()}
     candidati = []
     inizio = None
     for t, grezzo in dati.items():
@@ -193,6 +193,21 @@ def main():
         print(f"{rr:>12}{x['n']:>12}{x['win_rate']:>9.1f}%{x['profit_factor']:>11.2f}"
               f"{x['rendimento_pct']:>11.1f}%{x['annuo_pct']:>7.1f}%{x['max_dd_pct']:>9.1f}%")
     L.RR = rr_originale
+
+    # Universo esteso: stesse regole, più mercati (scelti a priori)
+    extra = [t for t, _ in L.ASSET_EXTRA.values()]
+    dati_extra = S.scarica_tutti(extra, periodo="5y")
+    tutti = dati | dati_extra
+    print(f"\nUNIVERSO ESTESO: {len(tutti)} mercati con dati ({len(dati_extra)}/{len(extra)} aggiuntivi scaricati)")
+    print(f"{'Max aperte':>11}{'Operazioni':>12}{'Win rate':>10}{'Profit f.':>11}{'Risultato':>12}{'Annuo':>8}{'Drawdown':>10}{'Perdite fila':>14}")
+    for max_aperte in (3, 5):
+        x = esegui(tutti, float(piano.get("capitale", 1000)), piano | {"max_posizioni_aperte": max_aperte})
+        print(f"{max_aperte:>11}{x['n']:>12}{x['win_rate']:>9.1f}%{x['profit_factor']:>11.2f}"
+              f"{x['rendimento_pct']:>11.1f}%{x['annuo_pct']:>7.1f}%{x['max_dd_pct']:>9.1f}%{x['perdite_di_fila']:>14}")
+    solo_extra = esegui(dati_extra, float(piano.get("capitale", 1000)), piano)
+    print(f"Solo i mercati aggiuntivi (verifica fuori campione): {solo_extra['n']} operazioni, "
+          f"win rate {solo_extra['win_rate']:.1f}%, profit factor {solo_extra['profit_factor']:.2f}, "
+          f"risultato {solo_extra['rendimento_pct']:+.1f}%")
 
 
 if __name__ == "__main__":
