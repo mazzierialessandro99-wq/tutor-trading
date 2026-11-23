@@ -11,7 +11,7 @@ seguendo le istruzioni che la dashboard mostra a schermo.
 |---|---|---|
 | 🎓 Regole d'oro | ✅ pronta | Rischio, EMA 200 / RSI / ATR, Stop Loss e Take Profit, regola dell'1%, calcolatrice della posizione |
 | 🚦 Analisi e segnali | ✅ pronta | Asset da yfinance, grafico con indicatori, semaforo, istruzioni passo passo |
-| 🧪 Verifica sul passato | 🚧 in costruzione | Backtest sugli ultimi 3 anni, drawdown massimo, win rate |
+| 🧪 Verifica sul passato | ✅ pronta | Backtest sugli ultimi 3 anni, drawdown massimo, win rate |
 | 🛰️ Sentinella | ✅ attiva | Controlla 20 mercati ogni 30 minuti (GitHub Actions) e avvisa su Telegram |
 | 🤖 Modalità automatica | 🔑 in attesa della chiave API | Apre operazioni da sola, SOLO sul conto Demo Capital.com, con i limiti del piano. Comandi Telegram: /stato /stop /riprendi |
 

@@ -280,7 +280,7 @@ PAGINE = ["🚦 Segnali", "📋 Piano", "🎓 Impara", "🧪 Test"]
 
 # ---- barra in alto: nome + impostazioni del conto ----
 with st.container(key="topbar", horizontal=True, vertical_alignment="center"):
-    st.markdown('<div class="brand">📈 Tutor <small>SOLO ANALISI · CONTO DEMO</small></div>',
+    st.markdown('<div class="brand">📈 Tutor <small>ASSISTENTE DI TRADING · CONTO DEMO</small></div>',
                 unsafe_allow_html=True)
     if hasattr(st, "space"):
         st.space("stretch")
@@ -474,6 +474,19 @@ def passi_operativi(p: dict, v: dict, nome: str, valuta: str, cambio: float, ris
     )
 
 
+def banner_assistente():
+    if PIANO.get("modalita") == "automatico":
+        st.markdown('<div class="card" style="display:flex;gap:12px;align-items:center;padding:12px 14px">'
+                    '<div style="font-size:1.5rem">🤖</div><div class="txt"><b>Assistente automatico · conto Demo</b><br>'
+                    'Controlla i mercati ogni 30 minuti e apre da solo le operazioni del piano. '
+                    'Su Telegram: <b>/stato</b> · <b>/stop</b> · <b>/riprendi</b></div></div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="card" style="display:flex;gap:12px;align-items:center;padding:12px 14px">'
+                    '<div style="font-size:1.5rem">🔔</div><div class="txt"><b>Assistente in modalità avvisi</b><br>'
+                    'Controlla i mercati ogni 30 minuti e ti scrive su Telegram quando un semaforo diventa verde.</div></div>',
+                    unsafe_allow_html=True)
+
+
 # ==============================================================================
 # SEZIONE SEGNALI: elenco degli asset
 # ==============================================================================
@@ -495,6 +508,7 @@ def schermata_elenco():
     st.markdown(f'<div class="oggi"><div class="t">Semaforo di oggi · chiusura {data:%d/%m}</div>'
                 f'<div class="h">{titolo}</div><div class="conti">{conti}</div></div>', unsafe_allow_html=True)
 
+    banner_assistente()
     for r in righe:
         scheda_asset(r)
 
@@ -743,15 +757,130 @@ La quantità da comprare **non si sceglie a sentimento**, si calcola:
 
 
 # ==============================================================================
-# SEZIONE TEST (backtest) — prossimo passo
+# SEZIONE TEST (backtest)
 # ==============================================================================
+@st.cache_data(ttl=12 * 3600, show_spinner=False)
+def calcola_backtest(capitale: float) -> dict:
+    import backtest as B
+    import sentinella
+    tickers = [t for t, _ in L.ASSET.values()]
+    if DEMO:
+        dati = {t: _dati_demo(t) for t in tickers}
+    else:
+        dati = sentinella.scarica_tutti(tickers, periodo="5y")
+    r = B.esegui(dati, capitale, PIANO)
+    r["mercati"] = len(dati)
+    return r
+
+
 def schermata_test():
+    import backtest as B
     st.markdown('<div class="titolo">Verifica sul passato</div>'
-                '<div class="sottotit">Le stesse regole del semaforo, provate sugli ultimi 3 anni.</div>',
+                '<div class="sottotit">Le stesse regole del semaforo e del tuo piano, provate sugli ultimi 3 anni '
+                'di 20 mercati. Come se l\'assistente fosse stato acceso dal 2023.</div>', unsafe_allow_html=True)
+
+    with st.expander("ℹ️ Come funziona la verifica"):
+        st.markdown(
+            f"""
+- Ogni volta che in passato un semaforo **è diventato verde**, si compra all'apertura del giorno dopo.
+- Stop-loss a **{fmt_num(L.STOP_ATR, 0)} ATR** sotto, Take profit a **{fmt_num(L.STOP_ATR * L.RR, 0)} ATR** sopra (1:{fmt_num(L.RR, 0)}).
+- Rischio del tuo piano: **{fmt_pct(PIANO.get('rischio_per_operazione', 1))}%** ({fmt_pct(PIANO.get('rischio_cripto', 0.5))}% sulle cripto),
+  massimo **{PIANO.get('max_posizioni_aperte', 3)}** operazioni aperte insieme.
+- Se nello stesso giorno vengono toccati stop e take profit, contiamo lo **stop** (ipotesi prudente).
+- Costi di spread e commissioni stimati allo **0,1%** per operazione.
+"""
+        )
+
+    if st.button("▶️  Esegui la verifica", type="primary", width="stretch", key="esegui_bt"):
+        ss.bt_fatto = True
+    if not ss.get("bt_fatto"):
+        st.markdown('<div class="nota">Ci vogliono circa 20-30 secondi: scarico 5 anni di prezzi per 20 mercati.</div>',
+                    unsafe_allow_html=True)
+        return
+
+    with st.spinner("Rigioco 3 anni di mercati…"):
+        try:
+            r = calcola_backtest(float(PIANO.get("capitale", 1000)))
+        except Exception:
+            r = {"n": 0}
+    if not r.get("n"):
+        st.error("Non sono riuscito a completare la verifica (dati non disponibili). Riprova tra qualche minuto.")
+        return
+
+    cap = float(PIANO.get("capitale", 1000))
+    giudizio, spiegazione = B.verdetto(r)
+    colore = {"buono": "VERDE", "debole": "GIALLO", "negativo": "ROSSO"}[giudizio]
+    titolo = {"buono": "Le regole reggono", "debole": "Risultato debole", "negativo": "Le regole perdono"}[giudizio]
+    st.markdown(
+        f'<div class="sem" style="border-color:{STATO[colore]}55;background:linear-gradient(135deg,{STATO[colore]}26,var(--surf) 72%)">'
+        f'<div style="font-size:2.2rem">{"✅" if giudizio == "buono" else "⚠️" if giudizio == "debole" else "⛔"}</div>'
+        f'<div><div class="sem-colore" style="color:{STATO_TESTO[colore]};font-size:1.35rem">{titolo}</div>'
+        f'<div class="sem-txt">{spiegazione}</div>'
+        f'<div class="sem-meta">{r["curva"].index[0]:%d/%m/%Y} → {r["curva"].index[-1]:%d/%m/%Y} · {r["mercati"]} mercati · '
+        f'{r["n"]} operazioni chiuse</div></div></div>', unsafe_allow_html=True)
+
+    voci = [("Capitale finale", f"{fmt_num(r['finale'], 0)} €", f"partendo da {fmt_num(cap, 0)} €"),
+            ("Rendimento", f"{'+' if r['rendimento_pct'] >= 0 else '−'}{fmt_num(abs(r['rendimento_pct']), 1)}%",
+             f"{'+' if r['annuo_pct'] >= 0 else '−'}{fmt_num(abs(r['annuo_pct']), 1)}% all'anno"),
+            ("Win rate", f"{fmt_num(r['win_rate'], 0)}%", "operazioni chiuse in guadagno"),
+            ("Drawdown massimo", f"−{fmt_num(abs(r['max_dd_pct']), 1)}%", "la discesa peggiore dal picco")]
+    st.markdown('<div class="tiles" style="grid-template-columns:repeat(2,1fr)">' + "".join(
+        f'<div class="tile"><div class="k">{k}</div><div class="v">{val}</div><div class="s">{s}</div></div>'
+        for k, val, s in voci) + "</div>", unsafe_allow_html=True)
+
+    # ---- curva del capitale ----
+    st.markdown('<div class="sezione">Come sarebbe andato il capitale</div>', unsafe_allow_html=True)
+    curva, dd = r["curva"], r["drawdown"]
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.08, row_heights=[0.72, 0.28],
+                        subplot_titles=("Capitale (€)", "Drawdown (%) · quanto sei sotto il massimo"))
+    fig.add_trace(go.Scatter(x=curva.index, y=curva.values, mode="lines", line=dict(color=T["ema"], width=2.2, shape="hv"),
+                             name="Capitale", hovertemplate="%{y:,.2f} €<extra></extra>"), row=1, col=1)
+    fig.add_hline(y=cap, line=dict(color=T["muto"], width=1, dash="dot"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=dd.index, y=dd.values, mode="lines", fill="tozeroy", line=dict(color=T["giu"], width=1.5, shape="hv"),
+                             fillcolor=T["giu"] + "33", name="Drawdown", hovertemplate="%{y:.1f}%<extra></extra>"), row=2, col=1)
+    fig.update_layout(height=430, template="plotly_dark" if SCURO else "plotly_white", showlegend=False,
+                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", separators=",.",
+                      margin=dict(l=4, r=4, t=28, b=4), hovermode="x unified", font=dict(color=T["testo2"], size=12))
+    fig.update_xaxes(gridcolor=T["griglia"], tickformat="%m/%y", hoverformat="%d/%m/%Y")
+    fig.update_yaxes(gridcolor=T["griglia"], side="right", zeroline=False)
+    fig.update_annotations(font=dict(size=12, color=T["muto"]), x=0, xanchor="left")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+
+    # ---- spiegazioni con i numeri veri ----
+    st.markdown('<div class="sezione">Cosa significano questi numeri</div>', unsafe_allow_html=True)
+    spiegazioni = [
+        ("🎯", "Win rate", f"Su 10 operazioni, circa <b>{fmt_num(r['win_rate'] / 10, 0)}</b> sono finite in guadagno. "
+         f"Non serve vincere spesso: con il rapporto 1:2 una vincita media (<b>{fmt_num(r['media_vinta'])} €</b>) "
+         f"vale circa il doppio di una perdita media (<b>{fmt_num(abs(r['media_persa']))} €</b>). Il punto di pareggio è circa il 34%."),
+        ("📉", "Drawdown massimo", f"Nel momento peggiore il conto era <b>{fmt_num(abs(r['max_dd_pct']), 1)}%</b> sotto il suo "
+         f"massimo precedente, cioè circa <b>{fmt_num(cap * abs(r['max_dd_pct']) / 100, 0)} €</b> su {fmt_num(cap, 0)}. "
+         "È la discesa che devi essere pronto a sopportare senza mollare il piano."),
+        ("⚖️", "Profit factor", f"Per ogni euro perso se ne sono guadagnati <b>{fmt_num(r['profit_factor'], 2)}</b>. "
+         "Sopra 1 la strategia guadagna; sopra 1,3 è considerata solida."),
+        ("🔁", "Perdite di fila", f"La serie peggiore è stata di <b>{r['perdite_di_fila']}</b> operazioni perse una dopo l'altra. "
+         "Capiterà anche dal vivo: è normale e non vuol dire che le regole siano rotte."),
+    ]
+    for ico, tit, txt in spiegazioni:
+        st.markdown(f'<div class="card spia"><div class="ico">{ico}</div><div><div class="tit">{tit}</div>'
+                    f'<div class="txt">{txt}</div></div></div>', unsafe_allow_html=True)
+
+    # ---- dettagli ----
+    with st.expander("📊 Risultato per mercato"):
+        pm = r["per_mercato"].rename(columns={"mercato": "Mercato", "operazioni": "Operazioni", "euro": "Risultato €",
+                                              "vinte": "Vinte %"})
+        st.dataframe(pm, hide_index=True, width="stretch",
+                     column_config={"Risultato €": st.column_config.NumberColumn(format="%.2f"),
+                                    "Vinte %": st.column_config.NumberColumn(format="%.0f")})
+    with st.expander("🧾 Ultime 20 operazioni"):
+        op = r["operazioni"].sort_values("entrata", ascending=False).head(20)
+        st.dataframe(pd.DataFrame({"Mercato": op["mercato"], "Entrata": op["entrata"].dt.strftime("%d/%m/%y"),
+                                   "Uscita": op["uscita"].dt.strftime("%d/%m/%y"), "Esito": op["esito"],
+                                   "€": op["euro"].round(2)}), hide_index=True, width="stretch")
+
+    st.markdown('<div class="card"><div class="txt">⚠️ <b>Onestà prima di tutto:</b> il passato non garantisce il futuro. '
+                'I dati di Yahoo sono indicativi, spread e slippage reali possono essere più alti, e i mercati cambiano. '
+                'Per questo il piano prevede settimane di prova sul <b>Demo</b> prima di usare soldi veri.</div></div>',
                 unsafe_allow_html=True)
-    st.markdown('<div class="card"><div class="txt">🚧 <b>In costruzione.</b> Qui vedrai come sarebbe andato il capitale '
-                'seguendo il semaforo, con il drawdown massimo e la percentuale di operazioni vinte, spiegati passo per passo.'
-                '</div></div>', unsafe_allow_html=True)
 
 
 # ==============================================================================

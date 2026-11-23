@@ -363,8 +363,11 @@ def main():
                 blocco = limite_superato(risultati)
             except C.CapitalErrore as e:
                 broker = None
-                messaggi.append(f"⚠️ Non riesco a collegarmi a Capital.com ({str(e)[:120]}). "
-                                "Per questo giro solo avvisi, riprovo tra 30 minuti.")
+                print(f"Capital.com non raggiungibile: {e}")
+                if stato.get("avviso_collegamento") != oggi:     # al massimo un avviso al giorno
+                    messaggi.append(f"⚠️ Non riesco a collegarmi a Capital.com ({str(e)[:120]}). "
+                                    "Finché non si risolve ti mando solo gli avvisi; riprovo ogni 30 minuti.")
+                    stato["avviso_collegamento"] = oggi
     auto_attivo = broker is not None and not stato.get("pausa")
 
     # operazioni chiuse dall'ultimo giro (stop o take profit)

@@ -148,6 +148,10 @@ def verdetto(r: dict) -> tuple[str, str]:
         return "debole", "Troppe poche operazioni per giudicare: servono più dati prima di fidarsi."
     pf, dd = r["profit_factor"], r["max_dd_pct"]
     if pf >= 1.3 and dd > -15:
+        if r["annuo_pct"] < 8:
+            return "buono", (f"Le regole hanno guadagnato con perdite ben sotto controllo, ma il rendimento è modesto "
+                             f"(circa {r['annuo_pct']:.0f}% all'anno): normale con un rischio dell'1%. "
+                             "Vale la pena metterle alla prova sul Demo, senza aspettarsi miracoli.")
         return "buono", "Le regole hanno guadagnato con perdite sotto controllo. Vale la pena metterle alla prova sul Demo."
     if pf >= 1.05:
         return "debole", ("Hanno guadagnato poco rispetto al rischio: il margine è sottile e basta un periodo sfortunato "
