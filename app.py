@@ -237,14 +237,20 @@ def prepara(dati: pd.DataFrame) -> pd.DataFrame:
     return df.iloc[L.EMA_PERIODO:]
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=1800, show_spinner=False)
 def panoramica() -> list[dict]:
-    """Semaforo di tutti gli asset proposti, per la schermata iniziale."""
+    """Semaforo di tutti gli asset proposti, per la schermata iniziale (una sola richiesta a Yahoo)."""
+    import sentinella
+    tickers = [t for t, _ in L.ASSET.values()]
+    try:
+        tutti = {t: _dati_demo(t) for t in tickers} if DEMO else sentinella.scarica_tutti(tickers)
+    except Exception:
+        tutti = {}
     righe = []
     for nome, (ticker, _) in L.ASSET.items():
         try:
-            d = scarica(ticker)
-            if len(d) < L.EMA_PERIODO + 50:
+            d = tutti.get(ticker)
+            if d is None or len(d) < L.EMA_PERIODO + 20:
                 continue
             v = L.valuta(L.aggiungi_indicatori(d))
             righe.append({"nome": nome, "ticker": ticker, "colore": v["colore"], "close": v["close"],

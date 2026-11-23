@@ -20,16 +20,34 @@ DIST_MIN_EMA_ATR = 1.0 # prezzo a meno di 1 ATR dalla EMA 200 = trend incerto
 STOP_ATR = 2.0         # Stop Loss = ingresso - 2 x ATR
 RR = 2.0               # Take Profit = 2 volte la distanza dello stop
 
-# Asset proposti: nome -> (ticker yfinance, valuta dei prezzi)
+# Mercati sorvegliati: nome -> (ticker yfinance, valuta dei prezzi)
+# Sono tra i più scambiati e si trovano tutti anche su Capital.com. Si possono aggiungere o togliere.
 ASSET = {
-    "S&P 500 (indice USA)": ("^GSPC", "USD"),
-    "Nasdaq 100 (tecnologia USA)": ("^NDX", "USD"),
+    # Indici
+    "S&P 500 (USA)": ("^GSPC", "USD"),
+    "Nasdaq 100 (USA)": ("^NDX", "USD"),
+    "Dow Jones (USA)": ("^DJI", "USD"),
+    "DAX (Germania)": ("^GDAXI", "EUR"),
+    "FTSE MIB (Italia)": ("FTSEMIB.MI", "EUR"),
+    "Euro Stoxx 50": ("^STOXX50E", "EUR"),
+    # Materie prime
     "Oro": ("GC=F", "USD"),
+    "Argento": ("SI=F", "USD"),
+    "Petrolio WTI": ("CL=F", "USD"),
+    # Valute
+    "Euro / Dollaro": ("EURUSD=X", "USD"),
+    "Sterlina / Dollaro": ("GBPUSD=X", "USD"),
+    # Criptovalute
     "Bitcoin": ("BTC-USD", "USD"),
+    "Ethereum": ("ETH-USD", "USD"),
+    # Azioni
     "Apple": ("AAPL", "USD"),
     "Microsoft": ("MSFT", "USD"),
     "Nvidia": ("NVDA", "USD"),
-    "Euro / Dollaro": ("EURUSD=X", "USD"),
+    "Amazon": ("AMZN", "USD"),
+    "Alphabet (Google)": ("GOOGL", "USD"),
+    "Meta": ("META", "USD"),
+    "Tesla": ("TSLA", "USD"),
 }
 
 
