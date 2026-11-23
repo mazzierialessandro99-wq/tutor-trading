@@ -430,6 +430,8 @@ def main():
         stato["asset"][ticker] = prima
 
     # ---- 5. benvenuto e riepilogo del mattino ----
+    if args.prova and broker is not None:
+        messaggi.insert(0, msg_stato(auto_attivo, conto, risultati, posizioni))
     if args.prova or primo_giro:
         modo = ("Opero da solo sul conto <b>Demo</b> di Capital.com seguendo il tuo piano, e ti avviso di ogni operazione."
                 if AUTOMATICO else "Non invio mai ordini: decidi sempre tu.")
