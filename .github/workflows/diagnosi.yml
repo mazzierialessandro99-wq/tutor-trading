@@ -1,0 +1,24 @@
+# Controllo del bot sul conto DEMO Capital.com (non apre operazioni). Avvio a mano: Actions -> Diagnosi.
+name: Diagnosi
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnosi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CAPITAL_API_KEY: ${{ secrets.CAPITAL_API_KEY }}
+      CAPITAL_IDENTIFIER: ${{ secrets.CAPITAL_IDENTIFIER }}
+      CAPITAL_PASSWORD: ${{ secrets.CAPITAL_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-sentinella.txt
+      - run: pip install -r requirements-sentinella.txt
+      - name: Diagnosi del bot
+        run: python diagnosi.py
