@@ -628,6 +628,24 @@ def schermata_piano():
     st.markdown(f'<div class="nota">🔔 Avvisi su Telegram dalle {dalle} alle {alle}: di notte la sentinella controlla '
                 'ma non ti sveglia, e ti aggiorna al mattino.</div>', unsafe_allow_html=True)
 
+    ob = float(P.get("obiettivo", 0) or 0)
+    if ob > cap:
+        st.markdown('<div class="sezione">🎯 Il tuo obiettivo</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="card"><div class="tit" style="font-weight:800;font-size:1.15rem">'
+            f'{fmt_num(cap, 0)} € → {fmt_num(ob, 0)} €</div>'
+            '<div class="txt">L\'avanzamento te lo mostra la sentinella su Telegram (/stato e riepilogo delle 8). '
+            'Quanto tempo serve, secondo 10.000 simulazioni basate sul backtest reale:</div>'
+            '<div class="campi" style="grid-template-columns:auto 1fr">'
+            '<span>Rischio 1% (il tuo piano)</span><span>oltre 10 anni · discesa tipica −13%</span>'
+            '<span>Rischio 2%</span><span>circa 6-7 anni · discesa tipica −24%</span>'
+            '<span>Rischio 3%</span><span>circa 4 anni · discesa tipica −35%</span>'
+            '<span>Rischio 5%</span><span>circa 2,5 anni · 1 volta su 10 il conto si dimezza prima</span>'
+            '<span>+50 € risparmiati al mese</span><span><b>circa 10 mesi</b>, senza alzare il rischio</span>'
+            '</div><div class="txt" style="margin-top:8px">La strada più sicura per raddoppiare non è rischiare di più, '
+            'ma <b>aggiungere risparmi</b> e lasciare lavorare le regole.</div></div>',
+            unsafe_allow_html=True)
+
     st.markdown('<div class="sezione">Il tuo percorso</div>', unsafe_allow_html=True)
     fase = P.get("fase", 1)
     for i, f in enumerate(P.get("fasi", []), start=1):

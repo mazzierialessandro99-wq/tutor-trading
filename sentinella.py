@@ -42,6 +42,7 @@ CAPITALE = float(os.environ.get("CAPITALE") or PIANO.get("capitale", 1000))   # 
 RISCHIO = float(os.environ.get("RISCHIO") or PIANO.get("rischio_per_operazione", 1))  # % per operazione
 DALLE, ALLE = PIANO.get("orari_avvisi", ["00:00", "23:59"])
 MAX_APERTE = int(PIANO.get("max_posizioni_aperte", 3))
+OBIETTIVO = float(PIANO.get("obiettivo", 0) or 0)       # es. 1000: dove vuoi arrivare partendo da CAPITALE
 AUTOMATICO = PIANO.get("modalita") == "automatico"
 ORA_RIEPILOGO = int(os.environ.get("ORA_RIEPILOGO", "8"))
 DEMO = os.environ.get("TUTOR_DEMO") == "1"               # dati inventati, solo per prove senza internet
@@ -253,11 +254,30 @@ def limite_superato(risultati: dict) -> tuple[str, str, float] | None:
     return None
 
 
-def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, posizioni: list[dict]) -> str:
+def progresso(stato: dict, valore_conto: float) -> float:
+    """Capitale 'virtuale' del piano: parte da CAPITALE e si muove con i risultati del bot sul Demo."""
+    ob = stato.get("obiettivo_traccia")
+    if not ob or ob.get("capitale") != CAPITALE:
+        ob = stato["obiettivo_traccia"] = {"capitale": CAPITALE, "base": valore_conto, "tappe": []}
+    return CAPITALE + (valore_conto - ob["base"])
+
+
+def barra(attuale: float) -> str:
+    if not OBIETTIVO or OBIETTIVO <= CAPITALE:
+        return ""
+    quota = max(0.0, min(1.0, (attuale - CAPITALE) / (OBIETTIVO - CAPITALE)))
+    pieni = round(quota * 10)
+    return f"🎯 Obiettivo: {num(attuale, 0)} € / {num(OBIETTIVO, 0)} €  {'▰' * pieni}{'▱' * (10 - pieni)} {quota * 100:.0f}%"
+
+
+def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, posizioni: list[dict],
+              attuale: float | None = None) -> str:
     righe = [f"📊 <b>Stato dell'assistente</b>",
              f"Modalità: {'🤖 automatica (Demo)' if auto_attivo else '✋ solo avvisi' if not AUTOMATICO else '⏸️ in pausa (/riprendi per ripartire)'}"]
+    if attuale is not None and OBIETTIVO:
+        righe.append(barra(attuale))
     if conto:
-        righe.append(f"Saldo demo: {num(conto['saldo'])} € · aperto: {euro(conto['pl_aperto'])}")
+        righe.append(f"Saldo demo (tutto il conto): {num(conto['saldo'])} € · aperto: {euro(conto['pl_aperto'])}")
     if risultati:
         for nome, campo, testo, _ in LIMITI:
             righe.append(f"Risultato {testo}: {euro(risultati[nome])} (limite −{num(CAPITALE * float(PIANO.get(campo, 100)) / 100)} €)")
@@ -363,7 +383,7 @@ def main():
     eurusd = 1.08 if DEMO or "EURUSD=X" not in dati else float(dati["EURUSD=X"]["Close"].iloc[-1])
 
     # ---- 3. conto Capital.com (solo in modalità automatica) ----
-    broker, conto, posizioni, risultati, blocco = None, None, [], None, None
+    broker, conto, posizioni, risultati, blocco, attuale = None, None, [], None, None, None
     if AUTOMATICO:
         broker = collega_broker()
         if broker is None:
@@ -378,6 +398,7 @@ def main():
                 posizioni = broker.posizioni()
                 risultati = aggiorna_periodi(stato, conto["saldo"] + conto["pl_aperto"], ora)
                 blocco = limite_superato(risultati)
+                attuale = progresso(stato, conto["saldo"])
             except C.CapitalErrore as e:
                 broker = None
                 print(f"Capital.com non raggiungibile: {e}")
@@ -402,8 +423,16 @@ def main():
                             f"{next(f for n, _, _, f in LIMITI if n == blocco[0])}. Fa parte del piano: proteggere il conto.")
             stato["blocco_avvisato"] = f"{blocco[0]}:{chiavi_periodo(ora)[blocco[0]]}"
 
+    if attuale is not None and OBIETTIVO > CAPITALE:
+        tappe = stato["obiettivo_traccia"].setdefault("tappe", [])
+        for t in range(int(CAPITALE) + 100, int(OBIETTIVO) + 1, 100):
+            if attuale >= t and t not in tappe:
+                tappe.append(t)
+                fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= OBIETTIVO else ""
+                messaggi.append(f"🎉 Tappa superata: il tuo capitale del piano ha raggiunto <b>{num(t, 0)} €</b>.\n{barra(attuale)}{fine}")
+
     if "/stato" in comandi:
-        messaggi.append(msg_stato(auto_attivo, conto, risultati, posizioni))
+        messaggi.append(msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
 
     # ---- 4. semafori: avvisi ed eventuali operazioni ----
     righe = []
@@ -448,7 +477,7 @@ def main():
 
     # ---- 5. benvenuto e riepilogo del mattino ----
     if args.prova and broker is not None:
-        messaggi.insert(0, msg_stato(auto_attivo, conto, risultati, posizioni))
+        messaggi.insert(0, msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
     if args.prova or primo_giro:
         modo = ("Opero da solo sul conto <b>Demo</b> di Capital.com seguendo il tuo piano, e ti avviso di ogni operazione."
                 if AUTOMATICO else "Non invio mai ordini: decidi sempre tu.")
@@ -457,7 +486,10 @@ def main():
                    f"Controllo i mercati ogni 30 minuti, giorno e notte, e ti scrivo quando un semaforo diventa verde. {modo}\n"
                    "Comandi: /stato · /stop · /riprendi\n\n<b>La situazione adesso:</b>"))
     elif ora.hour >= ORA_RIEPILOGO and stato.get("riepilogo") != oggi:
-        messaggi.insert(0, msg_riepilogo(righe, f"☀️ <b>Buongiorno! Il semaforo di oggi</b> ({ora:%d/%m})"))
+        titolo = f"☀️ <b>Buongiorno! Il semaforo di oggi</b> ({ora:%d/%m})"
+        if attuale is not None and OBIETTIVO:
+            titolo += "\n" + barra(attuale)
+        messaggi.insert(0, msg_riepilogo(righe, titolo))
     if ora.hour >= ORA_RIEPILOGO:
         stato["riepilogo"] = oggi
 
