@@ -1,0 +1,11 @@
+[theme]
+base = "dark"
+primaryColor = "#2ecc71"
+
+[server]
+# Permette di aprire l'app dal telefono sulla stessa rete Wi-Fi (opzione A)
+address = "0.0.0.0"
+port = 8501
+
+[browser]
+gatherUsageStats = false
