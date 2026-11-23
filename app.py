@@ -15,7 +15,17 @@ import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
 
+import importlib
+
 import logica as L
+import capital, sentinella, backtest  # noqa: E401
+
+# Streamlit Cloud, dopo un aggiornamento, ricarica solo questo file: i moduli importati potrebbero
+# restare alla versione vecchia. Li ricarichiamo sempre, in ordine, così sono tutti aggiornati.
+L = importlib.reload(L)
+capital = importlib.reload(capital)
+sentinella = importlib.reload(sentinella)
+backtest = importlib.reload(backtest)
 
 st.set_page_config(page_title="Tutor di Trading", page_icon="📈", layout="centered",
                    initial_sidebar_state="collapsed")
@@ -245,7 +255,6 @@ def prepara(dati: pd.DataFrame) -> pd.DataFrame:
 @st.cache_data(ttl=1800, show_spinner=False)
 def panoramica() -> list[dict]:
     """Semaforo di tutti gli asset proposti, per la schermata iniziale (una sola richiesta a Yahoo)."""
-    import sentinella
     tickers = [t for t, _ in L.ASSET.values()]
     try:
         tutti = {t: _dati_demo(t) for t in tickers} if DEMO else sentinella.scarica_tutti(tickers)
@@ -761,8 +770,7 @@ La quantità da comprare **non si sceglie a sentimento**, si calcola:
 # ==============================================================================
 @st.cache_data(ttl=12 * 3600, show_spinner=False)
 def calcola_backtest(capitale: float) -> dict:
-    import backtest as B
-    import sentinella
+    B = backtest
     tickers = [t for t, _ in L.ASSET.values()]
     if DEMO:
         dati = {t: _dati_demo(t) for t in tickers}
@@ -774,7 +782,7 @@ def calcola_backtest(capitale: float) -> dict:
 
 
 def schermata_test():
-    import backtest as B
+    B = backtest
     st.markdown('<div class="titolo">Verifica sul passato</div>'
                 '<div class="sottotit">Le stesse regole del semaforo e del tuo piano, provate sugli ultimi 3 anni '
                 'di 20 mercati. Come se l\'assistente fosse stato acceso dal 2023.</div>', unsafe_allow_html=True)
