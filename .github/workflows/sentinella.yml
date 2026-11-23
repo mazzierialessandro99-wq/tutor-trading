@@ -23,7 +23,11 @@ jobs:
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: "375765601"
-      # Capitale, rischio e orari degli avvisi si cambiano in piano.json
+      # Chiavi del conto DEMO Capital.com (modalità automatica). Se mancano, solo avvisi.
+      CAPITAL_API_KEY: ${{ secrets.CAPITAL_API_KEY }}
+      CAPITAL_IDENTIFIER: ${{ secrets.CAPITAL_IDENTIFIER }}
+      CAPITAL_PASSWORD: ${{ secrets.CAPITAL_PASSWORD }}
+      # Capitale, rischio, orari e modalità si cambiano in piano.json
     steps:
       - uses: actions/checkout@v4
 
