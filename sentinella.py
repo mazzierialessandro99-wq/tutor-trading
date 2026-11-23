@@ -114,16 +114,18 @@ def invia(testo: str, a_secco: bool = False):
 # ------------------------------------------------------------------------------
 # MESSAGGI
 # ------------------------------------------------------------------------------
-def msg_verde(nome: str, valuta: str, v: dict, p: dict, cambio: float, rischio: float) -> str:
+def msg_verde(nome: str, ticker: str, valuta: str, v: dict, p: dict, cambio: float, rischio: float) -> str:
     eur = lambda x: num(x / cambio)
+    dec = 4 if p["ingresso"] < 10 else 2
     return (
         f"🟢 <b>{nome}</b>: semaforo <b>VERDE</b>\n"
         f"Trend positivo (sopra la EMA 200) e RSI a {v['rsi']:.0f} in risalita: il ritracciamento sta finendo.\n\n"
-        f"📋 <b>Cosa fare</b> (conto demo · {num(CAPITALE, 0)} € · rischio {num(rischio, 2).rstrip('0').rstrip(',')}%)\n"
-        f"1. Quantità: <b>{quote(p['quote'])}</b>\n"
-        f"2. Ingresso (ordine limite): <b>{prezzo(p['ingresso'], valuta)}</b>\n"
-        f"3. Stop Loss: <b>{prezzo(p['stop'], valuta)}</b>\n"
-        f"4. Take Profit: <b>{prezzo(p['tp'], valuta)}</b>\n"
+        f"📋 <b>Su Capital.com</b> (Demo · piano {num(CAPITALE, 0)} € · rischio {num(rischio, 2).rstrip('0').rstrip(',')}%)\n"
+        f"Cerca <b>{L.nome_capital(ticker, nome)}</b> → Compra\n"
+        f"• Quantità (Contratti): <b>{quote(p['quote'])}</b>  ← cancella quella proposta!\n"
+        f"• Acquista quando il prezzo è pari a: <b>{prezzo(p['ingresso'], valuta)}</b>\n"
+        f"• Stop-loss: <b>{num(p['distanza'], dec)} punti</b> sotto l'ingresso (≈ {prezzo(p['stop'], valuta)})\n"
+        f"• Take profit: <b>{num(p['distanza'] * L.RR, dec)} punti</b> sopra (≈ {prezzo(p['tp'], valuta)})\n"
         f"Rischi circa {eur(p['perdita'])} € per guadagnarne circa {eur(p['guadagno'])} €.\n\n"
         f"⚠️ Controlla il prezzo vero sull'app: se è già sopra {prezzo(p['ingresso'] + 0.5 * v['atr'], valuta)}, "
         f"non inseguirlo.\n"
@@ -189,7 +191,7 @@ def main():
                 and prima.get("avvisato") != oggi:
             rischio = L.rischio_per(ticker, PIANO, RISCHIO)
             p = L.piano(CAPITALE * cambio, rischio, v["close"], v["atr"])
-            messaggi.append(msg_verde(nome, valuta, v, p, cambio, rischio))
+            messaggi.append(msg_verde(nome, ticker, valuta, v, p, cambio, rischio))
             prima["avvisato"] = oggi
         elif not primo_giro and prima.get("colore") == "VERDE" and v["colore"] != "VERDE":
             messaggi.append(msg_non_piu_verde(nome, v["colore"]))

@@ -187,3 +187,19 @@ def rischio_per(ticker: str, piano: dict, rischio_base: float | None = None) -> 
     if is_cripto(ticker):
         return min(base, piano.get("rischio_cripto", base))
     return base
+
+
+# ------------------------------------------------------------------------------
+# NOMI SU CAPITAL.COM (cosa scrivere nella ricerca dell'app). Da confermare con l'API.
+# ------------------------------------------------------------------------------
+NOMI_CAPITAL = {
+    "^GSPC": "US500", "^NDX": "US100", "^DJI": "US30", "^GDAXI": "DE40", "FTSEMIB.MI": "IT40",
+    "^STOXX50E": "EU50", "GC=F": "Gold", "SI=F": "Silver", "CL=F": "US Crude Oil",
+    "EURUSD=X": "EUR/USD", "GBPUSD=X": "GBP/USD", "BTC-USD": "Bitcoin", "ETH-USD": "Ethereum",
+    "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "AMZN": "Amazon",
+    "GOOGL": "Alphabet", "META": "Meta Platforms", "TSLA": "Tesla",
+}
+
+
+def nome_capital(ticker: str, nome: str) -> str:
+    return NOMI_CAPITAL.get(ticker, nome)

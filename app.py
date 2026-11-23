@@ -137,6 +137,9 @@ p, li {line-height: 1.55;}
 .campi {display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; margin-top: 8px; font-size: .92rem;
         background: var(--surf2); border-radius: 12px; padding: 10px 12px;}
 .campi span:nth-child(odd) {color: var(--muto);}
+.campi.colonna {grid-template-columns: 1fr; gap: 0;}
+.campi.colonna span:nth-child(odd) {font-size: .8rem; margin-top: 8px;}
+.campi.colonna span:nth-child(1) {margin-top: 0;}
 .campi span:nth-child(even) {font-weight: 700; color: var(--testo);}
 
 /* ---- widget di Streamlit più "da app" ---- */
@@ -445,21 +448,27 @@ def passi_operativi(p: dict, v: dict, nome: str, valuta: str, cambio: float, ris
     passo(4, "Take Profit", f"{sim}{fmt_prezzo(p['tp'])}",
           f"È a **{fmt_num(L.RR, 0)} volte** la distanza dello stop (rapporto 1:{fmt_num(L.RR, 0)}). "
           f"Se ci arriva guadagni circa **{eur(p['guadagno'])} €**: il doppio di quello che rischi.")
+    ticker = L.ASSET.get(nome, (nome, None))[0]
+    cerca = L.nome_capital(ticker, nome)
+    d = fmt_num(p["distanza"], dec)
+    d2 = fmt_num(p["distanza"] * L.RR, dec)
     st.markdown(
         f"""
 <div class="passo"><div class="num">5</div><div style="flex:1">
-  <div class="tit">Cosa compilare sul broker</div>
-  <div class="txt">Controlla che in alto ci sia scritto <b>DEMO</b>, cerca <b>{nome}</b> e apri il modulo d'ordine:</div>
-  <div class="campi">
-    <span>Direzione</span><span>Compra / Buy</span>
-    <span>Tipo d'ordine</span><span>Limite / Limit</span>
-    <span>Prezzo limite</span><span>{fmt_prezzo(p['ingresso'])}</span>
-    <span>Quantità</span><span>{fmt_quote(p['quote'])}</span>
-    <span>Stop Loss</span><span>{fmt_prezzo(p['stop'])}</span>
-    <span>Take Profit</span><span>{fmt_prezzo(p['tp'])}</span>
+  <div class="tit">Cosa fare nell'app Capital.com</div>
+  <div class="txt">Controlla che in alto ci sia scritto <b>Demo</b>, cerca <b>{cerca}</b> e tocca il riquadro blu <b>Compra</b>:</div>
+  <div class="campi colonna">
+    <span>Quantità (Contratti)</span><span>{fmt_quote(p['quote'])}</span>
+    <span>Acquista quando il prezzo è pari a</span><span>ON → {fmt_prezzo(p['ingresso'])}</span>
+    <span>Stop-loss</span><span>ON → {d} punti sotto l'ingresso</span>
+    <span>Take profit</span><span>ON → {d2} punti sopra l'ingresso</span>
   </div>
-  <div class="txt" style="margin-top:8px">Rileggi i numeri e conferma, poi scrivi nel diario data, asset e motivo.
-  Se il broker usa i <b>lotti</b> (CFD), controlla prima quanto vale un lotto per questo strumento.</div>
+  <div class="txt" style="margin-top:8px">⚠️ <b>Cancella sempre la quantità che propone l'app</b> (es. 85 contratti
+  vuol dire rischiare quasi tutto il conto) e scrivi <b>{fmt_quote(p['quote'])}</b>.<br>
+  I prezzi di Capital.com possono differire un po' dai nostri: per stop e take profit conta la <b>distanza in punti</b>
+  (con ingresso a {fmt_prezzo(p['ingresso'])} sono circa {fmt_prezzo(p['stop'])} e {fmt_prezzo(p['tp'])}).<br>
+  Controlla il <b>requisito di margine</b>: deve essere una piccola parte del conto. Poi premi il pulsante blu
+  <b>Compra</b> in basso e scrivi nel diario data, mercato e motivo.</div>
 </div></div>""",
         unsafe_allow_html=True,
     )
