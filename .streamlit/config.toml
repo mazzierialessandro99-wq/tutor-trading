@@ -1,9 +1,12 @@
 [theme]
 base = "dark"
-primaryColor = "#2ecc71"
+primaryColor = "#3987e5"
+backgroundColor = "#121413"
+secondaryBackgroundColor = "#1c1f1e"
+textColor = "#f0efec"
 
 [server]
-# Permette di aprire l'app dal telefono sulla stessa rete Wi-Fi (opzione A)
+# Permette di aprire l'app dal telefono sulla stessa rete Wi-Fi quando gira sul PC
 address = "0.0.0.0"
 port = 8501
 

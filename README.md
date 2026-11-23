@@ -10,7 +10,7 @@ seguendo le istruzioni che la dashboard mostra a schermo.
 | Scheda | Stato | Cosa fa |
 |---|---|---|
 | 🎓 Regole d'oro | ✅ pronta | Rischio, EMA 200 / RSI / ATR, Stop Loss e Take Profit, regola dell'1%, calcolatrice della posizione |
-| 🚦 Analisi e segnali | 🚧 in costruzione | Asset da yfinance, grafico con indicatori, semaforo, istruzioni passo passo |
+| 🚦 Analisi e segnali | ✅ pronta | Asset da yfinance, grafico con indicatori, semaforo, istruzioni passo passo |
 | 🧪 Verifica sul passato | 🚧 in costruzione | Backtest sugli ultimi 3 anni, drawdown massimo, win rate |
 
 ## Usarla dal telefono (senza PC)
