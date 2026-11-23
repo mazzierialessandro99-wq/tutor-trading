@@ -1,4 +1,4 @@
-# La sentinella: controlla i mercati ogni 30 minuti e scrive su Telegram.
+# La sentinella: controlla i mercati ogni 30 minuti e scrive su Telegram.ok
 # Non invia ordini. Si può anche avviare a mano da GitHub: Actions -> Sentinella -> Run workflow.
 name: Sentinella
 
