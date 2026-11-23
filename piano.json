@@ -2,11 +2,12 @@
   "profilo": {
     "tempo": "Molto: posso rispondere agli avvisi durante il giorno",
     "rischio": "Moderato: accetto un -10% in un mese se il piano è sensato",
-    "obiettivo": "Entrata extra nel tempo",
+    "obiettivo": "Da 500 € ad almeno 1.000 € (entrata extra nel tempo)",
     "esecuzione": "Automatica sul conto Demo (puoi fermarla con /stop)"
   },
   "modalita": "automatico",
-  "capitale": 1000,
+  "capitale": 500,
+  "obiettivo": 1000,
   "rischio_per_operazione": 1.0,
   "rischio_cripto": 0.5,
   "max_posizioni_aperte": 3,
