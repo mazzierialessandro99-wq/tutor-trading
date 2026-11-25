@@ -10,6 +10,7 @@ Regole simulate (le stesse della sentinella):
   • rischio per operazione del piano (1%, 0,5% sulle cripto) calcolato sul capitale iniziale
   • al massimo 3 operazioni aperte insieme, una sola per mercato
   • costi (spread e commissioni) stimati allo 0,1% del prezzo per ogni operazione
+  • commissioni notturne dei CFD per ogni giorno di posizione aperta (stima per tipo di mercato)
 
 Uso:  python backtest.py            (scarica 5 anni da Yahoo e simula gli ultimi 3)
 """
@@ -26,6 +27,20 @@ import logica as L
 ANNI = 3
 MAX_GIORNI = 60
 COSTO_PCT = 0.001
+# Commissioni notturne dei CFD (finanziamento della posizione), stima annua sul valore della posizione.
+# Riferimento reale: Microsoft sul Demo costa circa 0,02 € al giorno su ~80 $ di posizione (circa 9-10% annuo).
+SWAP_ANNUO = {"cripto": 0.20, "valute": 0.015, "altro": 0.09}
+CON_SWAP = True
+
+
+def swap_annuo(ticker: str) -> float:
+    if not CON_SWAP:
+        return 0.0
+    if L.is_cripto(ticker):
+        return SWAP_ANNUO["cripto"]
+    if ticker.endswith("=X"):
+        return SWAP_ANNUO["valute"]
+    return SWAP_ANNUO["altro"]
 
 
 def segnali_mercato(df: pd.DataFrame) -> pd.DataFrame:
@@ -80,7 +95,9 @@ def esegui(dati: dict[str, pd.DataFrame], capitale: float, piano: dict, anni: in
             ingresso = df["Open"].iloc[i + 1]
             distanza = L.STOP_ATR * df["ATR"].iloc[i]
             r_lordo = (esito["uscita"] - ingresso) / distanza
-            r_netto = r_lordo - COSTO_PCT * ingresso / distanza
+            giorni = max(1, (df.index[esito["j"]] - df.index[i + 1]).days)
+            costo_notte = ingresso * swap_annuo(t) / 365 * giorni / distanza
+            r_netto = r_lordo - COSTO_PCT * ingresso / distanza - costo_notte
             candidati.append({"ticker": t, "mercato": nomi.get(t, t), "entrata": df.index[i + 1],
                               "uscita": df.index[esito["j"]], "esito": esito["esito"], "R": r_netto,
                               "rischio_pct": L.rischio_per(t, piano)})
@@ -170,12 +187,18 @@ def main():
     if not r["n"]:
         print("Nessuna operazione nel periodo.")
         return
+    global CON_SWAP
+    CON_SWAP = False
+    senza = esegui(dati, float(piano.get("capitale", 1000)), piano)
+    CON_SWAP = True
+    print(f"Senza commissioni notturne: {senza['rendimento_pct']:+.1f}% (profit factor {senza['profit_factor']:.2f}) "
+          f"→ con: {r['rendimento_pct']:+.1f}% (profit factor {r['profit_factor']:.2f})")
     giudizio, spiegazione = verdetto(r)
     print(f"Mercati con dati: {len(dati)} · periodo: {r['curva'].index[0]:%d/%m/%Y} → {r['curva'].index[-1]:%d/%m/%Y}")
     print(f"Operazioni chiuse: {r['n']} (ancora aperte: {r['aperte_ora']})")
     print(f"Win rate: {r['win_rate']:.1f}% · media vinta {r['media_vinta']:.2f} € · media persa {r['media_persa']:.2f} €")
     print(f"Profit factor: {r['profit_factor']:.2f} · R medio: {r['R_medio']:.3f}")
-    print(f"Capitale: 1000 → {r['finale']:.2f} € ({r['rendimento_pct']:+.1f}%, {r['annuo_pct']:+.1f}% annuo)")
+    print(f"Capitale: {float(piano.get('capitale', 1000)):.0f} → {r['finale']:.2f} € ({r['rendimento_pct']:+.1f}%, {r['annuo_pct']:+.1f}% annuo)")
     print(f"Drawdown massimo: {r['max_dd_pct']:.1f}% · perdite di fila: {r['perdite_di_fila']} · durata media {r['durata_media']:.0f} giorni")
     print(f"VERDETTO: {giudizio.upper()} — {spiegazione}")
     print("\nPer mercato:")

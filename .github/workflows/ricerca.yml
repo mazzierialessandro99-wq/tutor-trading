@@ -1,0 +1,20 @@
+# Ricerca: confronto onesto di strategie e filtri "quando operare" (a mano: Actions -> Ricerca -> Run workflow)
+name: Ricerca
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ricerca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-sentinella.txt
+      - run: pip install -r requirements-sentinella.txt
+      - name: Ricerca su 74 mercati (20 base + 54 mai visti)
+        run: python ricerca.py
