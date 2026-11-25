@@ -600,6 +600,15 @@ def main():
         invia(m, args.a_secco, silenzioso=not in_orario)
     stato["ultimo_giro"] = ora.isoformat(timespec="minutes")
     stato["registro"] = stato.get("registro", [])[-200:]
+    # Per il diario nell'app: capitale del piano nel tempo e posizioni del momento
+    if attuale is not None:
+        stato.setdefault("storia", []).append([ora.isoformat(timespec="minutes"), round(attuale, 2)])
+        stato["storia"] = stato["storia"][-3000:]
+    if broker is not None:
+        stato["posizioni"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl")}
+                              for p in posizioni if "size" in p]
+    stato["modalita"] = "automatica" if auto_attivo else ("pausa" if stato.get("pausa") else "avvisi")
+    stato["capitale_piano"], stato["obiettivo"] = CAPITALE, OBIETTIVO
     STATO_FILE.write_text(json.dumps(stato, indent=1, ensure_ascii=False))
     print(f"Giro completato: {len(righe)} mercati controllati, {len(messaggi)} messaggi, "
           f"automatico {'attivo' if auto_attivo else 'spento'}.")

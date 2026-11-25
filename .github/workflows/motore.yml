@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  actions: write               # serve solo per riavviare se stesso
-  contents: read
+  actions: write               # per riavviare se stesso
+  contents: write              # per salvare la memoria sul branch "dati" dopo ogni giro
 
 jobs:
   motore:
@@ -30,6 +30,7 @@ jobs:
       CAPITAL_IDENTIFIER: ${{ secrets.CAPITAL_IDENTIFIER }}
       CAPITAL_PASSWORD: ${{ secrets.CAPITAL_PASSWORD }}
       DURATA_MINUTI: "340"
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
 
@@ -49,12 +50,16 @@ jobs:
           key: stato-${{ github.run_id }}
           restore-keys: stato-
 
+      - name: Carica la memoria dal branch dati
+        run: bash strumenti/memoria.sh carica
+
       - name: Giri di controllo ogni 30 minuti
         run: |
           fine=$(( $(date +%s) + DURATA_MINUTI * 60 ))
           while [ "$(date +%s)" -lt "$fine" ]; do
             echo "=== Giro delle $(TZ=Europe/Rome date +%H:%M) ==="
             python sentinella.py || echo "Giro non riuscito: riprovo al prossimo"
+            bash strumenti/memoria.sh salva
             # aspetta il prossimo orario :07 o :37
             adesso=$(date +%s)
             prossimo=$(( (adesso - 420) / 1800 * 1800 + 1800 + 420 ))
@@ -71,6 +76,4 @@ jobs:
 
       - name: Riavvia il motore
         if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: gh workflow run motore.yml --ref main --repo "${{ github.repository }}"

@@ -75,7 +75,7 @@ p, li {line-height: 1.55;}
 .st-key-nav {position: sticky; top: 0; z-index: 50; background: var(--bg); padding: 6px 0 8px;}
 .st-key-nav [data-testid="stButtonGroup"] {width: 100%;}
 .st-key-nav button {flex: 1; border-radius: 12px !important; font-weight: 600; min-height: 42px; padding: 4px 2px !important; min-width: 0 !important;}
-.st-key-nav button p {font-size: .86rem; white-space: nowrap; overflow: visible;}
+.st-key-nav button p {font-size: .8rem; white-space: nowrap; overflow: visible; letter-spacing: -.01em;}
 .st-key-nav button > div {gap: 3px;}
 
 /* ---- riquadri ---- */
@@ -285,7 +285,7 @@ ss.setdefault("capitale", float(PIANO.get("capitale", 1000)))
 ss.setdefault("rischio", float(PIANO.get("rischio_per_operazione", 1.0)))
 ss.setdefault("aperto", None)        # (nome, ticker) dell'asset aperto, None = elenco
 
-PAGINE = ["🚦 Segnali", "📋 Piano", "🎓 Impara", "🧪 Test"]
+PAGINE = ["🤖 Bot", "🚦 Segnali", "📋 Piano", "🎓 Impara", "🧪 Test"]
 
 # ---- barra in alto: nome + impostazioni del conto ----
 with st.container(key="topbar", horizontal=True, vertical_alignment="center"):
@@ -675,6 +675,125 @@ def schermata_piano():
 
 
 # ==============================================================================
+# SEZIONE BOT: il diario del bot (letto dalla sua memoria sul branch "dati")
+# ==============================================================================
+URL_MEMORIA = "https://raw.githubusercontent.com/mazzierialessandro99-wq/tutor-trading/dati/stato_sentinella.json"
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def memoria_bot() -> dict | None:
+    import json
+    import urllib.request
+    percorso = os.environ.get("MEMORIA_BOT_FILE")   # solo per le prove dello sviluppatore
+    try:
+        if percorso:
+            return json.loads(open(percorso, encoding="utf-8").read())
+        with urllib.request.urlopen(URL_MEMORIA, timeout=10) as r:
+            return json.loads(r.read().decode())
+    except Exception:
+        return None
+
+
+def schermata_bot():
+    st.markdown('<div class="titolo">Il mio bot</div>'
+                '<div class="sottotit">Cosa ha fatto sul conto Demo, aggiornato a ogni giro (ogni 30 minuti).</div>',
+                unsafe_allow_html=True)
+    m = memoria_bot()
+    if not m:
+        st.markdown('<div class="card"><div class="txt">Il diario non è ancora disponibile: compare dopo il primo giro del '
+                    'motore con la nuova memoria. Riprova tra 30 minuti.</div></div>', unsafe_allow_html=True)
+        return
+
+    # ---- stato ----
+    modalita = {"automatica": ("🤖", "Automatico sul Demo", "VERDE"), "pausa": ("⏸️", "In pausa (/riprendi)", "GIALLO"),
+                "avvisi": ("🔔", "Solo avvisi", "GIALLO")}.get(m.get("modalita"), ("🤖", "—", "GIALLO"))
+    ultimo = pd.Timestamp(m.get("ultimo_giro")) if m.get("ultimo_giro") else None
+    minuti = None
+    if ultimo is not None:
+        minuti = (pd.Timestamp.now(tz=ultimo.tz) - ultimo).total_seconds() / 60
+    fresco = minuti is not None and minuti <= 75
+    quando = ("mai" if minuti is None else f"{minuti:.0f} min fa" if minuti < 120 else f"{minuti / 60:.0f} ore fa")
+    sett = chiavi_settimana = pd.Timestamp.now(tz="Europe/Rome").isocalendar()
+    giri = (m.get("giri") or {}).get(f"{sett[0]}-W{sett[1]:02d}", 0)
+    st.markdown(
+        f'<div class="sem" style="border-color:{STATO[modalita[2]]}55;background:linear-gradient(135deg,{STATO[modalita[2]]}22,var(--surf) 72%)">'
+        f'<div style="font-size:2rem">{modalita[0]}</div><div>'
+        f'<div class="sem-colore" style="font-size:1.25rem;color:{STATO_TESTO[modalita[2]]}">{modalita[1]}</div>'
+        f'<div class="sem-txt">Ultimo controllo: <b>{quando}</b> · controlli questa settimana: <b>{giri}</b></div>'
+        f'<div class="sem-meta">{"✅ Il motore sta lavorando" if fresco else "⚠️ Nessun controllo nell’ultima ora: il motore potrebbe essersi fermato"}</div>'
+        f'</div></div>', unsafe_allow_html=True)
+
+    # ---- obiettivo e numeri ----
+    storia = m.get("storia") or []
+    cap0, ob = float(m.get("capitale_piano") or PIANO.get("capitale", 500)), float(m.get("obiettivo") or PIANO.get("obiettivo", 0) or 0)
+    attuale = float(storia[-1][1]) if storia else cap0
+    chiuse = m.get("chiuse") or []
+    st_ = sentinella.statistiche(chiuse)
+    quota = max(0.0, min(1.0, (attuale - cap0) / (ob - cap0))) if ob > cap0 else 0.0
+    st.markdown(
+        f'<div class="card"><div class="tit" style="font-weight:800">🎯 {fmt_num(attuale, 2)} € su {fmt_num(ob, 0)} €</div>'
+        f'<div style="height:12px;border-radius:999px;background:var(--surf2);margin:10px 0 4px;overflow:hidden">'
+        f'<div style="width:{quota * 100:.1f}%;height:100%;background:{T["ema"]};border-radius:999px"></div></div>'
+        f'<div class="nota" style="margin:0">Partenza {fmt_num(cap0, 0)} € · {quota * 100:.0f}% del percorso</div></div>',
+        unsafe_allow_html=True)
+    risultato = attuale - cap0
+    voci = [("Risultato del bot", f"{'+' if risultato >= 0 else '−'}{fmt_num(abs(risultato))} €", "dall'inizio del piano"),
+            ("Operazioni chiuse", str(st_["n"]), f"{len(m.get('posizioni') or [])} ancora aperte"),
+            ("Vinte", f"{st_['win_rate']:.0f}%" if st_["n"] else "—", "atteso circa 43%"),
+            ("Per giudicare", f"{st_['n']}/30", "operazioni chiuse")]
+    st.markdown('<div class="tiles" style="grid-template-columns:repeat(2,1fr)">' + "".join(
+        f'<div class="tile"><div class="k">{k}</div><div class="v">{val}</div><div class="s">{s}</div></div>'
+        for k, val, s in voci) + "</div>", unsafe_allow_html=True)
+
+    # ---- capitale nel tempo ----
+    if len(storia) >= 2:
+        st.markdown('<div class="sezione">Il capitale del piano nel tempo</div>', unsafe_allow_html=True)
+        df = pd.DataFrame(storia, columns=["quando", "capitale"])
+        df["quando"] = pd.to_datetime(df["quando"], utc=True).dt.tz_convert("Europe/Rome")
+        fig = go.Figure(go.Scatter(x=df["quando"], y=df["capitale"], mode="lines", line=dict(color=T["ema"], width=2.2, shape="hv"),
+                                   name="Capitale", hovertemplate="%{y:,.2f} €<extra></extra>"))
+        fig.add_hline(y=cap0, line=dict(color=T["muto"], width=1, dash="dot"))
+        fig.update_layout(height=260, template="plotly_dark" if SCURO else "plotly_white", showlegend=False,
+                          paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", separators=",.",
+                          margin=dict(l=4, r=4, t=8, b=4), hovermode="x unified", font=dict(color=T["testo2"], size=12))
+        fig.update_xaxes(gridcolor=T["griglia"], tickformat="%d/%m", hoverformat="%d/%m %H:%M")
+        fig.update_yaxes(gridcolor=T["griglia"], side="right")
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+
+    # ---- posizioni aperte ----
+    st.markdown('<div class="sezione">Operazioni aperte</div>', unsafe_allow_html=True)
+    pos = m.get("posizioni") or []
+    if not pos:
+        st.markdown('<div class="nota">Nessuna operazione aperta in questo momento.</div>', unsafe_allow_html=True)
+    for p in pos:
+        upl = float(p.get("upl") or 0)
+        colore = T["su"] if upl >= 0 else T["giu"]
+        st.markdown(
+            f'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center">'
+            f'<div><div class="tit" style="font-weight:700">{p.get("nome")}</div>'
+            f'<div class="nota" style="margin:0">{fmt_quote(float(p.get("size") or 0))} contratti a {fmt_prezzo(float(p.get("livello") or 0))} · '
+            f'stop {fmt_prezzo(float(p.get("stop") or 0))} · take profit {fmt_prezzo(float(p.get("tp") or 0))}</div></div>'
+            f'<div style="font-weight:800;color:{colore}">{"+" if upl >= 0 else "−"}{fmt_num(abs(upl))} €</div></div></div>',
+            unsafe_allow_html=True)
+
+    # ---- operazioni chiuse ----
+    st.markdown('<div class="sezione">Operazioni chiuse</div>', unsafe_allow_html=True)
+    if not chiuse:
+        st.markdown('<div class="nota">Ancora nessuna operazione chiusa. Le operazioni del bot durano in media 3 settimane.</div>',
+                    unsafe_allow_html=True)
+    else:
+        righe = [{"": "✅" if (c.get("euro") or 0) > 0 else "❌", "Mercato": c.get("nome"),
+                  "Aperta": pd.Timestamp(c["aperta"]).strftime("%d/%m/%y") if c.get("aperta") else "",
+                  "Chiusa": pd.Timestamp(c["chiusa"]).strftime("%d/%m/%y") if c.get("chiusa") else "",
+                  "Risultato": (f"{'+' if c['euro'] >= 0 else '−'}{fmt_num(abs(float(c['euro'])))} €"
+                                if c.get("euro") is not None else "n.d.")}
+                 for c in reversed(chiuse)]
+        st.dataframe(pd.DataFrame(righe), hide_index=True, width="stretch")
+    st.markdown('<div class="nota" style="margin-top:14px">I dati arrivano dalla memoria del bot, aggiornata a ogni giro. '
+                'Comandi su Telegram: /stato · /resoconto · /stop · /riprendi.</div>', unsafe_allow_html=True)
+
+
+# ==============================================================================
 # SEZIONE IMPARA
 # ==============================================================================
 def schermata_impara():
@@ -913,13 +1032,15 @@ def schermata_test():
 # INSTRADAMENTO
 # ==============================================================================
 if pagina == PAGINE[0]:
+    schermata_bot()
+elif pagina == PAGINE[1]:
     if ss.aperto:
         schermata_dettaglio(*ss.aperto)
     else:
         schermata_elenco()
-elif pagina == PAGINE[1]:
-    schermata_piano()
 elif pagina == PAGINE[2]:
+    schermata_piano()
+elif pagina == PAGINE[3]:
     schermata_impara()
 else:
     schermata_test()
