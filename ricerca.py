@@ -175,16 +175,16 @@ def main():
               f"{b['rendimento_pct']:>7.1f}%{b['max_dd_pct']:>6.1f}% | {'✅ PROMOSSA' if promossa else '—'}")
     promosse = [r for r in righe if r[6]]
     print()
-    riassunto = lambda x: {"operazioni": x["n"], "win_rate": round(x["win_rate"], 1),
-                           "profit_factor": round(x["profit_factor"], 3), "rendimento_pct": round(x["rendimento_pct"], 2),
-                           "max_dd_pct": round(x["max_dd_pct"], 2)}
+    riassunto = lambda x: {"operazioni": int(x["n"]), "win_rate": round(float(x["win_rate"]), 1),
+                           "profit_factor": round(float(min(x["profit_factor"], 99)), 3),
+                           "rendimento_pct": round(float(x["rendimento_pct"]), 2), "max_dd_pct": round(float(x["max_dd_pct"]), 2)}
     esito = {"data": pd.Timestamp.now(tz="Europe/Rome").isoformat(timespec="minutes"), "vincitrice": None,
              "regola": f"PF >= {SOGLIA_PF} sui 20 mercati e PF >= {SOGLIA_PF} con risultato positivo sui mercati mai visti",
              "configurazioni": [{"strategia": s, "rr": rr, "pareggio": be, "filtro": f, "base": riassunto(a),
-                                 "mai_visti": riassunto(b), "promossa": p} for s, rr, be, f, a, b, p in righe]}
+                                 "mai_visti": riassunto(b), "promossa": bool(p)} for s, rr, be, f, a, b, p in righe]}
     if promosse:
         s, rr, be, f, a, b, _ = max(promosse, key=lambda r: r[5]["profit_factor"])
-        esito["vincitrice"] = {"strategia": s, "rr": rr, "pareggio": be, "filtro": f,
+        esito["vincitrice"] = {"strategia": s, "rr": float(rr), "pareggio": bool(be), "filtro": f,
                                "base": riassunto(a), "mai_visti": riassunto(b)}
         print(f"VINCITRICE: {s} · TP 1:{rr:.0f} · pareggio {'sì' if be else 'no'} · quando: {f}")
         print(f"   20 mercati: PF {a['profit_factor']:.2f}, {a['rendimento_pct']:+.1f}% · "
