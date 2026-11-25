@@ -1,10 +1,8 @@
-# La sentinella: controlla i mercati ogni 30 minuti e scrive su Telegram.ok
-# Non invia ordini. Si può anche avviare a mano da GitHub: Actions -> Sentinella -> Run workflow.
+# Sentinella, GIRO SINGOLO a mano (prove e messaggio di benvenuto): Actions -> Sentinella -> Run workflow.
+# Il lavoro continuo ogni 30 minuti lo fa il workflow "Motore" (motore.yml).
 name: Sentinella
 
 on:
-  schedule:
-    - cron: "7,37 * * * *"     # ogni 30 minuti (al minuto 7 e 37, per evitare l'ora di punta di GitHub)
   workflow_dispatch:
     inputs:
       prova:

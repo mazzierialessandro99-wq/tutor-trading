@@ -1,0 +1,76 @@
+# MOTORE della sentinella: resta acceso circa 6 ore, fa un giro di controllo ogni 30 minuti
+# e prima di spegnersi si riavvia da solo. Così l'assistente lavora 24 ore su 24
+# senza dipendere dagli avvii programmati di GitHub (che arrivano in ritardo o saltano).
+#
+# Per SPEGNERE tutto: GitHub -> Actions -> Motore -> "..." -> Disable workflow.
+# Per fermare solo le operazioni (avvisi attivi): scrivi /stop al bot su Telegram.
+name: Motore
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"     # rete di sicurezza: se la catena si interrompe, ripartiamo entro 6 ore
+
+concurrency:
+  group: motore                # al massimo un motore acceso e uno in attesa
+  cancel-in-progress: false
+
+permissions:
+  actions: write               # serve solo per riavviare se stesso
+  contents: read
+
+jobs:
+  motore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: "375765601"
+      CAPITAL_API_KEY: ${{ secrets.CAPITAL_API_KEY }}
+      CAPITAL_IDENTIFIER: ${{ secrets.CAPITAL_IDENTIFIER }}
+      CAPITAL_PASSWORD: ${{ secrets.CAPITAL_PASSWORD }}
+      DURATA_MINUTI: "340"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-sentinella.txt
+
+      - name: Installa le librerie
+        run: pip install -r requirements-sentinella.txt
+
+      - name: Recupera la memoria della sentinella
+        uses: actions/cache/restore@v4
+        with:
+          path: stato_sentinella.json
+          key: stato-${{ github.run_id }}
+          restore-keys: stato-
+
+      - name: Giri di controllo ogni 30 minuti
+        run: |
+          fine=$(( $(date +%s) + DURATA_MINUTI * 60 ))
+          while [ "$(date +%s)" -lt "$fine" ]; do
+            echo "=== Giro delle $(TZ=Europe/Rome date +%H:%M) ==="
+            python sentinella.py || echo "Giro non riuscito: riprovo al prossimo"
+            # aspetta il prossimo orario :07 o :37
+            adesso=$(date +%s)
+            prossimo=$(( (adesso - 420) / 1800 * 1800 + 1800 + 420 ))
+            if [ "$prossimo" -ge "$fine" ]; then break; fi
+            sleep $(( prossimo - adesso ))
+          done
+
+      - name: Salva la memoria della sentinella
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: stato_sentinella.json
+          key: stato-${{ github.run_id }}
+
+      - name: Riavvia il motore
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run motore.yml --ref main --repo "${{ github.repository }}"
