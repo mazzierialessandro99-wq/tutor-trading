@@ -757,7 +757,18 @@ def schermata_piano():
                 'ma non ti sveglia, e ti aggiorna al mattino.</div>', unsafe_allow_html=True)
 
     ob = float(P.get("obiettivo", 0) or 0)
-    if ob > cap:
+    if ob > cap and P.get("palestra"):
+        st.markdown('<div class="sezione">🎯 L\'obiettivo del bot sul Demo</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="card"><div class="tit" style="font-weight:800;font-size:1.15rem">'
+            f'{fmt_num(cap, 0)} € → {fmt_num(ob, 0)} € (+{(ob / cap - 1) * 100:.0f}%)</div>'
+            '<div class="txt">Modalità <b>Palestra</b>: sul conto Demo il bot opera con capitale e rischio pieni per studiare '
+            'il mercato dal vivo. Sono soldi finti: serve a capire se le regole funzionano davvero, fuori dal backtest. '
+            'L\'avanzamento lo vedi nella sezione <b>Bot</b> e su Telegram (/stato).</div>'
+            '<div class="txt" style="margin-top:8px">Il tuo piano per il <b>conto vero</b> resta prudente: si parte piccoli, '
+            'con rischio dimezzato, solo dopo che il Demo avrà dato risultati positivi su almeno 30-40 operazioni.</div></div>',
+            unsafe_allow_html=True)
+    elif ob > cap:
         st.markdown('<div class="sezione">🎯 Il tuo obiettivo</div>', unsafe_allow_html=True)
         st.markdown(
             f'<div class="card"><div class="tit" style="font-weight:800;font-size:1.15rem">'
@@ -837,9 +848,12 @@ def riquadro_ricerca():
                  f"profit factor {v['mai_visti']['profit_factor']:.2f}, risultato {v['mai_visti']['rendimento_pct']:+.1f}%.")
         colore = "VERDE"
     else:
-        testo = ("<b>Non opera.</b> Con i costi reali (spread e commissioni notturne) nessuna delle "
+        testo = ("<b>Nessuna regola promossa.</b> Con i costi reali (spread e commissioni notturne) nessuna delle "
                  f"{len(ric.get('configurazioni', []))} combinazioni provate ha un vantaggio affidabile anche sui mercati mai visti. "
-                 "Il bot continua a osservare e rifà la ricerca ogni domenica: quando una regola supererà il test, ripartirà da solo.")
+                 "La ricerca si ripete ogni domenica: quando una regola supererà il test, il bot userà quella.")
+        if PIANO.get("palestra"):
+            testo += (" <br><br>🧪 <b>Modalità Palestra attiva:</b> sul Demo il bot opera comunque la strategia di base, "
+                      "per raccogliere risultati veri. Su un conto reale non lo farebbe.")
         colore = "GIALLO"
     st.markdown(f'<div class="card" style="border-color:{STATO[colore]}77"><div class="txt">{testo}</div>'
                 f'<div class="nota" style="margin:6px 0 0">Ricerca del {data} · regola: {ric.get("regola", "")}</div></div>',
@@ -881,6 +895,11 @@ def schermata_bot():
                                                      "Se non riparte entro qualche ora, scrivimelo in chat.")
     elif m.get("modalita") == "pausa":
         stato_t, colore, frase = "In pausa", "GIALLO", "Mi hai messo in pausa: guardo i mercati ma non apro operazioni. Scrivi /riprendi su Telegram per farmi ripartire."
+    elif m.get("modalita") == "automatica" and not cfg and PIANO.get("palestra"):
+        stato_t, colore = "Palestra sul Demo", "VERDE"
+        frase = ("Sul Demo opero i segnali della strategia di base <b>anche se la ricerca non la promuove</b>: ogni operazione "
+                 "è un esperimento per studiare il mercato dal vivo e confrontarlo con il backtest. "
+                 f"Oggi: {visti} segnali visti, {aperte_oggi} operazioni aperte.")
     elif m.get("modalita") == "automatica" and not cfg:
         stato_t, colore = "Osservo e studio", "GIALLO"
         frase = ("Oggi guardo i mercati <b>senza operare</b>: la mia ricerca dice che, con i costi reali, nessuna regola ha "

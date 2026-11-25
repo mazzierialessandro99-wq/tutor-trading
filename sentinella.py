@@ -57,6 +57,11 @@ EMOJI = {"VERDE": "🟢", "GIALLO": "🟡", "ROSSO": "🔴"}
 RICERCA_FILE = Path(os.environ.get("RICERCA_FILE", "ricerca_esito.json"))
 RICERCA = json.loads(RICERCA_FILE.read_text()) if RICERCA_FILE.exists() else None
 CFG = (RICERCA or {}).get("vincitrice")          # None = nessuna regola promossa: non si apre niente
+# PALESTRA (solo Demo): se la ricerca non promuove niente, il bot opera comunque la strategia di base
+# per raccogliere risultati veri da confrontare con il backtest. Ogni operazione è segnata come esperimento.
+PALESTRA = bool(PIANO.get("palestra"))
+if not CFG and PALESTRA:
+    CFG = {"strategia": "ritracciamento", "rr": 2.0, "pareggio": False, "filtro": "sempre", "palestra": True}
 if CFG:
     L.RR = float(CFG.get("rr", L.RR))
 NOMI_FILTRO = {"sempre": "sempre", "trend": "solo con il mercato USA in trend positivo",
@@ -68,6 +73,10 @@ NOMI_STRATEGIA = {"ritracciamento": "ritracciamento in trend (EMA 200 + RSI)",
 
 
 def descrizione_ricerca() -> str:
+    if CFG and CFG.get("palestra"):
+        data = str((RICERCA or {}).get("data", ""))[:10] or "—"
+        return (f"🧪 <b>Palestra sul Demo</b>: la ricerca del {data} non promuove nessuna regola, ma qui opero lo stesso "
+                "la strategia di base (ritracciamento, 1:2) per studiare il mercato dal vivo. Ogni operazione è un esperimento.")
     if not RICERCA:
         return "🔬 Ricerca: non ancora disponibile, quindi non apro operazioni."
     data = str(RICERCA.get("data", ""))[:10]
@@ -220,7 +229,7 @@ def msg_verde(nome: str, ticker: str, valuta: str, v: dict, p: dict, cambio: flo
 
 def msg_aperta(nome: str, m: dict, op: dict, v: dict, rischio_eur: float, aperte: int) -> str:
     return (
-        f"✅ <b>Ho aperto {nome}</b> sul conto Demo\n"
+        f"✅ <b>Ho aperto {nome}</b> sul conto Demo" + (" · 🧪 esperimento (palestra)" if CFG and CFG.get("palestra") else "") + "\n"
         f"Comprati <b>{quote(op['size'])}</b> contratti a <b>{prezzo(op['livello'], m['valuta'])}</b>\n"
         f"Stop-loss <b>{prezzo(op['stop'], m['valuta'])}</b> · Take profit <b>{prezzo(op['tp'], m['valuta'])}</b>\n"
         f"Rischio ≈ {num(rischio_eur)} € · obiettivo ≈ {num(rischio_eur * L.RR)} €\n\n"
@@ -590,6 +599,7 @@ def main():
             if deal not in aperte_ora:
                 euro_ris = risultato_chiusura(broker, info.get("epic", ""), info.get("aperta", "")) if info.get("epic") else None
                 stato.setdefault("chiuse", []).append({"nome": info.get("nome", "Operazione"), "epic": info.get("epic"),
+                                                       "palestra": bool(info.get("palestra")),
                                                        "aperta": info.get("aperta"), "chiusa": ora.isoformat(timespec="minutes"),
                                                        "euro": euro_ris})
                 if euro_ris is None:
@@ -686,11 +696,12 @@ def main():
                     posizioni.append({"epic": op["epic"], "nome": nome, "dealId": op["dealId"]})
                     stato.setdefault("aperte", {})[op["dealId"]] = {"nome": nome, "epic": op["epic"],
                                                                     "aperta": ora.isoformat(timespec="minutes"),
-                                                                    "livello": op["livello"], "distanza": op["distanza"]}
+                                                                    "livello": op["livello"], "distanza": op["distanza"],
+                                                                    "palestra": bool(CFG and CFG.get("palestra"))}
                     stato.setdefault("registro", []).append({k: op[k] for k in ("nome", "size", "livello", "stop", "tp")}
                                                             | {"data": ora.isoformat(timespec="minutes")})
                     messaggi.append(msg_aperta(nome, {"valuta": op["valuta"]}, op, v, op["rischio_eur"], len(posizioni)))
-                    annota(stato, ora, nome, "Operazione aperta",
+                    annota(stato, ora, nome, "Operazione aperta" + (" (palestra)" if CFG.get("palestra") else ""),
                            f"{quote(op['size'])} contratti a {prezzo(op['livello'])}, stop {prezzo(op['stop'])}, "
                            f"take profit {prezzo(op['tp'])}", "✅")
             elif AUTOMATICO and stato.get("pausa"):

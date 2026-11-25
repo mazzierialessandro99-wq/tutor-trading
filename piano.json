@@ -2,15 +2,16 @@
   "profilo": {
     "tempo": "Molto: posso rispondere agli avvisi durante il giorno",
     "rischio": "Moderato: accetto un -10% in un mese se il piano è sensato",
-    "obiettivo": "Da 500 € ad almeno 1.000 € (entrata extra nel tempo)",
-    "esecuzione": "Automatica sul conto Demo (puoi fermarla con /stop)"
+    "obiettivo": "Sul Demo: raddoppiare il capitale del bot (+100%) per studiare il mercato dal vivo",
+    "esecuzione": "Automatica sul conto Demo in modalità Palestra (puoi fermarla con /stop)"
   },
   "modalita": "automatico",
-  "capitale": 500,
-  "obiettivo": 1000,
+  "palestra": true,
+  "capitale": 100000,
+  "obiettivo": 200000,
   "rischio_per_operazione": 1.0,
   "rischio_cripto": 0.5,
-  "max_posizioni_aperte": 3,
+  "max_posizioni_aperte": 10,
   "stop_giornaliero_pct": 2,
   "stop_settimanale_pct": 4,
   "stop_mensile_pct": 8,
