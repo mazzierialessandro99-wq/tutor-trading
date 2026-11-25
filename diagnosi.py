@@ -35,6 +35,32 @@ def main():
     for p in pos:
         print(f"   - {p['nome']} ({p['epic']}): {p['size']} @ {p['livello']} · stop {p['stop']} · tp {p['tp']} · P/L {p['upl']}")
 
+    # ---- storico degli ultimi giorni: chi ha aperto cosa e com'è finita ----
+    print("\nSTORICO ULTIMI 7 GIORNI — attività (aperture/chiusure):")
+    try:
+        for a in sorted(b.attivita(7), key=lambda x: str(x.get("date") or x.get("dateUTC"))):
+            det = a.get("details") or {}
+            print(f"   {str(a.get('dateUTC') or a.get('date'))[:16]} · {a.get('epic')} · {a.get('type')}/{a.get('status')} · "
+                  f"fonte {a.get('source')} · {det.get('direction', '')} {det.get('size', '')} @ {det.get('level', '')} · "
+                  f"stop {det.get('stopLevel', '')} tp {det.get('profitLevel', '')}")
+    except C.CapitalErrore as e:
+        print(f"   (non disponibile: {e})")
+    print("\nSTORICO ULTIMI 7 GIORNI — transazioni (risultati):")
+    try:
+        totale = 0.0
+        for t in sorted(b.transazioni(7), key=lambda x: str(x.get("date") or x.get("dateUtc"))):
+            try:
+                importo = float(str(t.get("size", "0")).replace(",", ""))
+            except ValueError:
+                importo = 0.0
+            if t.get("transactionType") in ("TRADE", "SWAP", "TRADE_COMMISSION", "TRADE_SLIPPAGE_PROTECTION"):
+                totale += importo
+            print(f"   {str(t.get('dateUtc') or t.get('date'))[:16]} · {t.get('instrumentName')} · {t.get('transactionType')} · "
+                  f"{importo:+.2f} {t.get('currency', '')} · {t.get('note', '')}")
+        print(f"   Totale operazioni (trade, swap, commissioni): {totale:+.2f}")
+    except C.CapitalErrore as e:
+        print(f"   (non disponibile: {e})")
+
     tickers = [t for t, _ in L.ASSET.values()]
     dati = S.scarica_tutti(tickers + ["EURUSD=X"])
     eurusd = float(dati["EURUSD=X"]["Close"].iloc[-1]) if "EURUSD=X" in dati else 1.08

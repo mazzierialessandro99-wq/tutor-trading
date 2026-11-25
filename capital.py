@@ -134,6 +134,17 @@ class CapitalDemo:
                 "livello": conf.get("level"), "size": conf.get("size", size)}
 
 
+def _storico(self, percorso: str, giorni: int) -> list[dict]:
+    from datetime import datetime, timedelta, timezone
+    da = (datetime.now(timezone.utc) - timedelta(days=giorni)).strftime("%Y-%m-%dT%H:%M:%S")
+    dati, _ = self._chiama("GET", f"{percorso}?from={da}" + ("&detailed=true" if "activity" in percorso else ""))
+    return dati.get("activities") or dati.get("transactions") or []
+
+
+CapitalDemo.attivita = lambda self, giorni=7: _storico(self, "/history/activity", giorni)
+CapitalDemo.transazioni = lambda self, giorni=7: _storico(self, "/history/transactions", giorni)
+
+
 def arrotonda_size(size: float, passo: float) -> float:
     """Arrotonda PER DIFETTO al passo consentito: mai più rischio di quello del piano."""
     if passo <= 0:
