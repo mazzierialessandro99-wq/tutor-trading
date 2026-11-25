@@ -634,16 +634,15 @@ def schermata_piano():
         st.markdown(
             f'<div class="card"><div class="tit" style="font-weight:800;font-size:1.15rem">'
             f'{fmt_num(cap, 0)} € → {fmt_num(ob, 0)} €</div>'
-            '<div class="txt">L\'avanzamento te lo mostra la sentinella su Telegram (/stato e riepilogo delle 8). '
-            'Quanto tempo serve, secondo 10.000 simulazioni basate sul backtest reale:</div>'
+            '<div class="txt">L\'avanzamento lo vedi nella sezione <b>Bot</b> e su Telegram (/stato). '
+            'Con i costi reali inclusi, la ricerca attuale <b>non trova un vantaggio affidabile</b> nelle regole provate: '
+            'oggi il trading da solo non avvicina l\'obiettivo, e il bot per questo non opera finché la ricerca non trova '
+            'una regola valida.</div>'
             '<div class="campi" style="grid-template-columns:auto 1fr">'
-            '<span>Rischio 1% (il tuo piano)</span><span>oltre 10 anni · discesa tipica −13%</span>'
-            '<span>Rischio 2%</span><span>circa 6-7 anni · discesa tipica −24%</span>'
-            '<span>Rischio 3%</span><span>circa 4 anni · discesa tipica −35%</span>'
-            '<span>Rischio 5%</span><span>circa 2,5 anni · 1 volta su 10 il conto si dimezza prima</span>'
-            '<span>+50 € risparmiati al mese</span><span><b>circa 10 mesi</b>, senza alzare il rischio</span>'
-            '</div><div class="txt" style="margin-top:8px">La strada più sicura per raddoppiare non è rischiare di più, '
-            'ma <b>aggiungere risparmi</b> e lasciare lavorare le regole.</div></div>',
+            '<span>+50 € risparmiati al mese</span><span><b>circa 10 mesi</b></span>'
+            '<span>+100 € risparmiati al mese</span><span><b>circa 5 mesi</b></span>'
+            '</div><div class="txt" style="margin-top:8px">La strada concreta per raddoppiare è <b>aggiungere risparmi</b>; '
+            'il bot contribuirà solo se e quando la sua ricerca dimostrerà un vantaggio reale.</div></div>',
             unsafe_allow_html=True)
 
     st.markdown('<div class="sezione">Il tuo percorso</div>', unsafe_allow_html=True)
@@ -681,17 +680,50 @@ URL_MEMORIA = "https://raw.githubusercontent.com/mazzierialessandro99-wq/tutor-t
 
 
 @st.cache_data(ttl=120, show_spinner=False)
-def memoria_bot() -> dict | None:
+def memoria_bot(nome_file: str = "stato_sentinella.json") -> dict | None:
     import json
     import urllib.request
-    percorso = os.environ.get("MEMORIA_BOT_FILE")   # solo per le prove dello sviluppatore
+    locale = os.environ.get("MEMORIA_BOT_DIR")      # solo per le prove dello sviluppatore
     try:
-        if percorso:
-            return json.loads(open(percorso, encoding="utf-8").read())
-        with urllib.request.urlopen(URL_MEMORIA, timeout=10) as r:
+        if locale:
+            return json.loads(open(os.path.join(locale, nome_file), encoding="utf-8").read())
+        with urllib.request.urlopen(URL_MEMORIA.replace("stato_sentinella.json", nome_file), timeout=10) as r:
             return json.loads(r.read().decode())
     except Exception:
         return None
+
+
+def riquadro_ricerca():
+    ric = memoria_bot("ricerca_esito.json")
+    st.markdown('<div class="sezione">🔬 Cosa ha deciso la ricerca</div>', unsafe_allow_html=True)
+    if not ric:
+        st.markdown('<div class="card"><div class="txt">La ricerca settimanale non è ancora disponibile. '
+                    'Finché non c\'è, il bot non apre operazioni.</div></div>', unsafe_allow_html=True)
+        return
+    data = pd.Timestamp(ric["data"]).strftime("%d/%m/%Y")
+    v = ric.get("vincitrice")
+    if v:
+        nomi_s = {"ritracciamento": "ritracciamento in trend (EMA 200 + RSI)", "rottura": "rottura dei massimi a 55 giorni"}
+        testo = (f"<b>Opera</b> con la strategia <b>{nomi_s.get(v['strategia'], v['strategia'])}</b>, take profit 1:{v['rr']:.0f}"
+                 f"{', stop a pareggio' if v.get('pareggio') else ''}, filtro <b>{v['filtro']}</b>. Sui mercati mai visti: "
+                 f"profit factor {v['mai_visti']['profit_factor']:.2f}, risultato {v['mai_visti']['rendimento_pct']:+.1f}%.")
+        colore = "VERDE"
+    else:
+        testo = ("<b>Non opera.</b> Con i costi reali (spread e commissioni notturne) nessuna delle "
+                 f"{len(ric.get('configurazioni', []))} combinazioni provate ha un vantaggio affidabile anche sui mercati mai visti. "
+                 "Il bot continua a osservare e rifà la ricerca ogni domenica: quando una regola supererà il test, ripartirà da solo.")
+        colore = "GIALLO"
+    st.markdown(f'<div class="card" style="border-color:{STATO[colore]}77"><div class="txt">{testo}</div>'
+                f'<div class="nota" style="margin:6px 0 0">Ricerca del {data} · regola: {ric.get("regola", "")}</div></div>',
+                unsafe_allow_html=True)
+    conf = ric.get("configurazioni") or []
+    if conf:
+        with st.expander("📊 Tutte le combinazioni provate"):
+            st.dataframe(pd.DataFrame([{
+                "Strategia": c["strategia"], "TP": f"1:{c['rr']:.0f}", "Pareggio": "sì" if c["pareggio"] else "no",
+                "Quando": c["filtro"], "PF 20 mercati": c["base"]["profit_factor"],
+                "PF mai visti": c["mai_visti"]["profit_factor"], "Risultato mai visti %": c["mai_visti"]["rendimento_pct"],
+                "Promossa": "✅" if c["promossa"] else ""} for c in conf]), hide_index=True, width="stretch")
 
 
 def schermata_bot():
@@ -707,6 +739,9 @@ def schermata_bot():
     # ---- stato ----
     modalita = {"automatica": ("🤖", "Automatico sul Demo", "VERDE"), "pausa": ("⏸️", "In pausa (/riprendi)", "GIALLO"),
                 "avvisi": ("🔔", "Solo avvisi", "GIALLO")}.get(m.get("modalita"), ("🤖", "—", "GIALLO"))
+    ric = memoria_bot("ricerca_esito.json")
+    if m.get("modalita") == "automatica" and not (ric or {}).get("vincitrice"):
+        modalita = ("🔬", "Osserva e studia: non apre operazioni", "GIALLO")
     ultimo = pd.Timestamp(m.get("ultimo_giro")) if m.get("ultimo_giro") else None
     minuti = None
     if ultimo is not None:
@@ -722,6 +757,8 @@ def schermata_bot():
         f'<div class="sem-txt">Ultimo controllo: <b>{quando}</b> · controlli questa settimana: <b>{giri}</b></div>'
         f'<div class="sem-meta">{"✅ Il motore sta lavorando" if fresco else "⚠️ Nessun controllo nell’ultima ora: il motore potrebbe essersi fermato"}</div>'
         f'</div></div>', unsafe_allow_html=True)
+
+    riquadro_ricerca()
 
     # ---- obiettivo e numeri ----
     storia = m.get("storia") or []

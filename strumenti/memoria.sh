@@ -1,27 +1,36 @@
 #!/usr/bin/env bash
-# Memoria della sentinella sul branch "dati" (un solo commit, sovrascritto a ogni giro).
-#   strumenti/memoria.sh carica   -> scarica stato_sentinella.json dal branch dati (se c'è)
-#   strumenti/memoria.sh salva    -> pubblica stato_sentinella.json sul branch dati
+# Memoria del bot sul branch "dati": stato della sentinella e ultimo esito della ricerca.
+#   strumenti/memoria.sh carica                 -> scarica i file del branch dati (se ci sono)
+#   strumenti/memoria.sh salva [file ...]       -> pubblica i file indicati (default: stato_sentinella.json)
 # Serve GH_TOKEN con permesso contents: write e la variabile GITHUB_REPOSITORY.
 set -u
 URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+FILE_NOTI="stato_sentinella.json ricerca_esito.json"
 case "${1:-}" in
   carica)
     tmp=$(mktemp -d)
-    if git clone -q --depth 1 --branch dati "$URL" "$tmp" 2>/dev/null && [ -f "$tmp/stato_sentinella.json" ]; then
-      cp "$tmp/stato_sentinella.json" stato_sentinella.json && echo "Memoria caricata dal branch dati"
+    if git clone -q --depth 1 --branch dati "$URL" "$tmp" 2>/dev/null; then
+      for f in $FILE_NOTI; do [ -f "$tmp/$f" ] && cp "$tmp/$f" "$f" && echo "Caricato $f dal branch dati"; done
     else
-      echo "Nessuna memoria sul branch dati: uso quella della cache (se c'è)"
+      echo "Nessun branch dati: uso quello che c'è in locale"
     fi
     rm -rf "$tmp" ;;
   salva)
-    [ -f stato_sentinella.json ] || { echo "Niente da salvare"; exit 0; }
-    tmp=$(mktemp -d)
-    cp stato_sentinella.json "$tmp/"
-    ( cd "$tmp" && git init -q && git checkout -q -b dati \
-      && git -c user.name="Sentinella" -c user.email="sentinella@users.noreply.github.com" add -A \
-      && git -c user.name="Sentinella" -c user.email="sentinella@users.noreply.github.com" commit -qm "Memoria della sentinella" \
-      && git push -q -f "$URL" dati ) && echo "Memoria salvata sul branch dati" || echo "Salvataggio non riuscito (riprovo al prossimo giro)"
-    rm -rf "$tmp" ;;
-  *) echo "uso: memoria.sh carica|salva"; exit 1 ;;
+    shift
+    files="${*:-stato_sentinella.json}"
+    for tentativo in 1 2 3; do
+      tmp=$(mktemp -d)
+      if git clone -q --depth 1 --branch dati "$URL" "$tmp" 2>/dev/null; then :; else
+        git init -q "$tmp" && git -C "$tmp" checkout -q -b dati; fi
+      for f in $files; do [ -f "$f" ] && cp "$f" "$tmp/"; done
+      ok=1
+      ( cd "$tmp" && git add -A && { git diff --cached --quiet || \
+        git -c user.name="Sentinella" -c user.email="sentinella@users.noreply.github.com" commit -qm "Memoria del bot"; } \
+        && git push -q "$URL" dati ) || ok=0
+      rm -rf "$tmp"
+      if [ "$ok" = 1 ]; then echo "Salvato sul branch dati: $files"; exit 0; fi
+      sleep $((tentativo * 3))
+    done
+    echo "Salvataggio non riuscito (riprovo al prossimo giro)" ;;
+  *) echo "uso: memoria.sh carica | salva [file ...]"; exit 1 ;;
 esac

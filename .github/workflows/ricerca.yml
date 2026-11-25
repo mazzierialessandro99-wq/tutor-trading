@@ -1,13 +1,22 @@
-# Ricerca: confronto onesto di strategie e filtri "quando operare" (a mano: Actions -> Ricerca -> Run workflow)
+# Ricerca settimanale: il bot rifà lo studio di strategie e filtri "quando operare" sui dati più recenti.
+# L'esito (ricerca_esito.json sul branch dati) decide se e come il bot opera nella settimana.
+# Si può avviare anche a mano: Actions -> Ricerca -> Run workflow.
 name: Ricerca
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "41 6 * * 0"       # ogni domenica mattina
+
+permissions:
+  contents: write              # per salvare l'esito sul branch dati
 
 jobs:
   ricerca:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -18,3 +27,5 @@ jobs:
       - run: pip install -r requirements-sentinella.txt
       - name: Ricerca su 74 mercati (20 base + 54 mai visti)
         run: python ricerca.py
+      - name: Salva l'esito sul branch dati
+        run: bash strumenti/memoria.sh salva ricerca_esito.json

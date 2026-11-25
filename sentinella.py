@@ -32,8 +32,10 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 
+import backtest as BT
 import capital as C
 import logica as L
+import ricerca as R
 
 ROMA = ZoneInfo("Europe/Rome")
 APP_URL = os.environ.get("APP_URL", "https://tutor-trading-ale.streamlit.app")
@@ -50,6 +52,32 @@ DEMO = os.environ.get("TUTOR_DEMO") == "1"               # dati inventati, solo 
 BROKER_SIMULATO = os.environ.get("BROKER_SIMULATO") == "1"   # conto finto, solo per prove
 
 EMOJI = {"VERDE": "🟢", "GIALLO": "🟡", "ROSSO": "🔴"}
+
+# ESITO DELLA RICERCA SETTIMANALE: decide SE e COME il bot opera (file scaricato dal branch "dati")
+RICERCA_FILE = Path(os.environ.get("RICERCA_FILE", "ricerca_esito.json"))
+RICERCA = json.loads(RICERCA_FILE.read_text()) if RICERCA_FILE.exists() else None
+CFG = (RICERCA or {}).get("vincitrice")          # None = nessuna regola promossa: non si apre niente
+if CFG:
+    L.RR = float(CFG.get("rr", L.RR))
+NOMI_FILTRO = {"sempre": "sempre", "trend": "solo con il mercato USA in trend positivo",
+               "trend+calmo": "solo con mercato USA in trend positivo e volatilità normale",
+               "fiducia": "solo quando le ultime 20 occasioni studiate hanno reso",
+               "trend+fiducia": "con mercato USA in trend positivo e ultime occasioni in guadagno"}
+NOMI_STRATEGIA = {"ritracciamento": "ritracciamento in trend (EMA 200 + RSI)",
+                  "rottura": "rottura dei massimi a 55 giorni"}
+
+
+def descrizione_ricerca() -> str:
+    if not RICERCA:
+        return "🔬 Ricerca: non ancora disponibile, quindi non apro operazioni."
+    data = str(RICERCA.get("data", ""))[:10]
+    if not CFG:
+        return (f"🔬 Ricerca del {data}: nessuna regola ha un vantaggio affidabile (anche sui mercati mai visti), "
+                "quindi <b>non apro nuove operazioni</b>. Continuo a studiare e ricontrollo domenica.")
+    mv = CFG.get("mai_visti", {})
+    return (f"🔬 Ricerca del {data}: strategia attiva <b>{NOMI_STRATEGIA.get(CFG['strategia'], CFG['strategia'])}</b>, "
+            f"take profit 1:{CFG['rr']:.0f}{', stop a pareggio' if CFG.get('pareggio') else ''}, "
+            f"{NOMI_FILTRO.get(CFG['filtro'], CFG['filtro'])} (sui mercati mai visti: profit factor {mv.get('profit_factor', 0):.2f}).")
 
 
 # ------------------------------------------------------------------------------
@@ -196,7 +224,7 @@ def msg_aperta(nome: str, m: dict, op: dict, v: dict, rischio_eur: float, aperte
         f"Comprati <b>{quote(op['size'])}</b> contratti a <b>{prezzo(op['livello'], m['valuta'])}</b>\n"
         f"Stop-loss <b>{prezzo(op['stop'], m['valuta'])}</b> · Take profit <b>{prezzo(op['tp'], m['valuta'])}</b>\n"
         f"Rischio ≈ {num(rischio_eur)} € · obiettivo ≈ {num(rischio_eur * L.RR)} €\n\n"
-        f"Perché: trend positivo e RSI a {v['rsi']:.0f} in risalita dopo una pausa.\n"
+        f"Perché: {'il prezzo ha superato il massimo degli ultimi 55 giorni, con trend positivo' if CFG and CFG['strategia'] == 'rottura' else 'trend positivo e RSI a ' + format(v['rsi'], '.0f') + ' in risalita dopo una pausa'}.\n"
         f"Posizioni aperte: {aperte}/{MAX_APERTE}. Per fermarmi scrivi /stop"
     )
 
@@ -335,6 +363,7 @@ def msg_resoconto(stato: dict, titolo: str, risultato_periodo: float | None, gio
     if giri:
         righe.append(f"🛰️ Controlli dei mercati questa settimana: {giri} (ne servono circa 48 al giorno)")
 
+    righe.append("\n" + descrizione_ricerca())
     st = statistiche(chiuse_tutte)
     righe.append(f"\n📚 <b>Dall'inizio</b>: {st['n']} operazioni chiuse · totale {euro(st['totale'])}")
     if st["n"]:
@@ -356,6 +385,7 @@ def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, pos
               attuale: float | None = None) -> str:
     righe = [f"📊 <b>Stato dell'assistente</b>",
              f"Modalità: {'🤖 automatica (Demo)' if auto_attivo else '✋ solo avvisi' if not AUTOMATICO else '⏸️ in pausa (/riprendi per ripartire)'}"]
+    righe.append(descrizione_ricerca())
     if attuale is not None and OBIETTIVO:
         righe.append(barra(attuale))
     if conto:
@@ -417,8 +447,63 @@ def prova_ad_aprire(broker, ticker: str, nome: str, v: dict, eurusd: float, posi
     esito = broker.compra(m["epic"], size, stop, tp)
     op = {"epic": m["epic"], "nome": nome, "dealId": esito.get("dealId"), "size": esito.get("size", size),
           "livello": esito.get("livello") or ingresso, "stop": stop, "tp": tp, "rischio_eur": rischio_vero,
-          "valuta": m["valuta"]}
+          "valuta": m["valuta"], "distanza": distanza}
     return op, ""
+
+
+def fiducia_ok(dati: dict, stato: dict, oggi: str) -> bool:
+    """Le ultime 20 occasioni 'studiate' (tutte, prese o no) hanno reso? Calcolato una volta al giorno."""
+    f = stato.get("fiducia", {})
+    if f.get("data") == oggi:
+        return bool(f.get("ok"))
+    studiate = []
+    for nome, (t, _) in L.ASSET.items():
+        if t not in dati:
+            continue
+        df = BT.segnali_mercato(dati[t])
+        for i in R.segnali(df, CFG["strategia"]):
+            if i >= L.EMA_PERIODO and df.index[i] >= df.index[-1] - pd.Timedelta(days=365):
+                o = R.simula(df, i, float(CFG["rr"]), bool(CFG.get("pareggio")), t)
+                if o:
+                    studiate.append(o)
+    studiate.sort(key=lambda o: o["uscita"])
+    ultime = [o["R"] for o in studiate][-R.FIDUCIA_N:]
+    ok = len(ultime) >= R.FIDUCIA_N and float(np.mean(ultime)) > 0
+    stato["fiducia"] = {"data": oggi, "ok": ok, "media_R": round(float(np.mean(ultime)), 3) if ultime else None}
+    return ok
+
+
+def permesso_cfg(dati: dict, stato: dict, oggi: str) -> tuple[bool, str]:
+    """Il filtro della strategia attiva permette di operare oggi?"""
+    filtro = CFG.get("filtro", "sempre")
+    if filtro in ("trend", "trend+calmo", "trend+fiducia"):
+        if "^GSPC" not in dati:
+            return False, "mancano i dati dell'S&P 500 per decidere"
+        reg = R.regime(dati["^GSPC"])
+        domani = dati["^GSPC"].index[-1] + pd.Timedelta(days=1)
+        if not R.permesso(reg, domani, "trend+calmo" if filtro == "trend+calmo" else "trend"):
+            return False, ("il mercato USA non è in trend positivo o è troppo agitato" if filtro == "trend+calmo"
+                           else "il mercato USA non è in trend positivo")
+    if "fiducia" in filtro and not fiducia_ok(dati, stato, oggi):
+        return False, "le ultime 20 occasioni studiate non hanno reso: aspetto che il mercato torni favorevole"
+    return True, ""
+
+
+def gestisci_pareggio(broker, stato: dict, posizioni: list[dict], messaggi: list[str]):
+    """Stop spostato al prezzo d'ingresso quando l'operazione guadagna quanto rischiava."""
+    for p in posizioni:
+        info = stato.get("aperte", {}).get(p.get("dealId"), {})
+        livello, distanza = info.get("livello"), info.get("distanza")
+        if not livello or not distanza or info.get("pareggio_fatto") or p.get("bid") is None:
+            continue
+        if float(p["bid"]) >= float(livello) + float(distanza) and float(p.get("stop") or 0) < float(livello):
+            try:
+                broker.sposta_stop(p["dealId"], float(livello), p.get("tp"))
+                info["pareggio_fatto"] = True
+                messaggi.append(f"🛡️ <b>{info.get('nome', p.get('nome'))}</b>: guadagna già quanto rischiava, "
+                                f"ho spostato lo stop-loss al prezzo d'ingresso. Da ora, nel peggiore dei casi, esce a zero.")
+            except C.CapitalErrore as e:
+                print(f"Stop a pareggio non riuscito su {p.get('nome')}: {e}")
 
 
 def collega_broker():
@@ -459,7 +544,7 @@ def main():
 
     # ---- 2. prezzi e semafori ----
     tickers = [t for t, _ in L.ASSET.values()]
-    dati = scarica_tutti(tickers + ["EURUSD=X"])
+    dati = scarica_tutti(tickers + ["EURUSD=X"] + (["^GSPC"] if "^GSPC" not in tickers else []))
     if not dati:
         sys.exit("Nessun dato scaricato (Yahoo non risponde): riprovo al prossimo giro.")
     eurusd = 1.08 if DEMO or "EURUSD=X" not in dati else float(dati["EURUSD=X"]["Close"].iloc[-1])
@@ -522,6 +607,9 @@ def main():
                 fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= OBIETTIVO else ""
                 messaggi.append(f"🎉 Tappa superata: il tuo capitale del piano ha raggiunto <b>{num(t, 0)} €</b>.\n{barra(attuale)}{fine}")
 
+    if broker is not None and auto_attivo and CFG and CFG.get("pareggio"):
+        gestisci_pareggio(broker, stato, posizioni, messaggi)
+
     if "/stato" in comandi:
         messaggi.append(msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
     if "/resoconto" in comandi:
@@ -549,12 +637,32 @@ def main():
 
         if not in_orario and not primo_giro:
             continue    # fuori dagli orari del piano: niente avvisi né operazioni, se ne riparla al mattino
-        if not primo_giro and v["colore"] == "VERDE" and prima.get("colore") != "VERDE" \
-                and prima.get("avvisato") != oggi:
+
+        # Segnale della strategia promossa dalla ricerca (per il ritracciamento coincide con il semaforo verde)
+        if CFG and CFG["strategia"] == "ritracciamento":
+            segnale = v["colore"] == "VERDE" and prima.get("colore") != "VERDE" and prima.get("avvisato") != oggi
+        elif CFG:
+            df_s = BT.segnali_mercato(dati[ticker])
+            idx = R.segnali(df_s, CFG["strategia"])
+            giorno = str(df_s.index[-1].date())
+            segnale = len(idx) > 0 and idx[-1] == len(df_s) - 1 and prima.get("segnale_giorno") != giorno
+            if segnale:
+                prima["segnale_giorno"] = giorno
+        else:
+            segnale = False
+            if not primo_giro and v["colore"] == "VERDE" and prima.get("colore") != "VERDE" and prima.get("avvisato") != oggi:
+                messaggi.append(f"🔬 <b>{nome}</b>: semaforo verde, ma <b>non opero</b>. La ricerca di questa settimana dice che "
+                                "con i costi reali nessuna regola ha un vantaggio affidabile. Lo considero solo come studio.")
+                prima["avvisato"] = oggi
+
+        if not primo_giro and segnale:
             rischio = L.rischio_per(ticker, PIANO, RISCHIO)
             p = L.piano(CAPITALE * cambio, rischio, v["close"], v["atr"])
             motivo = ""
-            if auto_attivo and blocco:
+            consentito, perche_no = permesso_cfg(dati, stato, oggi)
+            if not consentito:
+                motivo = f"oggi la ricerca dice di non operare ({perche_no})"
+            elif auto_attivo and blocco:
                 motivo = blocco[1]
             elif auto_attivo:
                 try:
@@ -564,7 +672,8 @@ def main():
                 if op:
                     posizioni.append({"epic": op["epic"], "nome": nome, "dealId": op["dealId"]})
                     stato.setdefault("aperte", {})[op["dealId"]] = {"nome": nome, "epic": op["epic"],
-                                                                    "aperta": ora.isoformat(timespec="minutes")}
+                                                                    "aperta": ora.isoformat(timespec="minutes"),
+                                                                    "livello": op["livello"], "distanza": op["distanza"]}
                     stato.setdefault("registro", []).append({k: op[k] for k in ("nome", "size", "livello", "stop", "tp")}
                                                             | {"data": ora.isoformat(timespec="minutes")})
                     messaggi.append(msg_aperta(nome, {"valuta": op["valuta"]}, op, v, op["rischio_eur"], len(posizioni)))
@@ -573,7 +682,8 @@ def main():
             if not (auto_attivo and not motivo):
                 messaggi.append(msg_verde(nome, ticker, valuta, v, p, cambio, rischio, motivo))
             prima["avvisato"] = oggi
-        elif not primo_giro and prima.get("colore") == "VERDE" and v["colore"] != "VERDE":
+        elif not primo_giro and CFG and CFG["strategia"] == "ritracciamento" and prima.get("colore") == "VERDE" \
+                and v["colore"] != "VERDE":
             messaggi.append(msg_non_piu_verde(nome, v["colore"], auto_attivo))
         prima["colore"] = v["colore"]
         stato["asset"][ticker] = prima
@@ -582,7 +692,8 @@ def main():
     if args.prova and broker is not None:
         messaggi.insert(0, msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
     if args.prova or primo_giro:
-        modo = ("Opero da solo sul conto <b>Demo</b> di Capital.com seguendo il tuo piano, e ti avviso di ogni operazione."
+        modo = ("Opero da solo sul conto <b>Demo</b> di Capital.com seguendo il tuo piano e la mia ricerca settimanale, "
+                "e ti avviso di ogni operazione.\n" + descrizione_ricerca()
                 if AUTOMATICO else "Non invio mai ordini: decidi sempre tu.")
         messaggi.insert(0, msg_riepilogo(
             righe, "👋 <b>Ciao! Sono il tuo Tutor di Trading.</b>\n"

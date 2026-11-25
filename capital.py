@@ -91,7 +91,8 @@ class CapitalDemo:
             pos, mkt = p.get("position", {}), p.get("market", {})
             uscita.append({"epic": mkt.get("epic"), "nome": mkt.get("instrumentName"), "dealId": pos.get("dealId"),
                            "size": pos.get("size"), "direzione": pos.get("direction"), "livello": pos.get("level"),
-                           "stop": pos.get("stopLevel"), "tp": pos.get("profitLevel"), "upl": pos.get("upl")})
+                           "stop": pos.get("stopLevel"), "tp": pos.get("profitLevel"), "upl": pos.get("upl"),
+                           "bid": mkt.get("bid")})
         return uscita
 
     # ---- strumenti ----
@@ -120,6 +121,17 @@ class CapitalDemo:
         return None
 
     # ---- ordini ----
+    def sposta_stop(self, deal_id: str, stop: float, tp: float | None = None):
+        corpo = {"stopLevel": stop, "guaranteedStop": False}
+        if tp:
+            corpo["profitLevel"] = tp
+        dati, _ = self._chiama("PUT", f"/positions/{deal_id}", corpo)
+        ref = dati.get("dealReference")
+        if ref:
+            conf, _ = self._chiama("GET", f"/confirms/{ref}")
+            if conf.get("dealStatus") not in (None, "ACCEPTED"):
+                raise CapitalErrore(f"Modifica rifiutata: {conf.get('reason') or conf.get('dealStatus')}")
+
     def compra(self, epic: str, size: float, stop: float, tp: float) -> dict:
         corpo = {"epic": epic, "direction": "BUY", "size": size, "guaranteedStop": False,
                  "stopLevel": stop, "profitLevel": tp}
@@ -182,8 +194,13 @@ class CapitalSimulato(CapitalDemo):
     def attivita(self, giorni=7):
         return []
 
+    def sposta_stop(self, deal_id, stop, tp=None):
+        for p in self._pos:
+            if p["dealId"] == deal_id:
+                p["stop"] = stop
+
     def compra(self, epic, size, stop, tp):
         m = self.mercato(epic)
         self._pos.append({"epic": epic, "nome": epic, "dealId": f"SIM{len(self._pos) + 1}", "size": size,
-                          "direzione": "BUY", "livello": m["offer"], "stop": stop, "tp": tp, "upl": 0})
+                          "direzione": "BUY", "livello": m["offer"], "stop": stop, "tp": tp, "upl": 0, "bid": m["bid"]})
         return {"dealId": f"SIM{len(self._pos)}", "livello": m["offer"], "size": size}
