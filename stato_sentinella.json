@@ -1,0 +1,136 @@
+{
+ "asset": {
+  "^GSPC": {
+   "colore": "ROSSO"
+  },
+  "^NDX": {
+   "colore": "ROSSO"
+  },
+  "^DJI": {
+   "colore": "ROSSO"
+  },
+  "^GDAXI": {
+   "colore": "ROSSO"
+  },
+  "FTSEMIB.MI": {
+   "colore": "ROSSO"
+  },
+  "^STOXX50E": {
+   "colore": "ROSSO"
+  },
+  "GC=F": {
+   "colore": "ROSSO"
+  },
+  "SI=F": {
+   "colore": "ROSSO"
+  },
+  "CL=F": {
+   "colore": "ROSSO"
+  },
+  "EURUSD=X": {
+   "colore": "ROSSO"
+  },
+  "GBPUSD=X": {
+   "colore": "ROSSO"
+  },
+  "BTC-USD": {
+   "colore": "ROSSO"
+  },
+  "ETH-USD": {
+   "colore": "ROSSO"
+  },
+  "AAPL": {
+   "colore": "GIALLO"
+  },
+  "MSFT": {
+   "colore": "GIALLO",
+   "avvisato": "2026-11-23"
+  },
+  "NVDA": {
+   "colore": "ROSSO"
+  },
+  "AMZN": {
+   "colore": "ROSSO"
+  },
+  "GOOGL": {
+   "colore": "ROSSO"
+  },
+  "META": {
+   "colore": "ROSSO"
+  },
+  "TSLA": {
+   "colore": "GIALLO"
+  }
+ },
+ "ultimo_giro": "2026-11-25T21:07+01:00",
+ "avviso_credenziali": "2026-11-23",
+ "registro": [
+  {
+   "nome": "Microsoft",
+   "size": 0.16,
+   "livello": 499.31,
+   "stop": 465.4,
+   "tp": 567.22,
+   "data": "2026-11-23T17:25+01:00"
+  }
+ ],
+ "periodi": {
+  "giorno": {
+   "chiave": "2026-11-25",
+   "inizio": 98622.37000000001
+  },
+  "settimana": {
+   "chiave": "2026-W48",
+   "inizio": 98623.21
+  },
+  "mese": {
+   "chiave": "2026-11",
+   "inizio": 98623.21
+  }
+ },
+ "aperte": {
+  "00000000-7651-ad15-04a0-458c0015549e": {
+   "nome": "Microsoft Corp",
+   "epic": "MSFT",
+   "aperta": "2026-11-25T20:59+01:00"
+  }
+ },
+ "obiettivo_traccia": {
+  "capitale": 500.0,
+  "base": 98623.21,
+  "tappe": []
+ },
+ "riepilogo": "2026-11-25",
+ "telegram_offset": 626168294,
+ "giri": {
+  "2026-W48": 3
+ },
+ "storia": [
+  [
+   "2026-11-25T20:59+01:00",
+   498.55
+  ],
+  [
+   "2026-11-25T21:02+01:00",
+   498.62
+  ],
+  [
+   "2026-11-25T21:07+01:00",
+   498.65
+  ]
+ ],
+ "posizioni": [
+  {
+   "nome": "Microsoft Corp",
+   "epic": "MSFT",
+   "size": 0.16,
+   "livello": 499.31,
+   "stop": 465.4,
+   "tp": 567.22,
+   "upl": -1.31
+  }
+ ],
+ "modalita": "automatica",
+ "capitale_piano": 500.0,
+ "obiettivo": 1000.0
+}
