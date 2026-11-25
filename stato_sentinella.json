@@ -62,7 +62,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-25T21:37+01:00",
+ "ultimo_giro": "2026-11-25T21:45+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -96,16 +96,14 @@
   }
  },
  "obiettivo_traccia": {
-  "capitale": 500.0,
-  "base": 98623.21,
-  "tappe": [
-   600
-  ]
+  "capitale": 100000.0,
+  "base": 98730.33,
+  "tappe": []
  },
  "riepilogo": "2026-11-25",
  "telegram_offset": 626168294,
  "giri": {
-  "2026-W48": 6
+  "2026-W48": 7
  },
  "storia": [
   [
@@ -131,6 +129,10 @@
   [
    "2026-11-25T21:37+01:00",
    607.04
+  ],
+  [
+   "2026-11-25T21:45+01:00",
+   100000.0
   ]
  ],
  "posizioni": [
@@ -141,11 +143,11 @@
    "livello": 499.31,
    "stop": 465.4,
    "tp": 567.22,
-   "upl": -1.56,
-   "bid": 488.64
+   "upl": -1.49,
+   "bid": 489.12
   }
  ],
  "modalita": "automatica",
- "capitale_piano": 500.0,
- "obiettivo": 1000.0
+ "capitale_piano": 100000.0,
+ "obiettivo": 200000.0
 }
