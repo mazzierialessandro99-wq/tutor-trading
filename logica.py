@@ -240,3 +240,19 @@ def mercati(piano: dict | None = None) -> dict:
     """Mercati sorvegliati secondo il piano: 'base' (20) oppure 'esteso' (base + aggiuntivi)."""
     piano = piano if piano is not None else {}
     return ASSET | ASSET_EXTRA if piano.get("universo") == "esteso" else dict(ASSET)
+
+
+def piano_distanza(capitale: float, rischio_pct: float, ingresso: float, distanza: float) -> dict:
+    """Come piano(), ma con una distanza dello stop scelta (es. sotto il minimo recente)."""
+    stop = ingresso - distanza
+    tp = ingresso + RR * distanza
+    rischio = capitale * rischio_pct / 100
+    quote = rischio / distanza
+    limitato = False
+    if quote * ingresso > capitale:
+        quote = capitale / ingresso
+        limitato = True
+    return {"ingresso": ingresso, "stop": stop, "tp": tp, "quote": quote,
+            "impegno": quote * ingresso, "perdita": quote * distanza,
+            "guadagno": quote * distanza * RR, "rischio_max": rischio,
+            "distanza": distanza, "limitato": limitato}

@@ -18,7 +18,7 @@ from plotly.subplots import make_subplots
 import importlib
 
 import logica as L
-import capital, sentinella, backtest  # noqa: E401
+import capital, sentinella, backtest, coach  # noqa: E401
 
 # Streamlit Cloud, dopo un aggiornamento, ricarica solo questo file: i moduli importati potrebbero
 # restare alla versione vecchia. Li ricarichiamo sempre, in ordine, così sono tutti aggiornati.
@@ -26,6 +26,7 @@ L = importlib.reload(L)
 capital = importlib.reload(capital)
 sentinella = importlib.reload(sentinella)
 backtest = importlib.reload(backtest)
+coach = importlib.reload(coach)
 
 st.set_page_config(page_title="Tutor di Trading", page_icon="📈", layout="centered",
                    initial_sidebar_state="collapsed")
@@ -156,6 +157,46 @@ p, li {line-height: 1.55;}
 [data-testid="stExpander"] details {border-radius: 16px; background: var(--surf); border-color: var(--bordo);}
 [data-testid="stTextInput"] input, [data-testid="stNumberInput"] input {border-radius: 12px;}
 .stButton button {border-radius: 12px; font-weight: 600;}
+
+/* ---- bot ---- */
+.bot-hero {display: flex; gap: 14px; align-items: flex-start; border-radius: 22px; padding: 18px; margin: 4px 0 6px;
+           border: 1px solid var(--bordo); background: linear-gradient(135deg, var(--hero1), var(--hero2));}
+.bot-av {flex: 0 0 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+         font-size: 1.8rem; background: var(--surf); border: 1px solid var(--bordo);}
+.bot-nome {font-weight: 800; font-size: 1.2rem; color: var(--testo); display: flex; flex-wrap: wrap; gap: 8px; align-items: center;}
+.bot-stato {font-size: .75rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; border: 1px solid;}
+.bot-frase {color: var(--testo); margin-top: 6px; font-size: .95rem; line-height: 1.5;}
+.bot-meta {color: var(--muto); font-size: .78rem; margin-top: 8px;}
+.tl {padding: 6px 14px 10px;}
+.tl-giorno {font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muto);
+            margin: 12px 0 4px;}
+.tl-voce {display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid var(--bordo);}
+.tl-voce:last-child {border-bottom: none;}
+.tl-ora {flex: 0 0 42px; color: var(--muto); font-size: .8rem; padding-top: 2px;}
+.tl-ico {flex: 0 0 22px;}
+.tl-tit {color: var(--testo); font-size: .9rem;}
+.tl-mot {color: var(--muto); font-size: .8rem; line-height: 1.4;}
+
+/* ---- tutor ---- */
+.chips {display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px;}
+.chip {display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; font-weight: 700;
+       font-size: .86rem; background: var(--surf); border: 1px solid var(--bordo); color: var(--testo);}
+.lista {margin: 4px 0 0; padding-left: 0; list-style: none;}
+.lista li {position: relative; padding: 5px 0 5px 26px; color: var(--testo2); font-size: .93rem; line-height: 1.45;}
+.lista li b {color: var(--testo);}
+.lista li::before {position: absolute; left: 0; top: 4px; font-size: 1rem;}
+.lista.si li::before {content: "✅";}
+.lista.no li::before {content: "⛔";}
+.stop-card {background: var(--surf); border: 1px solid var(--bordo); border-radius: 16px; padding: 12px 14px; margin: 8px 0;}
+.stop-card.scelto {border: 1.5px solid var(--ema);}
+.stop-top {display: flex; justify-content: space-between; align-items: baseline; gap: 10px;}
+.stop-top .n {font-weight: 700; color: var(--testo);}
+.stop-top .p {font-weight: 800; font-size: 1.15rem; color: var(--testo); white-space: nowrap;}
+.badge {display: inline-block; font-size: .68rem; font-weight: 800; letter-spacing: .04em; padding: 2px 8px;
+        border-radius: 999px; background: var(--ema); color: #fff; margin-left: 6px; vertical-align: middle;}
+.stop-dati {display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 6px 0 4px; font-size: .82rem; color: var(--muto);}
+.stop-dati b {color: var(--testo);}
+.problema {color: var(--giu); font-size: .85rem; font-weight: 600; margin-top: 4px;}
 </style>
 """,
     unsafe_allow_html=True,
@@ -435,7 +476,8 @@ def passo(n: int, titolo: str, valore: str, testo: str):
                 f'<div class="txt">{html_testo(testo)}</div></div></div>', unsafe_allow_html=True)
 
 
-def passi_operativi(p: dict, v: dict, nome: str, valuta: str, cambio: float, rischio_pct: float):
+def passi_operativi(p: dict, v: dict, nome: str, valuta: str, cambio: float, rischio_pct: float,
+                    spiegazione_stop: str | None = None):
     sim = {"USD": "$", "EUR": "€"}.get(valuta, valuta + " ")
     eur = lambda x: fmt_num(x / cambio)   # importo nella valuta dell'asset -> euro
     nota_cambio = "" if valuta == "EUR" else f" (prezzi in {valuta}, cambio 1 € = {fmt_num(cambio, 4)} {valuta})"
@@ -451,6 +493,7 @@ def passi_operativi(p: dict, v: dict, nome: str, valuta: str, cambio: float, ris
           f"Se è già salito oltre **{sim}{fmt_prezzo(p['ingresso'] + 0.5 * v['atr'])}** (mezzo ATR), "
           "non inseguirlo: salta l'occasione.")
     passo(3, "Stop Loss", f"{sim}{fmt_prezzo(p['stop'])}",
+          (spiegazione_stop + f" Distanza dall'ingresso: {sim}{fmt_num(p['distanza'], dec)}.") if spiegazione_stop else
           f"È {fmt_num(L.STOP_ATR, 0)} volte l'ATR sotto l'ingresso ({sim}{fmt_num(p['distanza'], dec)}). "
           "Così le normali oscillazioni di una o due giornate non ti fanno uscire per sbaglio; "
           "se invece il prezzo scende davvero fin lì, l'idea era sbagliata e si esce con una perdita piccola.")
@@ -535,6 +578,90 @@ def schermata_elenco():
 # ==============================================================================
 # SEZIONE SEGNALI: dettaglio di un asset
 # ==============================================================================
+def sezione_coach(df: pd.DataFrame, v: dict, nome: str, ticker: str, valuta: str, cambio: float,
+                  rischio: float) -> tuple[float, str]:
+    """Il tutor sul mercato: situazione, cosa fare e non fare, scelta dello stop. Restituisce (distanza, spiegazione)."""
+    s = coach.analizza(df)
+    ricerca_ok = bool((memoria_bot("ricerca_esito.json") or {}).get("vincitrice"))
+    sim = {"USD": "$", "EUR": "€"}.get(valuta, valuta + " ")
+    eur = lambda x: fmt_num(x / cambio)
+    dec = 4 if s["close"] < 10 else 2
+
+    st.markdown('<div class="sezione">🧭 Il tuo tutor su questo mercato</div>', unsafe_allow_html=True)
+    chips = "".join(f'<div class="chip">{coach.ETICHETTE[k][s[k]][0]} {coach.ETICHETTE[k][s[k]][1]}</div>'
+                    for k in ("trend", "momento", "vol"))
+    st.markdown(f'<div class="chips">{chips}</div>', unsafe_allow_html=True)
+    fare, non = coach.consigli(s, ricerca_ok)
+    st.markdown('<div class="card"><div class="tit" style="font-weight:800">Cosa fare</div><ul class="lista si">'
+                + "".join(f"<li>{x}</li>" for x in fare) + "</ul></div>", unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="tit" style="font-weight:800">Cosa non fare</div><ul class="lista no">'
+                + "".join(f"<li>{x}</li>" for x in non) + "</ul></div>", unsafe_allow_html=True)
+
+    # ---- stop loss ----
+    st.markdown('<div class="sezione">🎯 Dove mettere lo stop loss</div>', unsafe_allow_html=True)
+    st.markdown('<div class="nota">Lo stop si decide <b>prima</b> di entrare. Qualunque metodo scegli, il rischio in euro '
+                'resta lo stesso: cambia la quantità. Stop più lontano = meno quote.</div>', unsafe_allow_html=True)
+    metodi = coach.metodi_stop(s, ss.capitale * cambio, rischio)
+    consigliato = next(m for m in metodi if m["consigliato"])
+    validi = [m for m in metodi if m["distanza"] > 0]
+    brevi = {"atr": "Volatilità", "struttura": "Minimo recente", "percentuale": "Percentuale"}
+    scelta = st.segmented_control("Metodo di stop", [m["chiave"] for m in validi], default=consigliato["chiave"],
+                                  required=True, format_func=lambda k: brevi[k], key=f"stop_{ticker}",
+                                  label_visibility="collapsed", width="stretch")
+    scelto = next(m for m in validi if m["chiave"] == scelta)
+    for m in validi:
+        st.markdown(
+            f'<div class="stop-card{" scelto" if m is scelto else ""}"><div class="stop-top">'
+            f'<div class="n">{m["nome"]}{"<span class=badge>CONSIGLIATO</span>" if m["consigliato"] else ""}</div>'
+            f'<div class="p">{sim}{fmt_prezzo(m["stop"])}</div></div>'
+            f'<div class="stop-dati"><span>distanza <b>{fmt_num(m["distanza"], dec)}</b> ({fmt_num(m["distanza_atr"], 1)} ATR)</span>'
+            f'<span>quote <b>{fmt_quote(m["quote"])}</b></span><span>rischio <b>{eur(m["rischio"])} €</b></span></div>'
+            f'<div class="txt">{m["perche"]}</div>'
+            + (f'<div class="problema">⚠️ {m["problema"]}</div>' if m["problema"] else "")
+            + (f'<div class="nota" style="margin:6px 0 0">💡 {consigliato["motivo_scelta"]}</div>' if m["consigliato"] else "")
+            + "</div>", unsafe_allow_html=True)
+
+    # grafico: ingresso, stop, take profit e minimo recente
+    tp = coach.take_profit(s, scelto)
+    vis = df.iloc[-90:]
+    fig = go.Figure(go.Candlestick(x=vis.index, open=vis["Open"], high=vis["High"], low=vis["Low"], close=vis["Close"],
+                                   increasing=dict(line=dict(color=T["su"], width=1), fillcolor=T["su"]),
+                                   decreasing=dict(line=dict(color=T["giu"], width=1), fillcolor=T["giu"]),
+                                   name="Prezzo", showlegend=False))
+    for y, testo, colore, tratto, pos in [(s["close"], "Ingresso", T["testo2"], "solid", "top left"),
+                                          (scelto["stop"], "Stop loss", T["giu"], "solid", "bottom left"),
+                                          (tp["tp"], "Take profit", T["su"], "solid", "top left"),
+                                          (s["supporto"], "Minimo recente", T["muto"], "dot", "top right")]:
+        fig.add_hline(y=y, line=dict(color=colore, width=1.6 if tratto == "solid" else 1, dash=tratto),
+                      annotation_text=f"{testo} {fmt_prezzo(y)}", annotation_position=pos,
+                      annotation_font=dict(size=11, color=colore))
+    fig.update_layout(height=320, template="plotly_dark" if SCURO else "plotly_white",
+                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", separators=",.",
+                      margin=dict(l=4, r=4, t=10, b=4), dragmode="pan", font=dict(color=T["testo2"], size=11),
+                      xaxis_rangeslider_visible=False)
+    fig.update_xaxes(gridcolor=T["griglia"], tickformat="%d/%m")
+    fig.update_yaxes(gridcolor=T["griglia"], side="right")
+    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+
+    st.markdown(f'<div class="card"><div class="tit" style="font-weight:800">🏁 Take profit: {sim}{fmt_prezzo(tp["tp"])}</div>'
+                f'<div class="txt">Il doppio della distanza dello stop (1:{fmt_num(L.RR, 0)}): se va bene guadagni circa '
+                f'{eur(scelto["rischio"] * L.RR)} €, se va male perdi circa {eur(scelto["rischio"])} €.</div>'
+                + (f'<div class="nota" style="margin:6px 0 0">⚠️ {tp["avviso"]}</div>' if tp["avviso"] else "")
+                + "</div>", unsafe_allow_html=True)
+
+    # ---- checklist ----
+    st.markdown('<div class="sezione">📋 Prima di premere Compra</div>', unsafe_allow_html=True)
+    voci = ["In alto nell'app c'è scritto Demo", "Il semaforo è verde e ho letto il perché",
+            "Ho scelto lo stop e so perché sta lì", "Ho scritto la quantità calcolata (non quella proposta dall'app)",
+            "Stop-loss e Take profit sono attivi nel modulo d'ordine", "Ho scritto nel diario perché entro"]
+    fatte = sum(st.checkbox(x, key=f"chk_{ticker}_{i}") for i, x in enumerate(voci))
+    st.progress(fatte / len(voci), text=f"{fatte} su {len(voci)}")
+    if fatte == len(voci):
+        st.markdown('<div class="nota">✅ Tutto pronto. Ricorda: dopo l\'ingresso stop e take profit non si toccano più.</div>',
+                    unsafe_allow_html=True)
+    return scelto["distanza"], f"Metodo «{scelto['nome']}»: {scelto['perche']}"
+
+
 def schermata_dettaglio(nome: str, ticker: str):
     if st.button("‹ Tutti gli asset", key="indietro"):
         ss.aperto = None
@@ -571,11 +698,12 @@ def schermata_dettaglio(nome: str, ticker: str):
         st.warning(f"Non riesco a leggere il cambio euro/{valuta}: i calcoli sono fatti come se 1 € = 1 {valuta}.")
         cambio = 1.0
     rischio = L.rischio_per(ticker, PIANO, ss.rischio)
-    p = L.piano(ss.capitale * cambio, rischio, v["close"], v["atr"])
+    distanza, spiegazione_stop = sezione_coach(df, v, nome, ticker, valuta, cambio, rischio)
+    p = L.piano_distanza(ss.capitale * cambio, rischio, v["close"], distanza)
 
     if v["colore"] == "VERDE":
         st.markdown('<div class="sezione">✅ Cosa fare, passo per passo</div>', unsafe_allow_html=True)
-        passi_operativi(p, v, nome, valuta, cambio, rischio)
+        passi_operativi(p, v, nome, valuta, cambio, rischio, spiegazione_stop)
     else:
         cosa = ("Niente: **non si compra**. Torna all'elenco e guarda un altro asset, oppure ricontrolla domani."
                 if v["colore"] == "ROSSO" else
@@ -585,7 +713,7 @@ def schermata_dettaglio(nome: str, ticker: str):
         st.markdown(f'<div class="card"><div class="txt">{html_testo(cosa)}</div></div>', unsafe_allow_html=True)
         with st.expander("📘 Esercizio: i numeri se oggi fosse verde"):
             st.caption("Solo per imparare a leggere il riquadro. **Oggi non è un'operazione da fare.**")
-            passi_operativi(p, v, nome, valuta, cambio, rischio)
+            passi_operativi(p, v, nome, valuta, cambio, rischio, spiegazione_stop)
 
     st.markdown('<div class="nota" style="margin-top:18px">Scopo didattico, non è consulenza finanziaria. '
                 'Gli ordini li inserisci tu, sul conto demo.</div>', unsafe_allow_html=True)
@@ -727,107 +855,145 @@ def riquadro_ricerca():
 
 
 def schermata_bot():
-    st.markdown('<div class="titolo">Il mio bot</div>'
-                '<div class="sottotit">Cosa ha fatto sul conto Demo, aggiornato a ogni giro (ogni 30 minuti).</div>',
-                unsafe_allow_html=True)
     m = memoria_bot()
     if not m:
+        st.markdown('<div class="titolo">Il mio bot</div>', unsafe_allow_html=True)
         st.markdown('<div class="card"><div class="txt">Il diario non è ancora disponibile: compare dopo il primo giro del '
-                    'motore con la nuova memoria. Riprova tra 30 minuti.</div></div>', unsafe_allow_html=True)
+                    'motore. Riprova tra 30 minuti.</div></div>', unsafe_allow_html=True)
         return
-
-    # ---- stato ----
-    modalita = {"automatica": ("🤖", "Automatico sul Demo", "VERDE"), "pausa": ("⏸️", "In pausa (/riprendi)", "GIALLO"),
-                "avvisi": ("🔔", "Solo avvisi", "GIALLO")}.get(m.get("modalita"), ("🤖", "—", "GIALLO"))
     ric = memoria_bot("ricerca_esito.json")
-    if m.get("modalita") == "automatica" and not (ric or {}).get("vincitrice"):
-        modalita = ("🔬", "Osserva e studia: non apre operazioni", "GIALLO")
-    ultimo = pd.Timestamp(m.get("ultimo_giro")) if m.get("ultimo_giro") else None
-    minuti = None
-    if ultimo is not None:
-        minuti = (pd.Timestamp.now(tz=ultimo.tz) - ultimo).total_seconds() / 60
+    adesso = pd.Timestamp.now(tz="Europe/Rome")
+    ultimo = pd.Timestamp(m["ultimo_giro"]) if m.get("ultimo_giro") else None
+    minuti = (adesso - ultimo).total_seconds() / 60 if ultimo is not None else None
     fresco = minuti is not None and minuti <= 75
-    quando = ("mai" if minuti is None else f"{minuti:.0f} min fa" if minuti < 120 else f"{minuti / 60:.0f} ore fa")
-    sett = chiavi_settimana = pd.Timestamp.now(tz="Europe/Rome").isocalendar()
+    quando = "mai" if minuti is None else f"{minuti:.0f} min fa" if minuti < 120 else f"{minuti / 60:.0f} ore fa"
+    sett = adesso.isocalendar()
     giri = (m.get("giri") or {}).get(f"{sett[0]}-W{sett[1]:02d}", 0)
+    decisioni = m.get("decisioni") or []
+    oggi = [d for d in decisioni if str(d.get("ora", ""))[:10] == adesso.strftime("%Y-%m-%d")]
+    visti = sum("Semaforo" in d["decisione"] or "Segnale" in d["decisione"] or "aperta" in d["decisione"] for d in oggi)
+    aperte_oggi = sum(d["decisione"] == "Operazione aperta" for d in oggi)
+    cfg = (ric or {}).get("vincitrice")
+
+    # ---- stato e racconto della giornata ----
+    if not fresco:
+        stato_t, colore, frase = "Fermo?", "ROSSO", ("Non do notizie da più di un'ora: il motore potrebbe essersi fermato. "
+                                                     "Se non riparte entro qualche ora, scrivimelo in chat.")
+    elif m.get("modalita") == "pausa":
+        stato_t, colore, frase = "In pausa", "GIALLO", "Mi hai messo in pausa: guardo i mercati ma non apro operazioni. Scrivi /riprendi su Telegram per farmi ripartire."
+    elif m.get("modalita") == "automatica" and not cfg:
+        stato_t, colore = "Osservo e studio", "GIALLO"
+        frase = ("Oggi guardo i mercati <b>senza operare</b>: la mia ricerca dice che, con i costi reali, nessuna regola ha "
+                 "un vantaggio affidabile. " + (f"Ho visto {visti} segnali, li tengo come studio." if visti else
+                                                 "Per ora nessun segnale interessante.") + " Domenica rifaccio la ricerca.")
+    elif m.get("modalita") == "automatica":
+        stato_t, colore = "Opero sul Demo", "VERDE"
+        frase = (f"Sto operando con la regola promossa dalla ricerca. Oggi: {visti} segnali visti, "
+                 f"{aperte_oggi} operazioni aperte.")
+    else:
+        stato_t, colore, frase = "Solo avvisi", "GIALLO", "Ti mando gli avvisi su Telegram, gli ordini li metti tu."
     st.markdown(
-        f'<div class="sem" style="border-color:{STATO[modalita[2]]}55;background:linear-gradient(135deg,{STATO[modalita[2]]}22,var(--surf) 72%)">'
-        f'<div style="font-size:2rem">{modalita[0]}</div><div>'
-        f'<div class="sem-colore" style="font-size:1.25rem;color:{STATO_TESTO[modalita[2]]}">{modalita[1]}</div>'
-        f'<div class="sem-txt">Ultimo controllo: <b>{quando}</b> · controlli questa settimana: <b>{giri}</b></div>'
-        f'<div class="sem-meta">{"✅ Il motore sta lavorando" if fresco else "⚠️ Nessun controllo nell’ultima ora: il motore potrebbe essersi fermato"}</div>'
+        f'<div class="bot-hero"><div class="bot-av">🤖</div><div style="flex:1">'
+        f'<div class="bot-nome">Il tuo bot <span class="bot-stato" style="background:{STATO[colore]}22;color:{STATO_TESTO[colore]};'
+        f'border-color:{STATO[colore]}66">● {stato_t}</span></div>'
+        f'<div class="bot-frase">{frase}</div>'
+        f'<div class="bot-meta">Ultimo controllo {quando} · {giri} controlli questa settimana · ogni 30 minuti</div>'
         f'</div></div>', unsafe_allow_html=True)
 
     riquadro_ricerca()
 
     # ---- obiettivo e numeri ----
     storia = m.get("storia") or []
-    cap0, ob = float(m.get("capitale_piano") or PIANO.get("capitale", 500)), float(m.get("obiettivo") or PIANO.get("obiettivo", 0) or 0)
+    cap0 = float(m.get("capitale_piano") or PIANO.get("capitale", 500))
+    ob = float(m.get("obiettivo") or PIANO.get("obiettivo", 0) or 0)
     attuale = float(storia[-1][1]) if storia else cap0
     chiuse = m.get("chiuse") or []
     st_ = sentinella.statistiche(chiuse)
     quota = max(0.0, min(1.0, (attuale - cap0) / (ob - cap0))) if ob > cap0 else 0.0
+    st.markdown('<div class="sezione">🎯 Verso l\'obiettivo</div>', unsafe_allow_html=True)
     st.markdown(
-        f'<div class="card"><div class="tit" style="font-weight:800">🎯 {fmt_num(attuale, 2)} € su {fmt_num(ob, 0)} €</div>'
+        f'<div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline">'
+        f'<div class="tit" style="font-weight:800;font-size:1.2rem">{fmt_num(attuale, 2)} €</div>'
+        f'<div class="nota" style="margin:0">obiettivo {fmt_num(ob, 0)} €</div></div>'
         f'<div style="height:12px;border-radius:999px;background:var(--surf2);margin:10px 0 4px;overflow:hidden">'
-        f'<div style="width:{quota * 100:.1f}%;height:100%;background:{T["ema"]};border-radius:999px"></div></div>'
+        f'<div style="width:{max(quota * 100, 1.5):.1f}%;height:100%;background:{T["ema"]};border-radius:999px"></div></div>'
         f'<div class="nota" style="margin:0">Partenza {fmt_num(cap0, 0)} € · {quota * 100:.0f}% del percorso</div></div>',
         unsafe_allow_html=True)
     risultato = attuale - cap0
     voci = [("Risultato del bot", f"{'+' if risultato >= 0 else '−'}{fmt_num(abs(risultato))} €", "dall'inizio del piano"),
             ("Operazioni chiuse", str(st_["n"]), f"{len(m.get('posizioni') or [])} ancora aperte"),
-            ("Vinte", f"{st_['win_rate']:.0f}%" if st_["n"] else "—", "atteso circa 43%"),
+            ("Vinte", f"{st_['win_rate']:.0f}%" if st_["n"] else "—", "atteso circa 40%"),
             ("Per giudicare", f"{st_['n']}/30", "operazioni chiuse")]
     st.markdown('<div class="tiles" style="grid-template-columns:repeat(2,1fr)">' + "".join(
         f'<div class="tile"><div class="k">{k}</div><div class="v">{val}</div><div class="s">{s}</div></div>'
         for k, val, s in voci) + "</div>", unsafe_allow_html=True)
-
-    # ---- capitale nel tempo ----
     if len(storia) >= 2:
-        st.markdown('<div class="sezione">Il capitale del piano nel tempo</div>', unsafe_allow_html=True)
         df = pd.DataFrame(storia, columns=["quando", "capitale"])
         df["quando"] = pd.to_datetime(df["quando"], utc=True).dt.tz_convert("Europe/Rome")
         fig = go.Figure(go.Scatter(x=df["quando"], y=df["capitale"], mode="lines", line=dict(color=T["ema"], width=2.2, shape="hv"),
-                                   name="Capitale", hovertemplate="%{y:,.2f} €<extra></extra>"))
+                                   hovertemplate="%{y:,.2f} €<extra></extra>"))
         fig.add_hline(y=cap0, line=dict(color=T["muto"], width=1, dash="dot"))
-        fig.update_layout(height=260, template="plotly_dark" if SCURO else "plotly_white", showlegend=False,
+        lo, hi = df["capitale"].min(), df["capitale"].max()
+        pad = max((hi - lo) * 0.2, cap0 * 0.004)
+        fig.update_layout(height=220, template="plotly_dark" if SCURO else "plotly_white", showlegend=False,
                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", separators=",.",
-                          margin=dict(l=4, r=4, t=8, b=4), hovermode="x unified", font=dict(color=T["testo2"], size=12))
+                          margin=dict(l=4, r=4, t=8, b=4), hovermode="x unified", font=dict(color=T["testo2"], size=11))
         fig.update_xaxes(gridcolor=T["griglia"], tickformat="%d/%m", hoverformat="%d/%m %H:%M")
-        fig.update_yaxes(gridcolor=T["griglia"], side="right")
+        fig.update_yaxes(gridcolor=T["griglia"], side="right", range=[min(lo, cap0) - pad, max(hi, cap0) + pad])
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     # ---- posizioni aperte ----
-    st.markdown('<div class="sezione">Operazioni aperte</div>', unsafe_allow_html=True)
     pos = m.get("posizioni") or []
+    st.markdown(f'<div class="sezione">📂 Operazioni aperte ({len(pos)})</div>', unsafe_allow_html=True)
     if not pos:
         st.markdown('<div class="nota">Nessuna operazione aperta in questo momento.</div>', unsafe_allow_html=True)
     for p in pos:
         upl = float(p.get("upl") or 0)
-        colore = T["su"] if upl >= 0 else T["giu"]
+        livello, stop_, tp_ = (float(p.get(k) or 0) for k in ("livello", "stop", "tp"))
+        corrente = float(p["bid"]) if p.get("bid") else livello
+        quota_pos = max(0.0, min(1.0, (corrente - stop_) / (tp_ - stop_))) if tp_ > stop_ else 0.5
         st.markdown(
             f'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center">'
-            f'<div><div class="tit" style="font-weight:700">{p.get("nome")}</div>'
-            f'<div class="nota" style="margin:0">{fmt_quote(float(p.get("size") or 0))} contratti a {fmt_prezzo(float(p.get("livello") or 0))} · '
-            f'stop {fmt_prezzo(float(p.get("stop") or 0))} · take profit {fmt_prezzo(float(p.get("tp") or 0))}</div></div>'
-            f'<div style="font-weight:800;color:{colore}">{"+" if upl >= 0 else "−"}{fmt_num(abs(upl))} €</div></div></div>',
+            f'<div class="tit" style="font-weight:700">{p.get("nome")}</div>'
+            f'<div style="font-weight:800;color:{T["su"] if upl >= 0 else T["giu"]}">{"+" if upl >= 0 else "−"}{fmt_num(abs(upl))} €</div></div>'
+            f'<div class="nota" style="margin:2px 0 8px">{fmt_quote(float(p.get("size") or 0))} contratti a {fmt_prezzo(livello)}</div>'
+            f'<div style="position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,{T["giu"]}55,var(--surf2) 33%,var(--surf2) 34%,{T["su"]}55)">'
+            f'<div style="position:absolute;left:calc({quota_pos * 100:.0f}% - 6px);top:-3px;width:14px;height:14px;border-radius:50%;'
+            f'background:{T["testo"]};border:2px solid var(--surf)"></div></div>'
+            f'<div style="display:flex;justify-content:space-between;margin-top:6px" class="nota">'
+            f'<span>stop {fmt_prezzo(stop_)}</span><span>take profit {fmt_prezzo(tp_)}</span></div></div>',
             unsafe_allow_html=True)
 
-    # ---- operazioni chiuse ----
-    st.markdown('<div class="sezione">Operazioni chiuse</div>', unsafe_allow_html=True)
-    if not chiuse:
-        st.markdown('<div class="nota">Ancora nessuna operazione chiusa. Le operazioni del bot durano in media 3 settimane.</div>',
+    # ---- diario delle decisioni ----
+    st.markdown('<div class="sezione">🗒️ Cosa ho fatto e perché</div>', unsafe_allow_html=True)
+    if not decisioni:
+        st.markdown('<div class="nota">Qui comparirà ogni mia decisione: segnali visti, operazioni aperte o saltate, e il motivo.</div>',
                     unsafe_allow_html=True)
     else:
-        righe = [{"": "✅" if (c.get("euro") or 0) > 0 else "❌", "Mercato": c.get("nome"),
-                  "Aperta": pd.Timestamp(c["aperta"]).strftime("%d/%m/%y") if c.get("aperta") else "",
-                  "Chiusa": pd.Timestamp(c["chiusa"]).strftime("%d/%m/%y") if c.get("chiusa") else "",
-                  "Risultato": (f"{'+' if c['euro'] >= 0 else '−'}{fmt_num(abs(float(c['euro'])))} €"
-                                if c.get("euro") is not None else "n.d.")}
-                 for c in reversed(chiuse)]
-        st.dataframe(pd.DataFrame(righe), hide_index=True, width="stretch")
-    st.markdown('<div class="nota" style="margin-top:14px">I dati arrivano dalla memoria del bot, aggiornata a ogni giro. '
-                'Comandi su Telegram: /stato · /resoconto · /stop · /riprendi.</div>', unsafe_allow_html=True)
+        righe, giorno_prec = [], None
+        for d in reversed(decisioni[-40:]):
+            t = pd.Timestamp(d["ora"])
+            giorno = ("Oggi" if t.date() == adesso.date() else "Ieri" if t.date() == (adesso - pd.Timedelta(days=1)).date()
+                      else t.strftime("%d/%m"))
+            if giorno != giorno_prec:
+                righe.append(f'<div class="tl-giorno">{giorno}</div>')
+                giorno_prec = giorno
+            righe.append(f'<div class="tl-voce"><div class="tl-ora">{t.strftime("%H:%M")}</div><div class="tl-ico">{d.get("icona", "•")}</div>'
+                         f'<div><div class="tl-tit"><b>{d["mercato"]}</b> · {d["decisione"]}</div>'
+                         f'<div class="tl-mot">{d["motivo"]}</div></div></div>')
+        st.markdown('<div class="card tl">' + "".join(righe) + "</div>", unsafe_allow_html=True)
+
+    # ---- operazioni chiuse ----
+    if chiuse:
+        st.markdown('<div class="sezione">🏁 Operazioni chiuse</div>', unsafe_allow_html=True)
+        st.dataframe(pd.DataFrame([{
+            "": "✅" if (c.get("euro") or 0) > 0 else "❌", "Mercato": c.get("nome"),
+            "Aperta": pd.Timestamp(c["aperta"]).strftime("%d/%m/%y") if c.get("aperta") else "",
+            "Chiusa": pd.Timestamp(c["chiusa"]).strftime("%d/%m/%y") if c.get("chiusa") else "",
+            "Risultato": (f"{'+' if c['euro'] >= 0 else '−'}{fmt_num(abs(float(c['euro'])))} €" if c.get("euro") is not None else "n.d.")}
+            for c in reversed(chiuse)]), hide_index=True, width="stretch")
+    st.markdown('<div class="nota" style="margin-top:14px">Comandi su Telegram: /stato · /resoconto · /stop · /riprendi.</div>',
+                unsafe_allow_html=True)
 
 
 # ==============================================================================
@@ -924,7 +1090,30 @@ La quantità da comprare **non si sceglie a sentimento**, si calcola:
             st.caption("Capitale e rischio si cambiano dal pulsante 💶 in alto. Se il broker non vende quote frazionarie, "
                        "arrotonda **per difetto**.")
 
-    with st.expander("4️⃣  Le regole d'oro in una schermata"):
+    with st.expander("4️⃣  Dove mettere lo stop loss (e dove no)"):
+        st.markdown(
+            """
+Lo stop loss è la decisione più importante di ogni operazione: dice **quando l'idea era sbagliata**.
+
+**Tre modi di metterlo** (li trovi calcolati su ogni mercato in *Segnali → tocca un mercato → Il tuo tutor*):
+- **Sotto il minimo recente**, con un piccolo margine. Ha un significato preciso: se il prezzo rompe il minimo
+  da cui doveva ripartire, la pausa è diventata una discesa. È il metodo preferito quando il minimo è a una
+  distanza sensata (tra 1,5 e 3,5 volte l'ATR).
+- **In base alla volatilità** (2 volte l'ATR, 2,5 se il mercato è agitato). Si adatta a quanto si muove quel mercato:
+  le oscillazioni normali non lo toccano.
+- **A percentuale fissa** (es. −3%). Comodo, ma cieco: su un mercato calmo è troppo largo, su uno agitato troppo stretto.
+
+**Le regole che valgono sempre:**
+1. Lo stop si decide **prima** di entrare e si imposta **insieme** all'ordine.
+2. **Mai troppo stretto**: sotto 1 ATR viene toccato dal rumore di una sola giornata.
+3. **Non esattamente sul minimo**: lì si accumulano gli stop di tutti. Meglio un po' sotto.
+4. **Mai allontanarlo** dopo essere entrato "per dargli spazio": è il modo più rapido per trasformare una piccola perdita in una grande.
+5. **Avvicinarlo** è ammesso solo con una regola decisa prima (per esempio a pareggio quando guadagni quanto rischiavi).
+6. **La quantità viene dallo stop**, non il contrario: stop più lontano = meno quote, così il rischio in euro resta l'1%.
+"""
+        )
+
+    with st.expander("5️⃣  Le regole d'oro in una schermata"):
         st.markdown(
             """
 1. **Prima la demo.** Almeno 2-3 mesi e 30+ operazioni su conto demo prima di pensare a soldi veri.

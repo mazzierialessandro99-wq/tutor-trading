@@ -506,6 +506,13 @@ def gestisci_pareggio(broker, stato: dict, posizioni: list[dict], messaggi: list
                 print(f"Stop a pareggio non riuscito su {p.get('nome')}: {e}")
 
 
+def annota(stato: dict, ora: datetime, mercato: str, decisione: str, motivo: str, icona: str = "•"):
+    """Diario delle decisioni del bot (lo mostra l'app nella sezione Bot)."""
+    stato.setdefault("decisioni", []).append({"ora": ora.isoformat(timespec="minutes"), "mercato": mercato,
+                                              "decisione": decisione, "motivo": motivo, "icona": icona})
+    stato["decisioni"] = stato["decisioni"][-150:]
+
+
 def collega_broker():
     if BROKER_SIMULATO:
         return C.CapitalSimulato(saldo=float(os.environ.get("SALDO_SIMULATO", "1000")))
@@ -592,12 +599,16 @@ def main():
                 else:
                     esito = f"chiusa in <b>perdita: {euro(euro_ris)}</b> ❌ (stop-loss): fa parte del gioco, era già messa in conto"
                 messaggi.append(f"🏁 <b>{info.get('nome', 'Operazione')}</b> {esito}\n{barra(attuale) if attuale is not None else ''}")
+                annota(stato, ora, info.get("nome", "Operazione"), "Operazione chiusa",
+                       "risultato non disponibile" if euro_ris is None else f"risultato {euro(euro_ris)}",
+                       "🏁" if euro_ris is None else ("✅" if euro_ris > 0 else "❌"))
         stato["aperte"] = {p["dealId"]: {**{"nome": p["nome"], "epic": p["epic"], "aperta": ora.isoformat(timespec="minutes")},
                                          **prima_aperte.get(p["dealId"], {}), "epic": p["epic"]} for p in posizioni}
         if blocco and stato.get("blocco_avvisato") != f"{blocco[0]}:{chiavi_periodo(ora)[blocco[0]]}":
             messaggi.append(f"⛔ <b>Mi fermo</b>: {blocco[1]}. Niente nuove operazioni "
                             f"{next(f for n, _, _, f in LIMITI if n == blocco[0])}. Fa parte del piano: proteggere il conto.")
             stato["blocco_avvisato"] = f"{blocco[0]}:{chiavi_periodo(ora)[blocco[0]]}"
+            annota(stato, ora, "Conto", "Mi fermo", blocco[1], "⛔")
 
     if attuale is not None and OBIETTIVO > CAPITALE:
         tappe = stato["obiettivo_traccia"].setdefault("tappe", [])
@@ -653,6 +664,8 @@ def main():
             if not primo_giro and v["colore"] == "VERDE" and prima.get("colore") != "VERDE" and prima.get("avvisato") != oggi:
                 messaggi.append(f"🔬 <b>{nome}</b>: semaforo verde, ma <b>non opero</b>. La ricerca di questa settimana dice che "
                                 "con i costi reali nessuna regola ha un vantaggio affidabile. Lo considero solo come studio.")
+                annota(stato, ora, nome, "Semaforo verde, non opero",
+                       "la ricerca non trova un vantaggio affidabile con i costi reali", "🔬")
                 prima["avvisato"] = oggi
 
         if not primo_giro and segnale:
@@ -677,10 +690,15 @@ def main():
                     stato.setdefault("registro", []).append({k: op[k] for k in ("nome", "size", "livello", "stop", "tp")}
                                                             | {"data": ora.isoformat(timespec="minutes")})
                     messaggi.append(msg_aperta(nome, {"valuta": op["valuta"]}, op, v, op["rischio_eur"], len(posizioni)))
+                    annota(stato, ora, nome, "Operazione aperta",
+                           f"{quote(op['size'])} contratti a {prezzo(op['livello'])}, stop {prezzo(op['stop'])}, "
+                           f"take profit {prezzo(op['tp'])}", "✅")
             elif AUTOMATICO and stato.get("pausa"):
                 motivo = "sono in pausa (scrivi /riprendi per farmi ripartire)"
             if not (auto_attivo and not motivo):
                 messaggi.append(msg_verde(nome, ticker, valuta, v, p, cambio, rischio, motivo))
+                if motivo:
+                    annota(stato, ora, nome, "Segnale, non apro", motivo, "⏸️")
             prima["avvisato"] = oggi
         elif not primo_giro and CFG and CFG["strategia"] == "ritracciamento" and prima.get("colore") == "VERDE" \
                 and v["colore"] != "VERDE":
@@ -716,7 +734,7 @@ def main():
         stato.setdefault("storia", []).append([ora.isoformat(timespec="minutes"), round(attuale, 2)])
         stato["storia"] = stato["storia"][-3000:]
     if broker is not None:
-        stato["posizioni"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl")}
+        stato["posizioni"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl", "bid")}
                               for p in posizioni if "size" in p]
     stato["modalita"] = "automatica" if auto_attivo else ("pausa" if stato.get("pausa") else "avvisi")
     stato["capitale_piano"], stato["obiettivo"] = CAPITALE, OBIETTIVO
