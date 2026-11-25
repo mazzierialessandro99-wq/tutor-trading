@@ -9,7 +9,8 @@ Applica le regole del semaforo e il tuo piano (piano.json):
   • quando un'operazione si chiude (stop o take profit) -> ti dice com'è andata
   • se raggiungi un limite di perdita del piano -> si ferma da sola
   • ogni mattina alle 8 (ora italiana) -> riepilogo della giornata
-Comandi su Telegram (letti a ogni giro): /stop  /riprendi  /stato
+Comandi su Telegram (letti a ogni giro): /stop  /riprendi  /stato  /resoconto
+Ogni lunedì mattina: resoconto della settimana (operazioni, risultati, confronto con il backtest).
 
 Prove dal PC:
     python sentinella.py --prova        manda subito un messaggio di prova con il riepilogo
@@ -24,7 +25,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -241,6 +242,8 @@ def aggiorna_periodi(stato: dict, valore: float, ora: datetime) -> dict:
     risultati = {}
     for nome, chiave in chiavi_periodo(ora).items():
         if per.get(nome, {}).get("chiave") != chiave:
+            if nome in per:
+                per[nome + "_prec"] = {"chiave": per[nome]["chiave"], "risultato": valore - per[nome]["inizio"]}
             per[nome] = {"chiave": chiave, "inizio": valore}
         risultati[nome] = valore - per[nome]["inizio"]
     return risultati
@@ -270,6 +273,85 @@ def barra(attuale: float) -> str:
     return f"🎯 Obiettivo: {num(attuale, 0)} € / {num(OBIETTIVO, 0)} €  {'▰' * pieni}{'▱' * (10 - pieni)} {quota * 100:.0f}%"
 
 
+# Valori attesi dal backtest reale (3 anni, 20 mercati): servono per il confronto nel resoconto
+ATTESO = {"win_rate": 43.0, "profit_factor": 1.31, "operazioni_settimana": 0.6}
+MIN_OPERAZIONI_GIUDIZIO = 30
+
+
+def utc_str(iso_locale: str) -> str:
+    try:
+        return datetime.fromisoformat(iso_locale).astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M")
+    except ValueError:
+        return ""
+
+
+def risultato_chiusura(broker, epic: str, aperta_iso: str) -> float | None:
+    """Guadagno/perdita in euro di un'operazione chiusa, letto dallo storico di Capital.com."""
+    try:
+        da = utc_str(aperta_iso)
+        movimenti = [t for t in broker.transazioni(5)
+                     if t.get("transactionType") == "TRADE" and t.get("instrumentName") == epic
+                     and str(t.get("dateUtc") or t.get("date") or "")[:16] >= da]
+        if not movimenti:
+            return None
+        return sum(float(str(t.get("size", "0")).replace(",", "")) for t in movimenti)
+    except Exception:
+        return None
+
+
+def statistiche(chiuse: list[dict]) -> dict:
+    vals = [c["euro"] for c in chiuse if c.get("euro") is not None]
+    vinte = [v for v in vals if v > 0]
+    perse = [v for v in vals if v <= 0]
+    return {"n": len(vals), "vinte": len(vinte), "totale": sum(vals),
+            "win_rate": len(vinte) / len(vals) * 100 if vals else 0.0,
+            "profit_factor": sum(vinte) / -sum(perse) if perse and sum(perse) else (float("inf") if vinte else 0.0),
+            "media_vinta": sum(vinte) / len(vinte) if vinte else 0.0,
+            "media_persa": sum(perse) / len(perse) if perse else 0.0}
+
+
+def msg_resoconto(stato: dict, titolo: str, risultato_periodo: float | None, giorni: int,
+                  posizioni: list[dict], attuale: float | None) -> str:
+    da = (datetime.now(ROMA) - timedelta(days=giorni)).isoformat()
+    chiuse_tutte = stato.get("chiuse", [])
+    chiuse = [c for c in chiuse_tutte if c.get("chiusa", "") >= da]
+    aperte_periodo = [r for r in stato.get("registro", []) if r.get("data", "") >= da]
+    righe = [titolo]
+    if risultato_periodo is not None:
+        righe.append(f"Risultato del bot: <b>{euro(risultato_periodo)}</b>")
+    if attuale is not None and OBIETTIVO:
+        righe.append(barra(attuale))
+    righe.append(f"\n📥 Operazioni aperte: {len(aperte_periodo)}" +
+                 (" (" + ", ".join(r["nome"] for r in aperte_periodo) + ")" if aperte_periodo else ""))
+    if chiuse:
+        righe.append(f"📤 Operazioni chiuse: {len(chiuse)}")
+        righe += [f"   {'✅' if (c.get('euro') or 0) > 0 else '❌'} {c['nome']}: "
+                  f"{euro(c['euro']) if c.get('euro') is not None else 'risultato non disponibile'}" for c in chiuse]
+    else:
+        righe.append("📤 Operazioni chiuse: nessuna")
+    if posizioni:
+        righe.append(f"⏳ Ancora aperte: " + ", ".join(f"{p['nome']} ({euro(float(p.get('upl') or 0))})" for p in posizioni))
+    giri = stato.get("giri", {}).get(chiavi_periodo(datetime.now(ROMA))["settimana"], 0)
+    if giri:
+        righe.append(f"🛰️ Controlli dei mercati questa settimana: {giri} (ne servono circa 48 al giorno)")
+
+    st = statistiche(chiuse_tutte)
+    righe.append(f"\n📚 <b>Dall'inizio</b>: {st['n']} operazioni chiuse · totale {euro(st['totale'])}")
+    if st["n"]:
+        righe.append(f"Vinte {st['vinte']}/{st['n']} ({st['win_rate']:.0f}%, atteso circa {ATTESO['win_rate']:.0f}%) · "
+                     f"media vinta {euro(st['media_vinta'])} · media persa {euro(st['media_persa'])}")
+    if st["n"] < MIN_OPERAZIONI_GIUDIZIO:
+        righe.append(f"🧪 Per giudicare le regole servono almeno {MIN_OPERAZIONI_GIUDIZIO} operazioni chiuse: siamo a "
+                     f"{st['n']}/{MIN_OPERAZIONI_GIUDIZIO}. Fino ad allora non cambio niente: sarebbe imparare dal caso.")
+    elif st["win_rate"] < ATTESO["win_rate"] - 10 or st["profit_factor"] < 1:
+        righe.append("⚠️ I risultati dal vivo sono <b>sotto</b> quelli del backtest. È il momento di una revisione: "
+                     "scrivimelo in chat e verifichiamo insieme le correzioni sul backtest prima di applicarle.")
+    else:
+        righe.append("👍 I risultati dal vivo sono in linea con il backtest: le regole restano così.")
+    righe.append(f"\n👉 {APP_URL}")
+    return "\n".join(righe)
+
+
 def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, posizioni: list[dict],
               attuale: float | None = None) -> str:
     righe = [f"📊 <b>Stato dell'assistente</b>",
@@ -287,7 +369,7 @@ def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, pos
                   for p in posizioni]
     elif conto:
         righe.append("\nNessuna posizione aperta.")
-    righe.append(f"\nComandi: /stop · /riprendi · /stato\n👉 {APP_URL}")
+    righe.append(f"\nComandi: /stato · /resoconto · /stop · /riprendi\n👉 {APP_URL}")
     return "\n".join(righe)
 
 
@@ -414,10 +496,19 @@ def main():
         prima_aperte = stato.get("aperte", {})
         for deal, info in prima_aperte.items():
             if deal not in aperte_ora:
-                saldo_txt = f" Saldo demo: {num(conto['saldo'])} €." if conto else ""
-                messaggi.append(f"🏁 <b>{info.get('nome', 'Operazione')}</b> chiusa (stop-loss o take profit).{saldo_txt}\n"
-                                "Annota nel diario com'è andata e cosa hai imparato.")
-        stato["aperte"] = {p["dealId"]: prima_aperte.get(p["dealId"], {"nome": p["nome"]}) for p in posizioni}
+                euro_ris = risultato_chiusura(broker, info.get("epic", ""), info.get("aperta", "")) if info.get("epic") else None
+                stato.setdefault("chiuse", []).append({"nome": info.get("nome", "Operazione"), "epic": info.get("epic"),
+                                                       "aperta": info.get("aperta"), "chiusa": ora.isoformat(timespec="minutes"),
+                                                       "euro": euro_ris})
+                if euro_ris is None:
+                    esito = "chiusa (stop-loss o take profit)"
+                elif euro_ris > 0:
+                    esito = f"chiusa in <b>guadagno: {euro(euro_ris)}</b> ✅ (take profit)"
+                else:
+                    esito = f"chiusa in <b>perdita: {euro(euro_ris)}</b> ❌ (stop-loss): fa parte del gioco, era già messa in conto"
+                messaggi.append(f"🏁 <b>{info.get('nome', 'Operazione')}</b> {esito}\n{barra(attuale) if attuale is not None else ''}")
+        stato["aperte"] = {p["dealId"]: {**{"nome": p["nome"], "epic": p["epic"], "aperta": ora.isoformat(timespec="minutes")},
+                                         **prima_aperte.get(p["dealId"], {}), "epic": p["epic"]} for p in posizioni}
         if blocco and stato.get("blocco_avvisato") != f"{blocco[0]}:{chiavi_periodo(ora)[blocco[0]]}":
             messaggi.append(f"⛔ <b>Mi fermo</b>: {blocco[1]}. Niente nuove operazioni "
                             f"{next(f for n, _, _, f in LIMITI if n == blocco[0])}. Fa parte del piano: proteggere il conto.")
@@ -433,6 +524,17 @@ def main():
 
     if "/stato" in comandi:
         messaggi.append(msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
+    if "/resoconto" in comandi:
+        messaggi.append(msg_resoconto(stato, "📒 <b>Resoconto della settimana in corso</b>",
+                                      risultati["settimana"] if risultati else None, 7, posizioni, attuale))
+    chiave_sett = chiavi_periodo(ora)["settimana"]
+    stato.setdefault("giri", {})[chiave_sett] = stato.get("giri", {}).get(chiave_sett, 0) + 1
+    stato["giri"] = {k: v for k, v in stato["giri"].items() if k >= chiavi_periodo(ora - timedelta(days=21))["settimana"]}
+    if ora.weekday() == 0 and ora.hour >= ORA_RIEPILOGO and stato.get("resoconto") != chiave_sett and not primo_giro:
+        prec = stato.get("periodi", {}).get("settimana_prec", {})
+        messaggi.append(msg_resoconto(stato, f"📒 <b>Resoconto settimanale</b> (settimana {prec.get('chiave', 'scorsa')})",
+                                      prec.get("risultato"), 7, posizioni, attuale))
+        stato["resoconto"] = chiave_sett
 
     # ---- 4. semafori: avvisi ed eventuali operazioni ----
     righe = []
@@ -461,7 +563,8 @@ def main():
                     op, motivo = None, f"Capital.com ha rifiutato l'ordine ({str(e)[:100]})"
                 if op:
                     posizioni.append({"epic": op["epic"], "nome": nome, "dealId": op["dealId"]})
-                    stato.setdefault("aperte", {})[op["dealId"]] = {"nome": nome, "aperta": ora.isoformat(timespec="minutes")}
+                    stato.setdefault("aperte", {})[op["dealId"]] = {"nome": nome, "epic": op["epic"],
+                                                                    "aperta": ora.isoformat(timespec="minutes")}
                     stato.setdefault("registro", []).append({k: op[k] for k in ("nome", "size", "livello", "stop", "tp")}
                                                             | {"data": ora.isoformat(timespec="minutes")})
                     messaggi.append(msg_aperta(nome, {"valuta": op["valuta"]}, op, v, op["rischio_eur"], len(posizioni)))
@@ -484,7 +587,7 @@ def main():
         messaggi.insert(0, msg_riepilogo(
             righe, "👋 <b>Ciao! Sono il tuo Tutor di Trading.</b>\n"
                    f"Controllo i mercati ogni 30 minuti, giorno e notte, e ti scrivo quando un semaforo diventa verde. {modo}\n"
-                   "Comandi: /stato · /stop · /riprendi\n\n<b>La situazione adesso:</b>"))
+                   "Comandi: /stato · /resoconto · /stop · /riprendi\n\n<b>La situazione adesso:</b>"))
     elif ora.hour >= ORA_RIEPILOGO and stato.get("riepilogo") != oggi:
         titolo = f"☀️ <b>Buongiorno! Il semaforo di oggi</b> ({ora:%d/%m})"
         if attuale is not None and OBIETTIVO:

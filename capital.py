@@ -175,6 +175,13 @@ class CapitalSimulato(CapitalDemo):
         return {"epic": epic, "nome": epic, "valuta": "USD", "min_size": 0.01, "passo": 0.01, "max_size": 1000,
                 "min_distanza_stop": 0, "aperto": True, "bid": p - 0.05, "offer": p + 0.05}
 
+    def transazioni(self, giorni=7):
+        import json, os
+        return json.loads(os.environ.get("TRANS_SIM", "[]"))
+
+    def attivita(self, giorni=7):
+        return []
+
     def compra(self, epic, size, stop, tp):
         m = self.mercato(epic)
         self._pos.append({"epic": epic, "nome": epic, "dealId": f"SIM{len(self._pos) + 1}", "size": size,
