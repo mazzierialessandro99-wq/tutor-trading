@@ -1,0 +1,28 @@
+# Ricerca sulle candele orarie (solo a mano): operare ora per ora darebbe un vantaggio?
+# L'esito va in ricerca_oraria.json sul branch dati e NON cambia cosa fa il bot.
+name: Ricerca oraria
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write              # per salvare l'esito sul branch dati
+
+jobs:
+  ricerca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-sentinella.txt
+      - run: pip install -r requirements-sentinella.txt
+      - name: Ricerca su candele orarie, 74 mercati
+        run: python ricerca_oraria.py
+      - name: Salva l'esito sul branch dati
+        run: bash strumenti/memoria.sh salva ricerca_oraria.json

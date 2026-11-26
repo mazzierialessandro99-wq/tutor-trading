@@ -126,12 +126,12 @@ def _demo(ticker: str) -> pd.DataFrame:
                          "Low": np.minimum(op, close) * 0.996, "Close": close}, index=idx)
 
 
-def scarica_tutti(tickers: list[str], periodo: str = "2y") -> dict[str, pd.DataFrame]:
-    """Candele giornaliere di tutti i mercati, in una sola richiesta."""
+def scarica_tutti(tickers: list[str], periodo: str = "2y", intervallo: str = "1d") -> dict[str, pd.DataFrame]:
+    """Candele di tutti i mercati (giornaliere salvo diversa indicazione), in una sola richiesta."""
     if DEMO:
         return {t: _demo(t) for t in tickers}
     import yfinance as yf
-    grezzi = yf.download(tickers, period=periodo, interval="1d", auto_adjust=True, progress=False,
+    grezzi = yf.download(tickers, period=periodo, interval=intervallo, auto_adjust=True, progress=False,
                          group_by="ticker", threads=True)
     dati = {}
 
@@ -154,7 +154,7 @@ def scarica_tutti(tickers: list[str], periodo: str = "2y") -> dict[str, pd.DataF
     # Riprova uno alla volta i mercati che non sono arrivati (a volte Yahoo ne perde qualcuno)
     for t in [t for t in tickers if t not in dati]:
         try:
-            df = pulisci(yf.download(t, period=periodo, interval="1d", auto_adjust=True, progress=False))
+            df = pulisci(yf.download(t, period=periodo, interval=intervallo, auto_adjust=True, progress=False))
             if df is not None:
                 dati[t] = df
         except Exception:
