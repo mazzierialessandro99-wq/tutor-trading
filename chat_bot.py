@@ -44,6 +44,10 @@ def trova_mercato(testo: str) -> str | None:
     for chiave in sorted(ALIAS, key=len, reverse=True):
         if re.search(rf"(?<![a-z]){re.escape(chiave)}(?![a-z])", t):
             return ALIAS[chiave]
+    for nome in L.ASSET:
+        base = _norm(nome.split(" (")[0])
+        if len(base) > 2 and base in t:
+            return nome
     return None
 
 
@@ -106,8 +110,11 @@ def rispondi(testo: str, ctx: dict) -> str:
         pos = m.get("posizioni") or []
         if not pos:
             return "Non ho operazioni aperte. Aspetto che un semaforo diventi verde: succede in media 2-3 volte al mese."
-        righe = [f"• <b>{p.get('nome')}</b>: {p.get('size')} contratti a {p.get('livello')}, "
-                 f"stop {p.get('stop')}, take profit {p.get('tp')} · {_euro(float(p.get('upl') or 0))}" for p in pos]
+        def n(x):
+            x = float(x or 0)
+            return _num(x, 4 if abs(x) < 10 else 2)
+        righe = [f"• <b>{p.get('nome')}</b>: {n(p.get('size'))} contratti a {n(p.get('livello'))}, "
+                 f"stop {n(p.get('stop'))}, take profit {n(p.get('tp'))} · {_euro(float(p.get('upl') or 0))}" for p in pos]
         return f"Ho <b>{len(pos)}</b> operazion{'e' if len(pos) == 1 else 'i'} apert{'a' if len(pos) == 1 else 'e'}:<br>" + "<br>".join(righe)
 
     # --- segnali di oggi ---

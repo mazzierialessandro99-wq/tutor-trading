@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+import streamlit.components.v1 as components
 
 import backtest
 import capital
@@ -69,10 +70,10 @@ p, li {line-height: 1.5;}
 .st-key-navbar button {flex: 1; border: none !important; background: transparent !important; min-height: 54px;
                       border-radius: 14px !important; padding: 2px !important; box-shadow: none !important;}
 .st-key-navbar button p {font-size: .68rem !important; font-weight: 600; color: var(--muto);}
-.st-key-navbar button div {flex-direction: column; gap: 0;}
-.st-key-navbar button [data-testid="stIconMaterial"] {font-size: 1.45rem; color: var(--muto); margin: 0 !important;}
-.st-key-navbar button[kind$="Active"] p, .st-key-navbar button[kind$="Active"] [data-testid="stIconMaterial"] {color: var(--acc) !important;}
-.st-key-navbar button[kind$="Active"] {background: color-mix(in srgb, var(--acc) 12%, transparent) !important;}
+.st-key-navbar button > div > span {flex-direction: column !important; gap: 1px !important;}
+.st-key-navbar button [data-testid="stIconMaterial"] {font-size: 1.5rem; color: var(--muto); margin: 0 !important;}
+.st-key-navbar button[aria-checked="true"] p, .st-key-navbar button[aria-checked="true"] [data-testid="stIconMaterial"] {color: var(--acc) !important; font-weight: 700;}
+.st-key-navbar button[aria-checked="true"] {background: color-mix(in srgb, var(--acc) 13%, transparent) !important;}
 
 /* testate */
 .top {display: flex; align-items: center; justify-content: space-between; margin: 2px 0 14px;}
@@ -149,6 +150,17 @@ p, li {line-height: 1.5;}
 .chat-hero {text-align: center; margin: 4px 0 6px;}
 .chat-hero .robot {animation-duration: 4s;}
 [data-testid="stChatInput"] {border-radius: 18px;}
+.bub.nuovo {position: relative;}
+.bub.nuovo .tx {animation: appari .35s 1.1s both;}
+.bub.nuovo .puntini {position: absolute; left: 14px; top: 12px; display: flex; gap: 4px; animation: sparisci .2s 1.1s both;}
+.puntini i {width: 7px; height: 7px; border-radius: 50%; background: var(--muto); animation: salta 1s infinite;}
+.puntini i:nth-child(2) {animation-delay: .15s;} .puntini i:nth-child(3) {animation-delay: .3s;}
+@keyframes salta {0%, 60%, 100% {transform: translateY(0); opacity: .5;} 30% {transform: translateY(-4px); opacity: 1;}}
+@keyframes appari {from {opacity: 0;} to {opacity: 1;}}
+@keyframes sparisci {from {opacity: 1;} to {opacity: 0; visibility: hidden;}}
+.avviso {display: flex; gap: 12px; align-items: center; border-radius: 18px; padding: 12px 14px; margin: 10px 0 4px;
+         background: var(--surf); border: 1px solid var(--bordo); border-left: 4px solid var(--c);}
+.avviso .ic {font-size: 1.3rem;}
 
 /* semaforo e tutor */
 .sem {display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: 20px; margin: 10px 0 8px;
@@ -403,6 +415,17 @@ def card(html: str):
     st.markdown(f'<div class="card">{html}</div>', unsafe_allow_html=True)
 
 
+def occhi_bot(m: dict | None, ric: dict | None) -> str:
+    """Occhi verdi se il bot è in guadagno, rossi se in perdita, gialli se fermo o in pausa, azzurri all'inizio."""
+    etichetta, col, _ = stato_bot(m, ric)
+    if col != SEMAFORO["VERDE"]:
+        return "#f5c542" if col == SEMAFORO["GIALLO"] else "#ff6b6b"
+    storia = (m or {}).get("storia") or []
+    cap0 = float((m or {}).get("capitale_piano") or PIANO.get("capitale", 0))
+    diff = float(storia[-1][1]) - cap0 if storia else 0
+    return "#3ee39a" if diff > 0.5 else "#ff6b6b" if diff < -0.5 else "#5ad1ff"
+
+
 def stato_bot(m: dict | None, ric: dict | None) -> tuple[str, str, str]:
     """(etichetta, colore, frase) dello stato del bot."""
     if not m:
@@ -434,7 +457,8 @@ def stato_bot(m: dict | None, ric: dict | None) -> tuple[str, str, str]:
 def schermata_home():
     m, ric = memoria(), memoria("ricerca_esito.json")
     etichetta, col, frase = stato_bot(m, ric)
-    st.markdown(f'<div class="top"><div class="top-l">{robot(40)}<h1>Ciao!</h1></div><span class="pill">● Conto Demo</span></div>',
+    occhi = occhi_bot(m, ric)
+    st.markdown(f'<div class="top"><div class="top-l">{robot(40, occhi)}<h1>Ciao!</h1></div><span class="pill">● Conto Demo</span></div>',
                 unsafe_allow_html=True)
     storia = (m or {}).get("storia") or []
     cap0 = float((m or {}).get("capitale_piano") or PIANO.get("capitale", 0))
@@ -445,9 +469,22 @@ def schermata_home():
                 f'<div class="saldo">{intero}<small>,{dec} €</small></div>'
                 f'<div class="var" style="color:{T["su"] if diff >= 0 else T["giu"]}">{"▲" if diff >= 0 else "▼"} '
                 f'{num(abs(diff))} € · {num(abs(diff) / cap0 * 100 if cap0 else 0)}%</div>', unsafe_allow_html=True)
-    if len(storia) >= 2:
+    if len(storia) >= 2 and len({round(float(x[1]), 2) for x in storia}) > 1:
         s = pd.Series([float(x[1]) for x in storia], index=pd.to_datetime([x[0] for x in storia], utc=True))
         st.plotly_chart(grafico_linea(s, 160, base=cap0), width="stretch", config={"displayModeBar": False, "staticPlot": True})
+
+    # notifica: l'ultima operazione aperta o chiusa nelle ultime 48 ore
+    for d in reversed((m or {}).get("decisioni") or []):
+        if not d["decisione"].startswith("Operazione "):
+            continue
+        quando = pd.Timestamp(d["ora"])
+        quando = quando.tz_localize("Europe/Rome") if quando.tzinfo is None else quando
+        if (pd.Timestamp.now(tz="Europe/Rome") - quando).total_seconds() < 48 * 3600:
+            c = T["giu"] if d.get("icona") == "❌" else T["su"] if d.get("icona") == "✅" else T["acc"]
+            st.markdown(f'<div class="avviso" style="--c:{c}"><span class="ic">{d.get("icona", "🔔")}</span><div class="r-c">'
+                        f'<div class="r-t">{d["mercato"]} · {d["decisione"].lower()}</div><div class="r-s" style="white-space:normal">'
+                        f'{d["motivo"]} · {quando:%d/%m %H:%M}</div></div></div>', unsafe_allow_html=True)
+        break
 
     with st.container(key="azioni", horizontal=True):
         st.button("Chiedi", icon=":material/forum:", on_click=vai, args=("chat",), width="stretch")
@@ -455,7 +492,7 @@ def schermata_home():
         st.button("Piano", icon=":material/flag:", on_click=vai, args=("altro",), width="stretch")
         st.button("Impara", icon=":material/school:", on_click=vai, args=("impara",), width="stretch")
 
-    st.markdown(f'<div class="bot-card">{robot(52)}<div style="flex:1;min-width:0"><div class="n">Sentinella '
+    st.markdown(f'<div class="bot-card">{robot(52, occhi)}<div style="flex:1;min-width:0"><div class="n">Sentinella '
                 f'<span class="dot" style="background:{col}"></span><span class="nota">{etichetta}</span></div>'
                 f'<div class="txt" style="margin-top:3px">{frase}</div></div></div>', unsafe_allow_html=True)
     st.button("Parla con il bot", icon=":material/chat_bubble:", on_click=vai, args=("chat",), width="stretch", type="primary")
@@ -511,6 +548,11 @@ def schermata_mercati():
     if not righe:
         st.error("Non riesco a scaricare i prezzi in questo momento. Riprova tra qualche minuto.")
         return
+    with st.form("cerca", border=False):
+        sim = st.text_input("Cerca un altro simbolo", placeholder="Cerca un simbolo: ENI.MI, TSLA, ETH-USD…", label_visibility="collapsed")
+        if st.form_submit_button("Analizza", icon=":material/search:", width="stretch") and sim.strip():
+            ss.aperto = (sim.strip().upper(), sim.strip().upper())
+            st.rerun()
     n = {c: sum(r["colore"] == c for r in righe) for c in SEMAFORO}
     st.markdown('<div class="griglia2" style="grid-template-columns:repeat(3,1fr)">' + "".join(
         f'<div class="mini"><div class="k">{lab}</div><div class="v" style="color:{SEMAFORO[c]}">{n[c]}</div></div>'
@@ -530,11 +572,6 @@ def schermata_mercati():
                             f'<div class="r-v" style="color:{T["su"] if su else T["giu"]}">{"+" if su else "−"}{num(abs(r["var"]))}%</div></div></div>',
                             unsafe_allow_html=True)
                 st.button(r["nome"], key=f"btn_{k}", on_click=vai, args=("mercati", (r["nome"], r["ticker"])))
-    with st.form("cerca", border=False):
-        sim = st.text_input("Cerca un altro simbolo", placeholder="Simbolo Yahoo, es. ENI.MI, TSLA, ETH-USD")
-        if st.form_submit_button("Analizza", width="stretch", icon=":material/search:") and sim.strip():
-            ss.aperto = (sim.strip().upper(), sim.strip().upper())
-            st.rerun()
 
 
 def dettaglio_mercato(nome: str, ticker: str):
@@ -564,6 +601,8 @@ def dettaglio_mercato(nome: str, ticker: str):
     lo, hi = float(min(serie.min(), ema.min())), float(max(serie.max(), ema.max()))
     fig.update_yaxes(range=[lo - (hi - lo) * .1, hi + (hi - lo) * .1])
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+    st.button(f"Chiedi al bot di {nome}", icon=":material/smart_toy:", width="stretch", key="chiedi_mercato",
+              on_click=lambda: (ss.update(domanda=f"Analizza {nome}"), vai("chat")))
     st.markdown('<div class="nota">Linea blu tratteggiata: la EMA 200, la direzione di fondo.</div>', unsafe_allow_html=True)
 
     col = SEMAFORO[v["colore"]]
@@ -645,7 +684,8 @@ def analizza_per_chat(nome: str) -> dict | None:
 def schermata_chat():
     m, ric = memoria(), memoria("ricerca_esito.json")
     etichetta, col, frase = stato_bot(m, ric)
-    st.markdown(f'<div class="chat-hero">{robot(96)}<div class="top h1" style="font-size:1.25rem;font-weight:800;color:var(--testo)">'
+    occhi = occhi_bot(m, ric)
+    st.markdown(f'<div class="chat-hero">{robot(96, occhi)}<div class="top h1" style="font-size:1.25rem;font-weight:800;color:var(--testo)">'
                 f'Sentinella</div><div class="nota"><span class="dot" style="background:{col}"></span> {etichetta} · '
                 f'risponde con i dati veri del bot</div></div>', unsafe_allow_html=True)
     if not ss.chat:
@@ -663,15 +703,27 @@ def schermata_chat():
     testo = st.chat_input("Scrivi al bot…")
     if testo:
         chiedi(testo)
+    if ss.get("domanda"):
+        chiedi(ss.pop("domanda"))
+    nuovo = ss.get("chat_visti", 1) < len(ss.chat)
+    html = ""
+    for i, (chi, t) in enumerate(ss.chat[-30:]):
+        ultimo = i == len(ss.chat[-30:]) - 1
+        if chi == "bot":
+            anim = nuovo and ultimo
+            html += (f'<div class="msg bot">{robot(28, occhi)}<div class="bub{" nuovo" if anim else ""}">'
+                     + ('<span class="puntini"><i></i><i></i><i></i></span>' if anim else "") + f'<span class="tx">{t}</span></div></div>')
+        else:
+            html += f'<div class="msg io"><div class="bub">{t}</div></div>'
+    st.markdown(html, unsafe_allow_html=True)
+    ss.chat_visti = len(ss.chat)
     scelta = st.pills("Suggerimenti", chat_bot.SUGGERIMENTI, key=f"sugg_{len(ss.chat)}", label_visibility="collapsed")
     if scelta:
         chiedi(scelta)
         st.rerun()
-    html = ""
-    for chi, t in ss.chat[-30:]:
-        html += (f'<div class="msg bot">{robot(28)}<div class="bub">{t}</div></div>' if chi == "bot"
-                 else f'<div class="msg io"><div class="bub">{t}</div></div>')
-    st.markdown(html, unsafe_allow_html=True)
+    if len(ss.chat) > 2:
+        components.html("<script>const d=window.parent.document;const m=d.querySelectorAll('.msg');"
+                        "if(m.length)m[m.length-1].scrollIntoView({behavior:'smooth',block:'center'});</script>", height=0)
     if len(ss.chat) > 1:
         st.button("Nuova chat", icon=":material/refresh:", on_click=lambda: ss.update(chat=[]))
     st.markdown('<div class="nota" style="text-align:center;margin-top:8px">Scopo didattico, non è consulenza finanziaria.</div>',
@@ -738,8 +790,16 @@ def schermata_impara():
     sezione("Calcolatrice della posizione")
     with st.container(border=True):
         c1, c2 = st.columns(2)
-        entrata = c1.number_input("Prezzo di entrata", min_value=0.01, value=50.0, step=0.5)
-        stop = c2.number_input("Stop loss", min_value=0.01, value=48.0, step=0.5)
+        def leggi(testo: str) -> float:
+            try:
+                return float(testo.replace(".", "").replace(",", ".") if "," in testo else testo)
+            except ValueError:
+                return 0.0
+        entrata = leggi(c1.text_input("Prezzo di entrata", "50,00"))
+        stop = leggi(c2.text_input("Stop loss", "48,00"))
+        if entrata <= 0 or stop <= 0:
+            st.error("Scrivi i prezzi con i numeri, per esempio 50,25.")
+            return
         if stop >= entrata:
             st.error("Per un acquisto lo stop deve stare sotto l'entrata.")
         else:
