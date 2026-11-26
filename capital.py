@@ -132,9 +132,12 @@ class CapitalDemo:
             if conf.get("dealStatus") not in (None, "ACCEPTED"):
                 raise CapitalErrore(f"Modifica rifiutata: {conf.get('reason') or conf.get('dealStatus')}")
 
-    def compra(self, epic: str, size: float, stop: float, tp: float) -> dict:
-        corpo = {"epic": epic, "direction": "BUY", "size": size, "guaranteedStop": False,
-                 "stopLevel": stop, "profitLevel": tp}
+    def compra(self, epic: str, size: float, stop: float | None = None, tp: float | None = None) -> dict:
+        corpo = {"epic": epic, "direction": "BUY", "size": size, "guaranteedStop": False}
+        if stop is not None:
+            corpo["stopLevel"] = stop
+        if tp is not None:
+            corpo["profitLevel"] = tp
         dati, _ = self._chiama("POST", "/positions", corpo)
         ref = dati.get("dealReference")
         if not ref:
@@ -144,6 +147,14 @@ class CapitalDemo:
             raise CapitalErrore(f"Ordine rifiutato: {conf.get('reason') or conf.get('dealStatus')}")
         return {"dealId": conf.get("dealId") or (conf.get("affectedDeals") or [{}])[0].get("dealId"),
                 "livello": conf.get("level"), "size": conf.get("size", size)}
+
+    def chiudi(self, deal_id: str):
+        dati, _ = self._chiama("DELETE", f"/positions/{deal_id}")
+        ref = dati.get("dealReference")
+        if ref:
+            conf, _ = self._chiama("GET", f"/confirms/{ref}")
+            if conf.get("dealStatus") not in (None, "ACCEPTED"):
+                raise CapitalErrore(f"Chiusura rifiutata: {conf.get('reason') or conf.get('dealStatus')}")
 
 
 def _storico(self, percorso: str, giorni: int) -> list[dict]:
@@ -199,7 +210,10 @@ class CapitalSimulato(CapitalDemo):
             if p["dealId"] == deal_id:
                 p["stop"] = stop
 
-    def compra(self, epic, size, stop, tp):
+    def chiudi(self, deal_id):
+        self._pos = [p for p in self._pos if p["dealId"] != deal_id]
+
+    def compra(self, epic, size, stop=None, tp=None):
         m = self.mercato(epic)
         self._pos.append({"epic": epic, "nome": epic, "dealId": f"SIM{len(self._pos) + 1}", "size": size,
                           "direzione": "BUY", "livello": m["offer"], "stop": stop, "tp": tp, "upl": 0, "bid": m["bid"]})

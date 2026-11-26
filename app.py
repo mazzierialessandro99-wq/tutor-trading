@@ -555,6 +555,24 @@ def schermata_home():
                       f'<div class="r-s">tp {prezzo(float(p.get("tp") or 0))}</div></div></div>')
         st.markdown(f'<div class="lista-card">{righe}</div>', unsafe_allow_html=True)
 
+    # trend mensile: il portafoglio lento
+    tr, pt = (m or {}).get("trend") or {}, (m or {}).get("posizioni_trend") or []
+    if PIANO.get("trend_mensile", {}).get("attivo"):
+        upl = sum(float(p.get("upl") or 0) for p in pt)
+        sezione("Trend mensile", f"{len(pt)} mercati · si ribilancia a inizio mese")
+        if not pt:
+            card('<div class="txt">Al primo giro il bot compra i mercati in trend da 6 mesi con i '
+                 f'{num(float(PIANO["trend_mensile"].get("capitale", 0)), 0)} € dedicati, poi li rivede una volta al mese.</div>')
+        else:
+            pesi = tr.get("obiettivo") or {}
+            nomi = {t: n for n, (t, _) in MERCATI.items()}
+            top = sorted(pesi.items(), key=lambda x: -x[1])[:5]
+            card(f'<div style="display:flex;justify-content:space-between;align-items:baseline"><span class="t">Risultato in corso</span>'
+                 f'<span class="r-p" style="color:{T["su"] if upl >= 0 else T["giu"]}">{euro_s(upl)}</span></div>'
+                 '<div class="chips" style="margin-top:8px">' + "".join(f'<span class="chip">{nomi.get(t, t)} {w * 100:.0f}%</span>' for t, w in top)
+                 + '</div><div class="nota">Esperimento sul Demo: con i CFD si pagano le commissioni notturne, '
+                 'con ETF o azioni vere no.</div>')
+
     decisioni = list(reversed((m or {}).get("decisioni") or []))[:8]
     sezione("Attività", "le decisioni del bot")
     if not decisioni:

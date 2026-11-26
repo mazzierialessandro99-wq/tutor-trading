@@ -35,6 +35,7 @@ import pandas as pd
 import backtest as BT
 import capital as C
 import eventi as E
+import trend_mensile as TM
 import logica as L
 import ricerca as R
 
@@ -61,6 +62,7 @@ CFG = (RICERCA or {}).get("vincitrice")          # None = nessuna regola promoss
 # PALESTRA (solo Demo): se la ricerca non promuove niente, il bot opera comunque la strategia di base
 # per raccogliere risultati veri da confrontare con il backtest. Ogni operazione è segnata come esperimento.
 PALESTRA = bool(PIANO.get("palestra"))
+TREND = PIANO.get("trend_mensile") or {}          # {"attivo": true, "capitale": 50000}
 if not CFG and PALESTRA:
     CFG = {"strategia": "ritracciamento", "rr": 2.0, "pareggio": False, "filtro": "sempre", "palestra": True}
 if CFG:
@@ -582,6 +584,7 @@ def main():
 
     # ---- 3. conto Capital.com (solo in modalità automatica) ----
     broker, conto, posizioni, risultati, blocco, attuale = None, None, [], None, None, None
+    pos_trend: list[dict] = []
     if AUTOMATICO:
         broker = collega_broker()
         if broker is None:
@@ -594,6 +597,10 @@ def main():
                 broker.accedi()
                 conto = broker.conto()
                 posizioni = broker.posizioni()
+                # le posizioni del trend mensile hanno la loro gestione: il resto del bot non le tocca
+                deal_trend = stato.get("trend", {}).get("deal", {})
+                pos_trend = [p for p in posizioni if p["dealId"] in deal_trend]
+                posizioni = [p for p in posizioni if p["dealId"] not in deal_trend]
                 risultati = aggiorna_periodi(stato, conto["saldo"] + conto["pl_aperto"], ora)
                 blocco = limite_superato(risultati)
                 attuale = progresso(stato, conto["saldo"])
@@ -735,6 +742,16 @@ def main():
         prima["colore"] = v["colore"]
         stato["asset"][ticker] = prima
 
+    # ---- 4b. trend mensile (portafoglio lento, una volta al mese) ----
+    if broker is not None and auto_attivo and TREND.get("attivo"):
+        nomi_t = {t: n for n, (t, _) in L.mercati(PIANO).items() if t in dati}
+        try:
+            TM.gestisci(broker, stato, dati, nomi_t, pos_trend, eurusd, ora, float(TREND.get("capitale", 50000)), messaggi, annota)
+            deal_trend = stato["trend"]["deal"]
+            pos_trend = [p for p in broker.posizioni() if p["dealId"] in deal_trend]
+        except C.CapitalErrore as e:
+            print(f"Trend mensile non gestito in questo giro: {e}")
+
     # ---- 5. benvenuto e riepilogo del mattino ----
     if args.prova and broker is not None:
         messaggi.insert(0, msg_stato(auto_attivo, conto, risultati, posizioni, attuale))
@@ -765,6 +782,8 @@ def main():
     if broker is not None:
         stato["posizioni"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl", "bid")}
                               for p in posizioni if "size" in p]
+        stato["posizioni_trend"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "upl", "bid")} for p in pos_trend]
+        stato.setdefault("trend", {})["capitale"] = float(TREND.get("capitale", 0) or 0)
     stato["modalita"] = "automatica" if auto_attivo else ("pausa" if stato.get("pausa") else "avvisi")
     stato["capitale_piano"], stato["obiettivo"] = CAPITALE, OBIETTIVO
     STATO_FILE.write_text(json.dumps(stato, indent=1, ensure_ascii=False))

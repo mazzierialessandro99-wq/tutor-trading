@@ -103,6 +103,19 @@ def rispondi(testo: str, ctx: dict) -> str:
                 "• Spiegazioni: <b>stop loss, take profit, RSI, EMA, ATR, leva, rischio, drawdown</b><br>"
                 "Su Telegram puoi usare /stato, /resoconto, /stop e /riprendi.")
 
+    # --- trend mensile ---
+    if ha("trend mensile", "portafoglio", "mensile", "lento"):
+        tr, pt = m.get("trend") or {}, m.get("posizioni_trend") or []
+        if not pt:
+            return ("Il <b>trend mensile</b> è il mio portafoglio lento: a inizio mese compro i mercati che salgono da 6 mesi, "
+                    "di più su quelli calmi e di meno su quelli agitati, e li rivedo una volta al mese. Al momento non ho posizioni aperte.")
+        upl = sum(float(p.get("upl") or 0) for p in pt)
+        nomi = {t: n for n, (t, _) in (L.ASSET | L.ASSET_EXTRA).items()}
+        top = sorted((tr.get("obiettivo") or {}).items(), key=lambda x: -x[1])[:6]
+        return (f"Nel <b>trend mensile</b> tengo <b>{len(pt)}</b> mercati, risultato in corso <b>{_euro(upl)}</b>.<br>"
+                "I principali: " + ", ".join(f"{nomi.get(t, t)} {w * 100:.0f}%" for t, w in top) + ".<br>"
+                "Lo rivedo il primo giorno di ogni mese: esco da chi ha perso il trend, entro in chi l'ha preso.")
+
     # --- cripto ---
     if ha("cripto", "crypto", "criptovalut"):
         righe = [r for r in ctx.get("panoramica") or [] if L.is_cripto(r["ticker"])]

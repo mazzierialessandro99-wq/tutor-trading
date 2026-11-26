@@ -8,6 +8,10 @@
   "modalita": "automatico",
   "palestra": true,
   "universo": "esteso",
+  "trend_mensile": {
+    "attivo": true,
+    "capitale": 50000
+  },
   "capitale": 100000,
   "obiettivo": 200000,
   "rischio_per_operazione": 1.0,
