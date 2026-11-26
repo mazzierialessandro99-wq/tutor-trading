@@ -8,7 +8,9 @@ Una volta al mese (al primo giro del mese nuovo):
   • si esce dai mercati che non sono più in trend, si entra in quelli nuovi; gli altri si lasciano come sono
 Stop loss SEMPRE (regola del piano): un "paracadute" largo, a 2 volte l'oscillazione tipica di un mese sotto il prezzo
 d'ingresso (es. un mercato che si muove del 20% l'anno → stop circa 11,5% sotto). Se scatta, quel mercato resta fuori
-fino al mese dopo. Niente take profit: si esce a fine mese se il trend si gira.
+fino al mese dopo. Take profit SEMPRE: al doppio della distanza dello stop (come la Palestra); se scatta si incassa e,
+se il trend c'è ancora, si rientra al ribilanciamento del mese dopo. Senza nessuno dei due, si esce a fine mese se il
+trend si gira. (Stop e take profit fissi NON erano nella ricerca: li misuriamo dal vivo.)
 È un ESPERIMENTO sul Demo: con i CFD le commissioni notturne pesano (circa 9% l'anno), per questo nel resoconto le
 mostro a parte, così vediamo come sarebbe andata con ETF/azioni vere.
 """
@@ -22,6 +24,7 @@ MESI = 6
 VOL_OBIETTIVO = 0.40
 MAX_TENTATIVI = 6
 STOP_SIGMA_MESE = 2.0
+RR = 2.0
 
 
 def quota_stop(dati: dict, t: str) -> float:
@@ -31,9 +34,11 @@ def quota_stop(dati: dict, t: str) -> float:
     return min(max(STOP_SIGMA_MESE * v / np.sqrt(12), 0.05), 0.5)
 
 
-def livello_stop(prezzo: float, quota: float, min_distanza: float = 0.0) -> float:
+def livelli(prezzo: float, quota: float, min_distanza: float = 0.0) -> tuple[float, float]:
+    """(stop, take profit) per un acquisto a questo prezzo."""
     distanza = max(prezzo * quota, min_distanza or 0.0)
-    return round(prezzo - distanza, 5 if prezzo < 10 else 2)
+    dec = 5 if prezzo < 10 else 2
+    return round(prezzo - distanza, dec), round(prezzo + RR * distanza, dec)
 
 
 def pesi_obiettivo(dati: dict, tickers: list[str]) -> dict[str, float]:
@@ -64,8 +69,11 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
     deal = tr.setdefault("deal", {})                       # dealId -> ticker
     epic_di = tr.setdefault("epic", {})                   # epic Capital.com -> ticker
     vivi = {p["dealId"] for p in pos_trend}
-    for d in [d for d in deal if d not in vivi]:          # chiuse da fuori (a mano o dal broker)
-        deal.pop(d)
+    for d in [d for d in deal if d not in vivi]:          # chiuse da stop, take profit (o a mano)
+        t = deal.pop(d)
+        messaggi.append(f"🏁 <b>Trend mensile · {nomi.get(t, t)}</b>: posizione chiusa da stop loss o take profit. "
+                        "Se il trend c'è ancora, rientro al ribilanciamento del mese prossimo.")
+        annota(stato, ora, f"Trend · {nomi.get(t, t)}", "Chiusa da stop o take profit", "rientro eventuale a inizio mese", "🏁")
     for p in pos_trend:                                    # posizioni del trend non ancora collegate al loro mercato
         if p["dealId"] not in deal:
             t = epic_di.get(p["epic"]) or next((t for t in nomi if C.EPIC.get(t, t) == p["epic"]
@@ -90,14 +98,17 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
     if tr.get("mese") != mese:
         tr.update(mese=mese, obiettivo=pesi_obiettivo(dati, list(nomi)), tentativi={}, cambi=[], annunciato=False)
         tr["da_fare"] = sorted(set(tr["obiettivo"]) | set(deal.values()))
-    # stop loss sempre: le posizioni del trend senza stop lo ricevono subito
+    # stop loss e take profit sempre: le posizioni del trend che non li hanno li ricevono subito
     for p in pos_trend:
         t = deal.get(p["dealId"])
-        if t and p.get("stop") is None and p.get("bid"):
+        if t and (p.get("stop") is None or p.get("tp") is None) and p.get("bid"):
+            livello, bid = float(p["livello"]), float(p["bid"])
+            stop, tp = livelli(livello, quota_stop(dati, t))
+            stop, tp = min(stop, livelli(bid, quota_stop(dati, t))[0]), max(tp, bid * 1.01)   # sempre dal lato giusto del prezzo
             try:
-                broker.sposta_stop(p["dealId"], livello_stop(min(float(p["livello"]), float(p["bid"])), quota_stop(dati, t)))
+                broker.sposta_stop(p["dealId"], p.get("stop") or stop, p.get("tp") or round(tp, 5 if bid < 10 else 2))
             except C.CapitalErrore as e:
-                print(f"Trend mensile, stop non messo su {t}: {e}")
+                print(f"Trend mensile, stop/take profit non messi su {t}: {e}")
     rimasti = []
     for t in tr.get("da_fare", []):
         w = tr["obiettivo"].get(t, 0.0)
@@ -121,7 +132,8 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
                 if size < m["min_size"]:
                     tr["cambi"].append(["troppo piccolo", t, w])
                     continue
-                esito = broker.compra(m["epic"], size, stop=livello_stop(m["offer"], quota_stop(dati, t), m["min_distanza_stop"]))
+                stop, tp = livelli(m["offer"], quota_stop(dati, t), m["min_distanza_stop"])
+                esito = broker.compra(m["epic"], size, stop=stop, tp=tp)
                 deal[esito["dealId"]] = t
                 epic_di[m["epic"]] = t
                 tr["cambi"].append(["entra", t, w])

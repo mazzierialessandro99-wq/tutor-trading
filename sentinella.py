@@ -62,6 +62,7 @@ CFG = (RICERCA or {}).get("vincitrice")          # None = nessuna regola promoss
 # PALESTRA (solo Demo): se la ricerca non promuove niente, il bot opera comunque la strategia di base
 # per raccogliere risultati veri da confrontare con il backtest. Ogni operazione è segnata come esperimento.
 PALESTRA = bool(PIANO.get("palestra"))
+GIORNI_MAX = 84                                     # 60 giorni di borsa, come nel backtest
 TREND = PIANO.get("trend_mensile") or {}          # {"attivo": true, "capitale": 50000}
 if not CFG and PALESTRA:
     CFG = {"strategia": "ritracciamento", "rr": 2.0, "pareggio": False, "filtro": "sempre", "palestra": True}
@@ -600,7 +601,7 @@ def main():
                 # le posizioni del trend mensile hanno la loro gestione: il resto del bot non le tocca
                 # (riconoscibili anche dal fatto che NON hanno take profit: la Palestra lo mette sempre)
                 deal_trend = stato.get("trend", {}).get("deal", {})
-                del_trend = lambda p: p["dealId"] in deal_trend or (TREND.get("attivo") and p.get("tp") is None)
+                del_trend = lambda p: p["dealId"] in deal_trend or (TREND.get("attivo") and p.get("tp") is None and p.get("stop") is None)
                 pos_trend = [p for p in posizioni if del_trend(p)]
                 posizioni = [p for p in posizioni if not del_trend(p)]
                 risultati = aggiorna_periodi(stato, conto["saldo"] + conto["pl_aperto"], ora)
@@ -638,6 +639,29 @@ def main():
                        "🏁" if euro_ris is None else ("✅" if euro_ris > 0 else "❌"))
         stato["aperte"] = {p["dealId"]: {**{"nome": p["nome"], "epic": p["epic"], "aperta": ora.isoformat(timespec="minutes")},
                                          **prima_aperte.get(p["dealId"], {}), "epic": p["epic"]} for p in posizioni}
+        # tempo scaduto (come nei test): dopo 60 giorni di borsa (~84 di calendario) senza stop né take profit, si chiude
+        for p in list(posizioni):
+            info = stato["aperte"].get(p["dealId"], {})
+            try:
+                giorni = (ora - datetime.fromisoformat(info["aperta"])).days
+            except Exception:
+                continue
+            if giorni < GIORNI_MAX or not auto_attivo:
+                continue
+            try:
+                broker.chiudi(p["dealId"])
+            except C.CapitalErrore as e:
+                print(f"Chiusura per tempo scaduto non riuscita su {p.get('nome')}: {e}")
+                continue
+            upl = float(p.get("upl") or 0)
+            posizioni.remove(p)
+            stato["aperte"].pop(p["dealId"], None)
+            stato.setdefault("chiuse", []).append({"nome": info.get("nome", p.get("nome")), "epic": p.get("epic"),
+                                                   "palestra": bool(info.get("palestra")), "aperta": info.get("aperta"),
+                                                   "chiusa": ora.isoformat(timespec="minutes"), "euro": upl})
+            messaggi.append(f"⏳ <b>{info.get('nome', p.get('nome'))}</b>: aperta da {giorni} giorni senza toccare né stop né "
+                            f"take profit. Come da regola la chiudo: risultato circa <b>{euro(upl)}</b>.")
+            annota(stato, ora, info.get("nome", p.get("nome")), "Chiusa per tempo scaduto", f"dopo {giorni} giorni, circa {euro(upl)}", "⏳")
         if blocco and stato.get("blocco_avvisato") != f"{blocco[0]}:{chiavi_periodo(ora)[blocco[0]]}":
             messaggi.append(f"⛔ <b>Mi fermo</b>: {blocco[1]}. Niente nuove operazioni "
                             f"{next(f for n, _, _, f in LIMITI if n == blocco[0])}. Fa parte del piano: proteggere il conto.")
@@ -750,7 +774,7 @@ def main():
         try:
             TM.gestisci(broker, stato, dati, nomi_t, pos_trend, eurusd, ora, float(TREND.get("capitale", 50000)), messaggi, annota)
             deal_trend = stato["trend"]["deal"]
-            pos_trend = [p for p in broker.posizioni() if p["dealId"] in deal_trend or p.get("tp") is None]
+            pos_trend = [p for p in broker.posizioni() if p["dealId"] in deal_trend or (p.get("tp") is None and p.get("stop") is None)]
         except C.CapitalErrore as e:
             print(f"Trend mensile non gestito in questo giro: {e}")
 
