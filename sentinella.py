@@ -617,7 +617,7 @@ def main():
 
     # operazioni chiuse dall'ultimo giro (stop o take profit)
     if broker is not None:
-        aperte_ora = {p["dealId"] for p in posizioni}
+        aperte_ora = {p["dealId"] for p in posizioni} | {p["dealId"] for p in pos_trend}   # il trend non è "chiuso"
         prima_aperte = stato.get("aperte", {})
         for deal, info in prima_aperte.items():
             if deal not in aperte_ora:

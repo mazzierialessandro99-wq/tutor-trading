@@ -55,6 +55,18 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
         if p["dealId"] not in deal:
             t = epic_di.get(p["epic"]) or next((t for t in nomi if C.EPIC.get(t, t) == p["epic"]
                                                 or t.split(".")[0].replace("-USD", "USD") == p["epic"]), None)
+            if not t:                                       # ultima prova: chiedo a Capital.com l'epic dei mercati comprati
+                for a, tk, _ in tr.get("cambi", []):
+                    if a == "entra" and tk not in epic_di.values():
+                        try:
+                            m = broker.trova(tk, nomi.get(tk, tk))
+                        except C.CapitalErrore:
+                            m = None
+                        if m:
+                            epic_di[m["epic"]] = tk
+                            if m["epic"] == p["epic"]:
+                                t = tk
+                                break
             if t:
                 deal[p["dealId"]] = t
             else:
