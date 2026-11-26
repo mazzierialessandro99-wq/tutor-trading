@@ -329,8 +329,8 @@ ss.setdefault("aperto", None)        # (nome, ticker) dell'asset aperto, None = 
 PAGINE = ["🤖 Bot", "🚦 Segnali", "📋 Piano", "🎓 Impara", "🧪 Test"]
 
 # ---- barra in alto: nome + impostazioni del conto ----
-with st.container(key="topbar", horizontal=True, vertical_alignment="center"):
-    st.markdown('<div class="brand">📈 Tutor <small>ASSISTENTE DI TRADING · CONTO DEMO</small></div>',
+with st.container(key="topbar", horizontal=True, vertical_alignment="center", wrap=False):
+    st.markdown('<div class="brand">📈 Tutor <small>CONTO DEMO</small></div>',
                 unsafe_allow_html=True)
     if hasattr(st, "space"):
         st.space("stretch")
