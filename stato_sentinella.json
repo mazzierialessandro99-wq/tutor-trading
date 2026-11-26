@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T10:07+01:00",
+ "ultimo_giro": "2026-11-26T10:27+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -338,7 +338,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168294,
  "giri": {
-  "2026-W48": 37
+  "2026-W48": 38
  },
  "storia": [
   [
@@ -488,6 +488,10 @@
   [
    "2026-11-26T10:07+01:00",
    99959.84
+  ],
+  [
+   "2026-11-26T10:27+01:00",
+   99944.81
   ]
  ],
  "posizioni": [
@@ -508,8 +512,8 @@
    "livello": 191.65,
    "stop": 180.04,
    "tp": 214.86,
-   "upl": 60.305,
-   "bid": 192.35
+   "upl": 107.6875,
+   "bid": 192.9
   },
   {
    "nome": "TotalEnergies SE",
@@ -528,15 +532,15 @@
    "livello": 24.03,
    "stop": 23.0,
    "tp": 26.09,
-   "upl": -29.13,
-   "bid": 24.0
+   "upl": -77.68,
+   "bid": 23.95
   }
  ],
  "modalita": "automatica",
  "capitale_piano": 100000.0,
  "obiettivo": 200000.0,
  "tensione": false,
- "vix": 26.6,
+ "vix": 26.9,
  "eventi": {
   "SAP.DE": {
    "giorno": "2026-11-26",
@@ -853,64 +857,72 @@
    "epic": "AVAXUSD",
    "size": 64.3,
    "livello": 6.6506,
-   "upl": -0.36,
-   "bid": 6.6444
+   "upl": -0.66,
+   "bid": 6.6394
   },
   {
    "nome": "Allianz",
    "epic": "ALVD",
    "size": 2.5,
    "livello": 460.0,
-   "upl": -3.5,
-   "bid": 458.6
+   "upl": -5.5,
+   "bid": 457.8
   },
   {
    "nome": "Enel",
    "epic": "ENEL",
    "size": 136,
    "livello": 9.47,
-   "upl": 4.76,
-   "bid": 9.505
-  },
-  {
-   "nome": "Eni",
-   "epic": "ENI",
-   "size": 40,
-   "livello": 24.03,
-   "upl": -1.2,
-   "bid": 24.0
-  },
-  {
-   "nome": "Intesa Sanpaolo",
-   "epic": "ISP",
-   "size": 162.75,
-   "livello": 5.6525,
-   "upl": -1.6275,
-   "bid": 5.6425
+   "upl": 5.44,
+   "bid": 9.51
   },
   {
    "nome": "ChainLink/USD",
    "epic": "LINKUSD",
    "size": 50,
    "livello": 9.18303,
-   "upl": 1.89,
-   "bid": 9.22454
+   "upl": 0.83,
+   "bid": 9.20123
+  },
+  {
+   "nome": "Ethereum/USD",
+   "epic": "ETHUSD",
+   "size": 1.179,
+   "livello": 1688.51,
+   "upl": 7.94,
+   "bid": 1695.9
+  },
+  {
+   "nome": "Eni",
+   "epic": "ENI",
+   "size": 40,
+   "livello": 24.03,
+   "upl": -3.2,
+   "bid": 23.95
+  },
+  {
+   "nome": "Intesa Sanpaolo",
+   "epic": "ISP",
+   "size": 162.75,
+   "livello": 5.6525,
+   "upl": -3.255,
+   "bid": 5.6325
   },
   {
    "nome": "Natural Gas",
    "epic": "NATURALGAS",
    "size": 135.1,
    "livello": 3.5338,
-   "upl": -2.34,
-   "bid": 3.5148
+   "upl": -0.37,
+   "bid": 3.5308
   },
   {
    "nome": "SAP",
    "epic": "SAPD",
    "size": 4.11,
    "livello": 191.8,
-   "upl": 2.466,
-   "bid": 192.4
+   "upl": 4.521,
+   "bid": 192.9
   },
   {
    "nome": "TotalEnergies SE",
@@ -925,32 +937,24 @@
    "epic": "RACEM",
    "size": 2.88,
    "livello": 372.08,
-   "upl": 1.4112,
-   "bid": 372.57
+   "upl": 2.5632,
+   "bid": 372.97
   },
   {
    "nome": "Unicredit",
    "epic": "UCG",
    "size": 10.156,
    "livello": 75.81,
-   "upl": -4.0624,
-   "bid": 75.41
-  },
-  {
-   "nome": "Ethereum/USD",
-   "epic": "ETHUSD",
-   "size": 1.179,
-   "livello": 1688.51,
-   "upl": 12.51,
-   "bid": 1700.15
+   "upl": -10.46068,
+   "bid": 74.78
   },
   {
    "nome": "Germany 40",
    "epic": "DE40",
    "size": 0.057,
    "livello": 25141.0,
-   "upl": 5.8083,
-   "bid": 25242.9
+   "upl": 4.4574,
+   "bid": 25219.2
   }
  ],
  "chiuse": [
