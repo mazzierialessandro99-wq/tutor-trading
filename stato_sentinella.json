@@ -232,7 +232,7 @@
   },
   "TTE.PA": {
    "avvisato": "2026-11-26",
-   "colore": "GIALLO"
+   "colore": "VERDE"
   },
   "ALV.DE": {
    "colore": "GIALLO"
@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T16:07+01:00",
+ "ultimo_giro": "2026-11-26T16:37+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -341,7 +341,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168295,
  "giri": {
-  "2026-W48": 54
+  "2026-W48": 55
  },
  "storia": [
   [
@@ -559,6 +559,10 @@
   [
    "2026-11-26T16:07+01:00",
    100250.75
+  ],
+  [
+   "2026-11-26T16:37+01:00",
+   100277.07
   ]
  ],
  "posizioni": [
@@ -579,8 +583,8 @@
    "livello": 191.65,
    "stop": 180.04,
    "tp": 214.86,
-   "upl": 107.6875,
-   "bid": 192.9
+   "upl": 99.0725,
+   "bid": 192.8
   },
   {
    "nome": "TotalEnergies SE",
@@ -589,8 +593,8 @@
    "livello": 78.24,
    "stop": 75.03,
    "tp": 84.66,
-   "upl": 71.599,
-   "bid": 78.47
+   "upl": 56.034,
+   "bid": 78.42
   },
   {
    "nome": "Eni",
@@ -599,15 +603,15 @@
    "livello": 24.03,
    "stop": 23.0,
    "tp": 26.09,
-   "upl": 87.39,
-   "bid": 24.12
+   "upl": 126.23,
+   "bid": 24.16
   }
  ],
  "modalita": "automatica",
  "capitale_piano": 100000.0,
  "obiettivo": 200000.0,
  "tensione": false,
- "vix": 26.9,
+ "vix": 26.8,
  "eventi": {
   "SAP.DE": {
    "giorno": "2026-11-26",
@@ -918,28 +922,28 @@
    "TTEF": "TTE.PA"
   },
   "attese": {
-   "AAPL": "16:07 AAPL CLOSED",
-   "ABBV": "16:07 ABBV CLOSED",
-   "COST": "16:07 COST CLOSED",
-   "CRM": "16:07 CRM CLOSED",
-   "CVX": "16:07 CVX CLOSED",
-   "DIS": "16:07 DIS CLOSED",
-   "HD": "16:07 HD CLOSED",
-   "JNJ": "16:07 JNJ CLOSED",
-   "JPM": "16:07 JPM CLOSED",
-   "KO": "16:07 KO CLOSED",
-   "LLY": "16:07 LLY CLOSED",
-   "MA": "16:07 MA CLOSED",
-   "MCD": "16:07 MCD CLOSED",
-   "MRK": "16:07 MRK CLOSED",
-   "MSFT": "16:07 MSFT CLOSED",
-   "PEP": "16:07 PEP CLOSED",
-   "PFE": "16:07 PFE CLOSED",
-   "PG": "16:07 PG CLOSED",
-   "V": "16:07 V CLOSED",
-   "WMT": "16:07 WMT CLOSED",
-   "XOM": "16:07 XOM CLOSED",
-   "^IBEX": "16:07 IBEX CLOSED"
+   "AAPL": "16:37 AAPL CLOSED",
+   "ABBV": "16:37 ABBV CLOSED",
+   "COST": "16:37 COST CLOSED",
+   "CRM": "16:37 CRM CLOSED",
+   "CVX": "16:37 CVX CLOSED",
+   "DIS": "16:37 DIS CLOSED",
+   "HD": "16:37 HD CLOSED",
+   "JNJ": "16:37 JNJ CLOSED",
+   "JPM": "16:37 JPM CLOSED",
+   "KO": "16:37 KO CLOSED",
+   "LLY": "16:37 LLY CLOSED",
+   "MA": "16:37 MA CLOSED",
+   "MCD": "16:37 MCD CLOSED",
+   "MRK": "16:37 MRK CLOSED",
+   "MSFT": "16:37 MSFT CLOSED",
+   "PEP": "16:37 PEP CLOSED",
+   "PFE": "16:37 PFE CLOSED",
+   "PG": "16:37 PG CLOSED",
+   "V": "16:37 V CLOSED",
+   "WMT": "16:37 WMT CLOSED",
+   "XOM": "16:37 XOM CLOSED",
+   "^IBEX": "16:37 IBEX CLOSED"
   }
  },
  "posizioni_trend": [
@@ -950,8 +954,8 @@
    "livello": 460.0,
    "stop": 402.09,
    "tp": 571.63,
-   "upl": -1.25,
-   "bid": 459.5
+   "upl": -1.5,
+   "bid": 459.4
   },
   {
    "nome": "Enel",
@@ -970,8 +974,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": -17.07,
-   "bid": 1672.61
+   "upl": -3.92,
+   "bid": 1684.86
   },
   {
    "nome": "Avalanche/USD",
@@ -980,8 +984,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -9.77,
-   "bid": 6.4838
+   "upl": -7.25,
+   "bid": 6.5269
   },
   {
    "nome": "ChainLink/USD",
@@ -990,8 +994,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": -5.6,
-   "bid": 9.06012
+   "upl": -3.36,
+   "bid": 9.10923
   },
   {
    "nome": "Eni",
@@ -1000,8 +1004,8 @@
    "livello": 24.03,
    "stop": 20.57,
    "tp": 30.81,
-   "upl": 3.6,
-   "bid": 24.12
+   "upl": 5.2,
+   "bid": 24.16
   },
   {
    "nome": "Intesa Sanpaolo",
@@ -1010,8 +1014,8 @@
    "livello": 5.6525,
    "stop": 4.73278,
    "tp": 7.44663,
-   "upl": -3.661875,
-   "bid": 5.63
+   "upl": -3.255,
+   "bid": 5.6325
   },
   {
    "nome": "Natural Gas",
@@ -1020,8 +1024,8 @@
    "livello": 3.5338,
    "stop": 2.40807,
    "tp": 5.77904,
-   "upl": -0.92,
-   "bid": 3.5263
+   "upl": 0.18,
+   "bid": 3.5353
   },
   {
    "nome": "SAP",
@@ -1030,8 +1034,8 @@
    "livello": 191.8,
    "stop": 158.0,
    "tp": 259.32,
-   "upl": 4.7265,
-   "bid": 192.95
+   "upl": 4.11,
+   "bid": 192.8
   },
   {
    "nome": "TotalEnergies SE",
@@ -1040,8 +1044,8 @@
    "livello": 78.29,
    "stop": 68.22,
    "tp": 97.89,
-   "upl": 2.538,
-   "bid": 78.47
+   "upl": 1.833,
+   "bid": 78.42
   },
   {
    "nome": "Ferrari - EUR",
@@ -1060,8 +1064,8 @@
    "livello": 75.81,
    "stop": 60.74,
    "tp": 104.08,
-   "upl": -16.14804,
-   "bid": 74.22
+   "upl": -17.56988,
+   "bid": 74.08
   },
   {
    "nome": "Germany 40",
@@ -1070,8 +1074,8 @@
    "livello": 25141.0,
    "stop": 22682.13,
    "tp": 30033.73,
-   "upl": 5.3352,
-   "bid": 25234.6
+   "upl": 5.5176,
+   "bid": 25237.8
   }
  ],
  "chiuse": [
