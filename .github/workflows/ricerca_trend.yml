@@ -1,0 +1,30 @@
+# Ricerca "trend sui mesi" (time-series momentum): manuale e ogni domenica dopo la ricerca principale.
+# L'esito va in ricerca_trend.json sul branch dati e NON cambia cosa fa il bot.
+name: Ricerca trend
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 8 * * 0"       # ogni domenica, dopo la ricerca principale
+
+permissions:
+  contents: write              # per salvare l'esito sul branch dati
+
+jobs:
+  ricerca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-sentinella.txt
+      - run: pip install -r requirements-sentinella.txt
+      - name: Trend sui mesi, 83 mercati, 10 anni
+        run: python ricerca_trend.py
+      - name: Salva l'esito sul branch dati
+        run: bash strumenti/memoria.sh salva ricerca_trend.json
