@@ -1,5 +1,5 @@
 {
- "data": "2026-11-26T09:03+01:00",
+ "data": "2026-11-26T09:05+01:00",
  "regola": "Sharpe >= 0.5 e rendimento annuo positivo sui 20 mercati e sui mai visti, costi inclusi",
  "riferimento_sp500": {
   "annuo_pct": 12.54,
@@ -138,7 +138,7 @@
    "mai_visti": {
     "annuo_pct": 0.54,
     "volatilita_pct": 14.45,
-    "sharpe": 0.037,
+    "sharpe": 0.038,
     "max_dd_pct": -48.8,
     "anni_positivi": "6 su 11",
     "per_anno": {
@@ -228,7 +228,7 @@
    "mai_visti": {
     "annuo_pct": 1.1,
     "volatilita_pct": 15.59,
-    "sharpe": 0.07,
+    "sharpe": 0.071,
     "max_dd_pct": -52.05,
     "anni_positivi": "7 su 11",
     "per_anno": {
@@ -332,7 +332,7 @@
      "2023": 5.1,
      "2024": 7.0,
      "2025": 7.5,
-     "2026": -5.4
+     "2026": -5.3
     }
    },
    "promossa": false
