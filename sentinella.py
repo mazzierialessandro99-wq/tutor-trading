@@ -769,6 +769,8 @@ def main():
         stato["asset"][ticker] = prima
 
     # ---- 4b. trend mensile (portafoglio lento, una volta al mese) ----
+    if PIANO.get("prova_stop_garantito") and "stop_garantito" not in stato:
+        stato["stop_garantito"] = {}                    # la prossima operazione del trend lo prova
     if broker is not None and auto_attivo and TREND.get("attivo"):
         nomi_t = {t: n for n, (t, _) in L.mercati(PIANO).items() if t in dati}
         try:

@@ -133,7 +133,25 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
                     tr["cambi"].append(["troppo piccolo", t, w])
                     continue
                 stop, tp = livelli(m["offer"], quota_stop(dati, t), m["min_distanza_stop"])
-                esito = broker.compra(m["epic"], size, stop=stop, tp=tp)
+                prova = stato.get("stop_garantito")
+                if prova is not None and not prova.get("fatto"):
+                    # PROVA dello stop garantito (una sola operazione): chiude esattamente allo stop anche nei salti di prezzo
+                    try:
+                        esito = broker.compra(m["epic"], size, stop=stop, tp=tp, garantito=True)
+                        prova.update(fatto=True, accettato=True, ticker=t, nome=nomi.get(t, t), dealId=esito["dealId"],
+                                     stop=stop, prezzo=m["offer"], size=size, data=f"{ora:%Y-%m-%d %H:%M}")
+                        messaggi.append(f"🛡️ <b>Prova dello stop garantito</b>: comprato <b>{nomi.get(t, t)}</b> con stop garantito a "
+                                        f"{stop}. Capital.com l'ha accettato. Se scatta, controllo quanto costa davvero.")
+                    except C.CapitalErrore as e:
+                        prova.update(tentativi=prova.get("tentativi", 0) + 1, ultimo_rifiuto=str(e)[:200])
+                        print(f"Stop garantito rifiutato su {t}: {e}")
+                        if prova["tentativi"] >= 3:
+                            prova.update(fatto=True, accettato=False)
+                            messaggi.append(f"🛡️ <b>Prova dello stop garantito</b>: Capital.com lo rifiuta ({str(e)[:150]}). "
+                                            "Continuo con gli stop normali.")
+                        esito = broker.compra(m["epic"], size, stop=stop, tp=tp)
+                else:
+                    esito = broker.compra(m["epic"], size, stop=stop, tp=tp)
                 deal[esito["dealId"]] = t
                 epic_di[m["epic"]] = t
                 tr["cambi"].append(["entra", t, w])

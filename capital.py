@@ -132,8 +132,9 @@ class CapitalDemo:
             if conf.get("dealStatus") not in (None, "ACCEPTED"):
                 raise CapitalErrore(f"Modifica rifiutata: {conf.get('reason') or conf.get('dealStatus')}")
 
-    def compra(self, epic: str, size: float, stop: float | None = None, tp: float | None = None) -> dict:
-        corpo = {"epic": epic, "direction": "BUY", "size": size, "guaranteedStop": False}
+    def compra(self, epic: str, size: float, stop: float | None = None, tp: float | None = None,
+               garantito: bool = False) -> dict:
+        corpo = {"epic": epic, "direction": "BUY", "size": size, "guaranteedStop": bool(garantito and stop is not None)}
         if stop is not None:
             corpo["stopLevel"] = stop
         if tp is not None:
@@ -215,7 +216,7 @@ class CapitalSimulato(CapitalDemo):
     def chiudi(self, deal_id):
         self._pos = [p for p in self._pos if p["dealId"] != deal_id]
 
-    def compra(self, epic, size, stop=None, tp=None):
+    def compra(self, epic, size, stop=None, tp=None, garantito=False):
         m = self.mercato(epic)
         self._pos.append({"epic": epic, "nome": epic, "dealId": f"SIM{len(self._pos) + 1}", "size": size,
                           "direzione": "BUY", "livello": m["offer"], "stop": stop, "tp": tp, "upl": 0, "bid": m["bid"]})

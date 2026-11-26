@@ -8,6 +8,7 @@
   "modalita": "automatico",
   "palestra": true,
   "universo": "esteso",
+  "prova_stop_garantito": true,
   "trend_mensile": {
     "attivo": true,
     "capitale": 50000
