@@ -10,7 +10,7 @@
    "colore": "ROSSO"
   },
   "^GDAXI": {
-   "colore": "ROSSO"
+   "colore": "GIALLO"
   },
   "FTSEMIB.MI": {
    "colore": "ROSSO"
@@ -60,9 +60,201 @@
   },
   "TSLA": {
    "colore": "GIALLO"
+  },
+  "SOL-USD": {
+   "colore": "ROSSO"
+  },
+  "XRP-USD": {
+   "colore": "ROSSO"
+  },
+  "BNB-USD": {
+   "colore": "ROSSO"
+  },
+  "ADA-USD": {
+   "colore": "ROSSO"
+  },
+  "DOGE-USD": {
+   "colore": "ROSSO"
+  },
+  "LTC-USD": {
+   "colore": "ROSSO"
+  },
+  "AVAX-USD": {
+   "colore": "ROSSO"
+  },
+  "DOT-USD": {
+   "colore": "ROSSO"
+  },
+  "LINK-USD": {
+   "colore": "ROSSO"
+  },
+  "^RUT": {
+   "colore": "ROSSO"
+  },
+  "^FCHI": {
+   "colore": "ROSSO"
+  },
+  "^AEX": {
+   "colore": "GIALLO"
+  },
+  "^IBEX": {
+   "colore": "GIALLO"
+  },
+  "NG=F": {
+   "colore": "GIALLO"
+  },
+  "HG=F": {
+   "colore": "ROSSO"
+  },
+  "PL=F": {
+   "colore": "ROSSO"
+  },
+  "AUDUSD=X": {
+   "colore": "ROSSO"
+  },
+  "NZDUSD=X": {
+   "colore": "ROSSO"
+  },
+  "AVGO": {
+   "colore": "ROSSO"
+  },
+  "JPM": {
+   "colore": "ROSSO"
+  },
+  "V": {
+   "colore": "GIALLO"
+  },
+  "MA": {
+   "colore": "GIALLO"
+  },
+  "UNH": {
+   "colore": "ROSSO"
+  },
+  "XOM": {
+   "colore": "GIALLO"
+  },
+  "JNJ": {
+   "colore": "GIALLO"
+  },
+  "PG": {
+   "colore": "GIALLO"
+  },
+  "HD": {
+   "colore": "GIALLO"
+  },
+  "COST": {
+   "colore": "GIALLO"
+  },
+  "LLY": {
+   "colore": "GIALLO"
+  },
+  "ABBV": {
+   "colore": "GIALLO"
+  },
+  "KO": {
+   "colore": "GIALLO"
+  },
+  "PEP": {
+   "colore": "GIALLO"
+  },
+  "WMT": {
+   "colore": "GIALLO"
+  },
+  "BAC": {
+   "colore": "ROSSO"
+  },
+  "ORCL": {
+   "colore": "ROSSO"
+  },
+  "CRM": {
+   "colore": "ROSSO"
+  },
+  "AMD": {
+   "colore": "ROSSO"
+  },
+  "NFLX": {
+   "colore": "ROSSO"
+  },
+  "ADBE": {
+   "colore": "ROSSO"
+  },
+  "INTC": {
+   "colore": "ROSSO"
+  },
+  "CSCO": {
+   "colore": "ROSSO"
+  },
+  "DIS": {
+   "colore": "GIALLO"
+  },
+  "MCD": {
+   "colore": "GIALLO"
+  },
+  "NKE": {
+   "colore": "ROSSO"
+  },
+  "BA": {
+   "colore": "ROSSO"
+  },
+  "CAT": {
+   "colore": "ROSSO"
+  },
+  "GS": {
+   "colore": "ROSSO"
+  },
+  "IBM": {
+   "colore": "ROSSO"
+  },
+  "QCOM": {
+   "colore": "ROSSO"
+  },
+  "PFE": {
+   "colore": "GIALLO"
+  },
+  "MRK": {
+   "colore": "GIALLO"
+  },
+  "CVX": {
+   "colore": "GIALLO"
+  },
+  "SAP.DE": {
+   "avvisato": "2026-11-26",
+   "colore": "VERDE"
+  },
+  "ASML.AS": {
+   "colore": "ROSSO"
+  },
+  "MC.PA": {
+   "colore": "ROSSO"
+  },
+  "SIE.DE": {
+   "colore": "ROSSO"
+  },
+  "TTE.PA": {
+   "avvisato": "2026-11-26",
+   "colore": "VERDE"
+  },
+  "ALV.DE": {
+   "colore": "GIALLO"
+  },
+  "ENI.MI": {
+   "avvisato": "2026-11-26",
+   "colore": "VERDE"
+  },
+  "ENEL.MI": {
+   "colore": "GIALLO"
+  },
+  "ISP.MI": {
+   "colore": "ROSSO"
+  },
+  "UCG.MI": {
+   "colore": "GIALLO"
+  },
+  "RACE.MI": {
+   "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T09:07+01:00",
+ "ultimo_giro": "2026-11-26T09:19+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -72,6 +264,30 @@
    "stop": 465.4,
    "tp": 567.22,
    "data": "2026-11-23T17:25+01:00"
+  },
+  {
+   "nome": "SAP",
+   "size": 86.15,
+   "livello": 191.65,
+   "stop": 180.04,
+   "tp": 214.86,
+   "data": "2026-11-26T09:19+01:00"
+  },
+  {
+   "nome": "TotalEnergies",
+   "size": 311.3,
+   "livello": 78.24,
+   "stop": 75.03,
+   "tp": 84.66,
+   "data": "2026-11-26T09:19+01:00"
+  },
+  {
+   "nome": "ENI",
+   "size": 971,
+   "livello": 24.03,
+   "stop": 23.0,
+   "tp": 26.09,
+   "data": "2026-11-26T09:19+01:00"
   }
  ],
  "periodi": {
@@ -97,6 +313,30 @@
    "nome": "Microsoft Corp",
    "epic": "MSFT",
    "aperta": "2026-11-25T20:59+01:00"
+  },
+  "00000000-76bb-2986-04a0-458c0015549e": {
+   "nome": "SAP",
+   "epic": "SAPD",
+   "aperta": "2026-11-26T09:19+01:00",
+   "livello": 191.65,
+   "distanza": 11.606802313437194,
+   "palestra": true
+  },
+  "00000000-76bb-2995-04a0-458c0015549e": {
+   "nome": "TotalEnergies",
+   "epic": "TTEF",
+   "aperta": "2026-11-26T09:19+01:00",
+   "livello": 78.24,
+   "distanza": 3.2120797916568358,
+   "palestra": true
+  },
+  "00000000-76bb-29af-04a0-458c0015549e": {
+   "nome": "ENI",
+   "epic": "ENI",
+   "aperta": "2026-11-26T09:19+01:00",
+   "livello": 24.03,
+   "distanza": 1.028823472452109,
+   "palestra": true
   }
  },
  "obiettivo_traccia": {
@@ -107,7 +347,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168294,
  "giri": {
-  "2026-W48": 32
+  "2026-W48": 33
  },
  "storia": [
   [
@@ -237,6 +477,10 @@
   [
    "2026-11-26T09:07+01:00",
    100000.33
+  ],
+  [
+   "2026-11-26T09:19+01:00",
+   100000.33
   ]
  ],
  "posizioni": [
@@ -253,5 +497,194 @@
  ],
  "modalita": "automatica",
  "capitale_piano": 100000.0,
- "obiettivo": 200000.0
+ "obiettivo": 200000.0,
+ "tensione": false,
+ "vix": 28.3,
+ "eventi": {
+  "SAP.DE": {
+   "giorno": "2026-11-26",
+   "conti": "2027-01-28"
+  },
+  "TTE.PA": {
+   "giorno": "2026-11-26",
+   "conti": "2027-02-10"
+  },
+  "ENI.MI": {
+   "giorno": "2026-11-26",
+   "conti": null
+  }
+ },
+ "decisioni": [
+  {
+   "ora": "2026-11-26T09:19+01:00",
+   "mercato": "SAP",
+   "decisione": "Operazione aperta (palestra)",
+   "motivo": "86,15 contratti a 191,65, stop 180,04, take profit 214,86",
+   "icona": "✅"
+  },
+  {
+   "ora": "2026-11-26T09:19+01:00",
+   "mercato": "TotalEnergies",
+   "decisione": "Operazione aperta (palestra)",
+   "motivo": "311 contratti a 78,24, stop 75,03, take profit 84,66",
+   "icona": "✅"
+  },
+  {
+   "ora": "2026-11-26T09:19+01:00",
+   "mercato": "ENI",
+   "decisione": "Operazione aperta (palestra)",
+   "motivo": "971 contratti a 24,03, stop 23,00, take profit 26,09",
+   "icona": "✅"
+  }
+ ],
+ "trend": {
+  "deal": {
+   "00000000-76bb-29db-04a0-458c0015549e": "ALV.DE",
+   "00000000-76bb-29ed-04a0-458c0015549e": "AVAX-USD",
+   "00000000-76bb-2a0f-04a0-458c0015549e": "ENEL.MI",
+   "00000000-76bb-2a25-04a0-458c0015549e": "ENI.MI",
+   "00000000-76bb-2a41-04a0-458c0015549e": "ISP.MI",
+   "00000000-76bb-2a9d-04a0-458c0015549e": "LINK-USD",
+   "00000000-76bb-2ab7-04a0-458c0015549e": "NG=F",
+   "00000000-76bb-2ac3-04a0-458c0015549e": "RACE.MI",
+   "00000000-76bb-2aca-04a0-458c0015549e": "SAP.DE",
+   "00000000-76bb-2ad1-04a0-458c0015549e": "TTE.PA",
+   "00000000-76bb-2ad8-04a0-458c0015549e": "UCG.MI",
+   "00000000-76bb-2ae7-04a0-458c0015549e": "^AEX",
+   "00000000-76bb-2aee-04a0-458c0015549e": "^GDAXI"
+  },
+  "mese": "2026-11",
+  "obiettivo": {
+   "^GDAXI": 0.0287,
+   "AAPL": 0.0214,
+   "MSFT": 0.0171,
+   "AVAX-USD": 0.0078,
+   "LINK-USD": 0.0085,
+   "^AEX": 0.0363,
+   "^IBEX": 0.0276,
+   "NG=F": 0.0087,
+   "JPM": 0.0217,
+   "V": 0.0213,
+   "MA": 0.021,
+   "XOM": 0.0179,
+   "JNJ": 0.0193,
+   "PG": 0.023,
+   "HD": 0.0161,
+   "COST": 0.0256,
+   "LLY": 0.0163,
+   "ABBV": 0.0223,
+   "KO": 0.0276,
+   "PEP": 0.0209,
+   "WMT": 0.0214,
+   "CRM": 0.0125,
+   "DIS": 0.0199,
+   "MCD": 0.0197,
+   "PFE": 0.023,
+   "MRK": 0.0165,
+   "CVX": 0.0196,
+   "SAP.DE": 0.0158,
+   "TTE.PA": 0.0222,
+   "ALV.DE": 0.023,
+   "ENI.MI": 0.0195,
+   "ENEL.MI": 0.0259,
+   "ISP.MI": 0.0184,
+   "UCG.MI": 0.0154,
+   "RACE.MI": 0.0215
+  },
+  "tentativi": {},
+  "cambi": [
+   [
+    "entra",
+    "ALV.DE",
+    0.023
+   ],
+   [
+    "entra",
+    "AVAX-USD",
+    0.0078
+   ],
+   [
+    "entra",
+    "ENEL.MI",
+    0.0259
+   ],
+   [
+    "entra",
+    "ENI.MI",
+    0.0195
+   ],
+   [
+    "entra",
+    "ISP.MI",
+    0.0184
+   ],
+   [
+    "entra",
+    "LINK-USD",
+    0.0085
+   ],
+   [
+    "entra",
+    "NG=F",
+    0.0087
+   ],
+   [
+    "entra",
+    "RACE.MI",
+    0.0215
+   ],
+   [
+    "entra",
+    "SAP.DE",
+    0.0158
+   ],
+   [
+    "entra",
+    "TTE.PA",
+    0.0222
+   ],
+   [
+    "entra",
+    "UCG.MI",
+    0.0154
+   ],
+   [
+    "entra",
+    "^AEX",
+    0.0363
+   ],
+   [
+    "entra",
+    "^GDAXI",
+    0.0287
+   ]
+  ],
+  "annunciato": false,
+  "da_fare": [
+   "AAPL",
+   "ABBV",
+   "COST",
+   "CRM",
+   "CVX",
+   "DIS",
+   "HD",
+   "JNJ",
+   "JPM",
+   "KO",
+   "LLY",
+   "MA",
+   "MCD",
+   "MRK",
+   "MSFT",
+   "PEP",
+   "PFE",
+   "PG",
+   "V",
+   "WMT",
+   "XOM",
+   "^IBEX"
+  ],
+  "capitale": 50000.0
+ },
+ "posizioni_trend": []
 }
