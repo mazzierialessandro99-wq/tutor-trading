@@ -118,6 +118,17 @@ def main():
         righe.append({"mesi": n, "lato": lato, "base": a, "mai_visti": b, "promossa": bool(promossa)})
         print(f"{n:<6}{lato:<20}| {a['annuo_pct']:>6.1f}%{a['sharpe']:>7.2f}{a['max_dd_pct']:>8.1f}% | "
               f"{b['annuo_pct']:>6.1f}%{b['sharpe']:>7.2f}{b['max_dd_pct']:>8.1f}% | {'✅ PROMOSSA' if promossa else '—'}")
+    # diagnosi: quanto pesano le commissioni notturne dei CFD? (stesse regole, come se si comprassero ETF/azioni vere)
+    B.CON_SWAP = False
+    senza = {}
+    for n, lato in CONFIGURAZIONI:
+        if lato == "solo acquisti":
+            a = misura(simula(gruppi["20 mercati"], n, lato))
+            b = misura(simula(gruppi["mai visti"], n, lato))
+            senza[n] = {"base": a, "mai_visti": b}
+            print(f"senza commissioni notturne · {n:<5} mesi | {a['annuo_pct']:>6.1f}%{a['sharpe']:>7.2f}{a['max_dd_pct']:>8.1f}% | "
+                  f"{b['annuo_pct']:>6.1f}%{b['sharpe']:>7.2f}{b['max_dd_pct']:>8.1f}%")
+    B.CON_SWAP = True
     promosse = [r for r in righe if r["promossa"]]
     vincitrice = max(promosse, key=lambda r: r["mai_visti"]["sharpe"]) if promosse else None
     print()
@@ -128,7 +139,7 @@ def main():
         print("NESSUNA configurazione supera la regola.")
     esito = {"data": pd.Timestamp.now(tz="Europe/Rome").isoformat(timespec="minutes"),
              "regola": f"Sharpe >= {SOGLIA_SHARPE} e rendimento annuo positivo sui 20 mercati e sui mai visti, costi inclusi",
-             "riferimento_sp500": riferimento, "configurazioni": righe, "vincitrice": vincitrice}
+             "riferimento_sp500": riferimento, "configurazioni": righe, "senza_commissioni_notturne": senza, "vincitrice": vincitrice}
     with open("ricerca_trend.json", "w", encoding="utf-8") as f:
         json.dump(esito, f, indent=1, ensure_ascii=False)
     print("Esito salvato in ricerca_trend.json")
