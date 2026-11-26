@@ -570,7 +570,10 @@ def schermata_home():
             card(f'<div style="display:flex;justify-content:space-between;align-items:baseline"><span class="t">Risultato in corso</span>'
                  f'<span class="r-p" style="color:{T["su"] if upl >= 0 else T["giu"]}">{euro_s(upl)}</span></div>'
                  '<div class="chips" style="margin-top:8px">' + "".join(f'<span class="chip">{nomi.get(t, t)} {w * 100:.0f}%</span>' for t, w in top)
-                 + '</div><div class="nota">Esperimento sul Demo: con i CFD si pagano le commissioni notturne, '
+                 + '</div>' + (f'<div class="warn">{sum(1 for p in pt if not p.get("stop") or not p.get("tp"))} posizioni ancora senza '
+                               'stop o take profit: il bot li mette al prossimo giro.</div>'
+                               if any(not p.get("stop") or not p.get("tp") for p in pt if "stop" in p) else '')
+                 + '<div class="nota">Esperimento sul Demo: con i CFD si pagano le commissioni notturne, '
                  'con ETF o azioni vere no.</div>')
 
     decisioni = list(reversed((m or {}).get("decisioni") or []))[:8]

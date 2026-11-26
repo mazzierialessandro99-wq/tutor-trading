@@ -810,7 +810,8 @@ def main():
     if broker is not None:
         stato["posizioni"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl", "bid")}
                               for p in posizioni if "size" in p]
-        stato["posizioni_trend"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "upl", "bid")} for p in pos_trend]
+        stato["posizioni_trend"] = [{k: p.get(k) for k in ("nome", "epic", "size", "livello", "stop", "tp", "upl", "bid")}
+                                    for p in pos_trend]
         stato.setdefault("trend", {})["capitale"] = float(TREND.get("capitale", 0) or 0)
     stato["modalita"] = "automatica" if auto_attivo else ("pausa" if stato.get("pausa") else "avvisi")
     stato["capitale_piano"], stato["obiettivo"] = CAPITALE, OBIETTIVO
