@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T22:37+01:00",
+ "ultimo_giro": "2026-11-26T23:07+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -314,11 +314,6 @@
    "epic": "MSFT",
    "aperta": "2026-11-25T20:59+01:00"
   },
-  "00000000-76bb-2989-04a0-458c0015549e": {
-   "nome": "SAP",
-   "epic": "SAPD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
   "00000000-76bb-2998-04a0-458c0015549e": {
    "nome": "TotalEnergies SE",
    "epic": "TTEF",
@@ -327,6 +322,11 @@
   "00000000-76bb-29b2-04a0-458c0015549e": {
    "nome": "Eni",
    "epic": "ENI",
+   "aperta": "2026-11-26T09:37+01:00"
+  },
+  "00000000-76bb-2989-04a0-458c0015549e": {
+   "nome": "SAP",
+   "epic": "SAPD",
    "aperta": "2026-11-26T09:37+01:00"
   }
  },
@@ -343,7 +343,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168295,
  "giri": {
-  "2026-W48": 68
+  "2026-W48": 69
  },
  "storia": [
   [
@@ -617,6 +617,10 @@
   [
    "2026-11-26T22:37+01:00",
    100261.95
+  ],
+  [
+   "2026-11-26T23:07+01:00",
+   100233.18
   ]
  ],
  "posizioni": [
@@ -629,16 +633,6 @@
    "tp": 567.22,
    "upl": -1.14,
    "bid": 491.5
-  },
-  {
-   "nome": "SAP",
-   "epic": "SAPD",
-   "size": 86.15,
-   "livello": 191.65,
-   "stop": 180.04,
-   "tp": 214.86,
-   "upl": 137.84,
-   "bid": 193.25
   },
   {
    "nome": "TotalEnergies SE",
@@ -659,6 +653,16 @@
    "tp": 26.09,
    "upl": 87.39,
    "bid": 24.12
+  },
+  {
+   "nome": "SAP",
+   "epic": "SAPD",
+   "size": 86.15,
+   "livello": 191.65,
+   "stop": 180.04,
+   "tp": 214.86,
+   "upl": 137.84,
+   "bid": 193.25
   }
  ],
  "modalita": "automatica",
@@ -976,28 +980,28 @@
    "TTEF": "TTE.PA"
   },
   "attese": {
-   "AAPL": "22:37 AAPL CLOSED",
-   "ABBV": "22:37 ABBV CLOSED",
-   "COST": "22:37 COST CLOSED",
-   "CRM": "22:37 CRM CLOSED",
-   "CVX": "22:37 CVX CLOSED",
-   "DIS": "22:37 DIS CLOSED",
-   "HD": "22:37 HD CLOSED",
-   "JNJ": "22:37 JNJ CLOSED",
-   "JPM": "22:37 JPM CLOSED",
-   "KO": "22:37 KO CLOSED",
-   "LLY": "22:37 LLY CLOSED",
-   "MA": "22:37 MA CLOSED",
-   "MCD": "22:37 MCD CLOSED",
-   "MRK": "22:37 MRK CLOSED",
-   "MSFT": "22:37 MSFT CLOSED",
-   "PEP": "22:37 PEP CLOSED",
-   "PFE": "22:37 PFE CLOSED",
-   "PG": "22:37 PG CLOSED",
-   "V": "22:37 V CLOSED",
-   "WMT": "22:37 WMT CLOSED",
-   "XOM": "22:37 XOM CLOSED",
-   "^IBEX": "22:37 IBEX CLOSED"
+   "AAPL": "23:07 AAPL CLOSED",
+   "ABBV": "23:07 ABBV CLOSED",
+   "COST": "23:07 COST CLOSED",
+   "CRM": "23:07 CRM CLOSED",
+   "CVX": "23:07 CVX CLOSED",
+   "DIS": "23:07 DIS CLOSED",
+   "HD": "23:07 HD CLOSED",
+   "JNJ": "23:07 JNJ CLOSED",
+   "JPM": "23:07 JPM CLOSED",
+   "KO": "23:07 KO CLOSED",
+   "LLY": "23:07 LLY CLOSED",
+   "MA": "23:07 MA CLOSED",
+   "MCD": "23:07 MCD CLOSED",
+   "MRK": "23:07 MRK CLOSED",
+   "MSFT": "23:07 MSFT CLOSED",
+   "PEP": "23:07 PEP CLOSED",
+   "PFE": "23:07 PFE CLOSED",
+   "PG": "23:07 PG CLOSED",
+   "V": "23:07 V CLOSED",
+   "WMT": "23:07 WMT CLOSED",
+   "XOM": "23:07 XOM CLOSED",
+   "^IBEX": "23:07 IBEX CLOSED"
   }
  },
  "posizioni_trend": [
@@ -1028,8 +1032,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": 18.6,
-   "bid": 1705.82
+   "upl": 8.14,
+   "bid": 1696.08
   },
   {
    "nome": "Avalanche/USD",
@@ -1038,8 +1042,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -0.3,
-   "bid": 6.6454
+   "upl": -2.31,
+   "bid": 6.6112
   },
   {
    "nome": "ChainLink/USD",
@@ -1048,8 +1052,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": 7.89,
-   "bid": 9.35603
+   "upl": 6.54,
+   "bid": 9.32642
   },
   {
    "nome": "Eni",
@@ -1078,8 +1082,8 @@
    "livello": 3.5338,
    "stop": 2.40807,
    "tp": 5.77904,
-   "upl": -4.06,
-   "bid": 3.5008
+   "upl": -5.54,
+   "bid": 3.4888
   },
   {
    "nome": "SAP",
