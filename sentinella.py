@@ -466,7 +466,7 @@ def fiducia_ok(dati: dict, stato: dict, oggi: str) -> bool:
     if f.get("data") == oggi:
         return bool(f.get("ok"))
     studiate = []
-    for nome, (t, _) in L.ASSET.items():
+    for nome, (t, _) in L.mercati(PIANO).items():
         if t not in dati:
             continue
         df = BT.segnali_mercato(dati[t])
@@ -559,7 +559,7 @@ def main():
         stato["pausa"] = False
 
     # ---- 2. prezzi e semafori ----
-    tickers = [t for t, _ in L.ASSET.values()]
+    tickers = [t for t, _ in L.mercati(PIANO).values()]
     dati = scarica_tutti(tickers + ["EURUSD=X"] + (["^GSPC"] if "^GSPC" not in tickers else []))
     if not dati:
         sys.exit("Nessun dato scaricato (Yahoo non risponde): riprovo al prossimo giro.")
@@ -648,7 +648,7 @@ def main():
     # ---- 4. semafori: avvisi ed eventuali operazioni ----
     righe = []
     esclusi = set(PIANO.get("mercati_esclusi", []))
-    for nome, (ticker, valuta) in L.ASSET.items():
+    for nome, (ticker, valuta) in L.mercati(PIANO).items():
         if ticker not in dati or nome in esclusi or ticker in esclusi:
             continue
         v = L.valuta(L.aggiungi_indicatori(dati[ticker]))

@@ -28,7 +28,7 @@ DEMO_URL = "https://demo-api-capital.backend-capital.com/api/v1"   # SOLO DEMO, 
 EPIC = {
     "^GSPC": "US500", "^NDX": "US100", "^DJI": "US30", "^GDAXI": "DE40", "FTSEMIB.MI": "IT40",
     "^STOXX50E": "EU50", "GC=F": "GOLD", "SI=F": "SILVER", "CL=F": "OIL_CRUDE",
-    "EURUSD=X": "EURUSD", "GBPUSD=X": "GBPUSD", "BTC-USD": "BTCUSD", "ETH-USD": "ETHUSD",
+    "EURUSD=X": "EURUSD", "GBPUSD=X": "GBPUSD", "BTC-USD": "BTCUSD", "ETH-USD": "ETHUSD", "SOL-USD": "SOLUSD", "XRP-USD": "XRPUSD", "BNB-USD": "BNBUSD", "ADA-USD": "ADAUSD", "DOGE-USD": "DOGEUSD", "LTC-USD": "LTCUSD", "AVAX-USD": "AVAXUSD", "DOT-USD": "DOTUSD", "LINK-USD": "LINKUSD",
     "AAPL": "AAPL", "MSFT": "MSFT", "NVDA": "NVDA", "AMZN": "AMZN", "GOOGL": "GOOGL",
     "META": "META", "TSLA": "TSLA",
 }

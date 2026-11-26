@@ -7,6 +7,7 @@
   },
   "modalita": "automatico",
   "palestra": true,
+  "universo": "esteso",
   "capitale": 100000,
   "obiettivo": 200000,
   "rischio_per_operazione": 1.0,

@@ -195,7 +195,7 @@ def rischio_per(ticker: str, piano: dict, rischio_base: float | None = None) -> 
 NOMI_CAPITAL = {
     "^GSPC": "US500", "^NDX": "US100", "^DJI": "US30", "^GDAXI": "DE40", "FTSEMIB.MI": "IT40",
     "^STOXX50E": "EU50", "GC=F": "Gold", "SI=F": "Silver", "CL=F": "US Crude Oil",
-    "EURUSD=X": "EUR/USD", "GBPUSD=X": "GBP/USD", "BTC-USD": "Bitcoin", "ETH-USD": "Ethereum",
+    "EURUSD=X": "EUR/USD", "GBPUSD=X": "GBP/USD", "BTC-USD": "Bitcoin", "ETH-USD": "Ethereum", "SOL-USD": "Solana", "XRP-USD": "XRP", "BNB-USD": "BNB", "ADA-USD": "Cardano", "DOGE-USD": "Dogecoin", "LTC-USD": "Litecoin", "AVAX-USD": "Avalanche", "DOT-USD": "Polkadot", "LINK-USD": "Chainlink",
     "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "AMZN": "Amazon",
     "GOOGL": "Alphabet", "META": "Meta Platforms", "TSLA": "Tesla",
 }
@@ -211,6 +211,8 @@ def nome_capital(ticker: str, nome: str) -> str:
 # NON scelti guardando i risultati del backtest (sarebbe barare).
 # ------------------------------------------------------------------------------
 ASSET_EXTRA = {
+    # Cripto (oltre a Bitcoin ed Ethereum)
+    "Solana": ("SOL-USD", "USD"), "XRP": ("XRP-USD", "USD"), "BNB": ("BNB-USD", "USD"), "Cardano": ("ADA-USD", "USD"), "Dogecoin": ("DOGE-USD", "USD"), "Litecoin": ("LTC-USD", "USD"), "Avalanche": ("AVAX-USD", "USD"), "Polkadot": ("DOT-USD", "USD"), "Chainlink": ("LINK-USD", "USD"),
     # Indici
     "Russell 2000 (USA)": ("^RUT", "USD"), "CAC 40 (Francia)": ("^FCHI", "EUR"),
     "AEX (Olanda)": ("^AEX", "EUR"), "IBEX 35 (Spagna)": ("^IBEX", "EUR"),

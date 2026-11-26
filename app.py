@@ -37,6 +37,7 @@ chat_bot = importlib.reload(chat_bot)
 st.set_page_config(page_title="Tutor di Trading", page_icon="📈", layout="centered", initial_sidebar_state="collapsed")
 
 PIANO = L.carica_piano()
+MERCATI = L.mercati(PIANO)          # quelli che il bot sorveglia (base o esteso)
 DEMO = os.environ.get("TUTOR_DEMO") == "1"      # solo per le prove dello sviluppatore, senza internet
 URL_DATI = "https://raw.githubusercontent.com/mazzierialessandro99-wq/tutor-trading/dati/"
 
@@ -252,7 +253,7 @@ def _dati_demo(ticker: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def tutti_i_dati() -> dict:
-    tickers = [t for t, _ in L.ASSET.values()]
+    tickers = [t for t, _ in MERCATI.values()]
     if DEMO:
         return {t: _dati_demo(t) for t in tickers}
     try:
@@ -305,7 +306,7 @@ def categoria(ticker: str) -> str:
 @st.cache_data(ttl=1800, show_spinner=False)
 def panoramica() -> list[dict]:
     righe = []
-    for nome, (ticker, valuta) in L.ASSET.items():
+    for nome, (ticker, valuta) in MERCATI.items():
         d = tutti_i_dati().get(ticker)
         if d is None or len(d) < L.EMA_PERIODO + 20:
             continue
@@ -331,7 +332,7 @@ def memoria(nome_file: str = "stato_sentinella.json") -> dict | None:
 
 @st.cache_data(ttl=12 * 3600, show_spinner=False)
 def calcola_backtest(capitale: float) -> dict:
-    tickers = [t for t, _ in L.ASSET.values()]
+    tickers = [t for t, _ in MERCATI.values()]
     dati = {t: _dati_demo(t) for t in tickers} if DEMO else sentinella.scarica_tutti(tickers, periodo="5y")
     r = backtest.esegui(dati, capitale, PIANO)
     r["mercati"] = len(dati)
@@ -588,7 +589,7 @@ def dettaglio_mercato(nome: str, ticker: str):
         return
     df = prepara(d)
     v = L.valuta(df)
-    valuta = L.ASSET.get(nome, (None, "USD"))[1] or "USD"
+    valuta = MERCATI.get(nome, (None, "USD"))[1] or "USD"
     sim = {"USD": "$", "EUR": "€"}.get(valuta, valuta + " ")
     var = (df["Close"].iloc[-1] / df["Close"].iloc[-2] - 1) * 100
     st.markdown(f'<div style="display:flex;align-items:center;gap:12px;margin:6px 0 10px">{logo(nome, SEMAFORO[v["colore"]])}'
@@ -672,14 +673,14 @@ def dettaglio_mercato(nome: str, ticker: str):
 # CHAT CON IL BOT
 # ==============================================================================
 def analizza_per_chat(nome: str) -> dict | None:
-    ticker = L.ASSET.get(nome, (None, None))[0]
+    ticker = MERCATI.get(nome, (None, None))[0]
     d = dati_di(ticker) if ticker else None
     if d is None or len(d) < L.EMA_PERIODO + 50:
         return None
     df = prepara(d)
     v = L.valuta(df)
     s = coach.analizza(df)
-    metodi = coach.metodi_stop(s, ss.capitale * cambio_eur(L.ASSET[nome][1]), L.rischio_per(ticker, PIANO, ss.rischio))
+    metodi = coach.metodi_stop(s, ss.capitale * cambio_eur(MERCATI[nome][1]), L.rischio_per(ticker, PIANO, ss.rischio))
     cons = next((m for m in metodi if m["consigliato"]), metodi[0])
     fare, _ = coach.consigli(s, True)
     return {"colore": v["colore"], "sintesi": v["sintesi"], "trend": s["trend"], "momento": s["momento"], "vol": s["vol"],

@@ -11,7 +11,7 @@ import unicodedata
 import logica as L
 
 SUGGERIMENTI = ["Come va?", "Operazioni aperte", "Cosa c'è di verde oggi?", "Perché non operi?",
-                "Come metto lo stop loss?", "Analizza l'oro"]
+                "Come metto lo stop loss?", "Come vanno le cripto?", "Analizza l'oro"]
 
 # parole chiave dei mercati (minuscole, senza accenti) -> nome nella lista dei mercati
 ALIAS = {
@@ -22,7 +22,9 @@ ALIAS = {
     "eurusd": "Euro / Dollaro", "euro dollaro": "Euro / Dollaro", "sterlina": "Sterlina / Dollaro",
     "bitcoin": "Bitcoin", "btc": "Bitcoin", "ethereum": "Ethereum", "eth": "Ethereum", "apple": "Apple",
     "microsoft": "Microsoft", "nvidia": "Nvidia", "amazon": "Amazon", "google": "Alphabet (Google)",
-    "alphabet": "Alphabet (Google)", "meta": "Meta", "facebook": "Meta", "tesla": "Tesla",
+    "alphabet": "Alphabet (Google)", "meta": "Meta", "facebook": "Meta", "tesla": "Tesla", "solana": "Solana", "sol": "Solana", "ripple": "XRP", "xrp": "XRP", "bnb": "BNB",
+    "cardano": "Cardano", "doge": "Dogecoin", "dogecoin": "Dogecoin", "litecoin": "Litecoin", "avalanche": "Avalanche",
+    "polkadot": "Polkadot", "chainlink": "Chainlink", "cripto": None,
 }
 
 
@@ -43,8 +45,9 @@ def trova_mercato(testo: str) -> str | None:
     t = _norm(testo)
     for chiave in sorted(ALIAS, key=len, reverse=True):
         if re.search(rf"(?<![a-z]){re.escape(chiave)}(?![a-z])", t):
-            return ALIAS[chiave]
-    for nome in L.ASSET:
+            if ALIAS[chiave]:
+                return ALIAS[chiave]
+    for nome in L.ASSET | L.ASSET_EXTRA:
         base = _norm(nome.split(" (")[0])
         if len(base) > 2 and base in t:
             return nome
@@ -88,6 +91,17 @@ def rispondi(testo: str, ctx: dict) -> str:
                 "• <b>Analizza l'oro</b> (o qualsiasi mercato della lista)<br>• <b>Perché non operi?</b> · la mia ricerca<br>"
                 "• Spiegazioni: <b>stop loss, take profit, RSI, EMA, ATR, leva, rischio, drawdown</b><br>"
                 "Su Telegram puoi usare /stato, /resoconto, /stop e /riprendi.")
+
+    # --- cripto ---
+    if ha("cripto", "crypto", "criptovalut"):
+        righe = [r for r in ctx.get("panoramica") or [] if L.is_cripto(r["ticker"])]
+        if not righe:
+            return "Non riesco a leggere i prezzi delle cripto in questo momento."
+        pallino = {"VERDE": "🟢", "GIALLO": "🟡", "ROSSO": "🔴"}
+        elenco = "<br>".join(f"{pallino[r['colore']]} <b>{r['nome']}</b> {'+' if r['var'] >= 0 else '−'}{_num(abs(r['var']))}% oggi"
+                             for r in sorted(righe, key=lambda r: ("VERDE", "GIALLO", "ROSSO").index(r["colore"])))
+        return (f"Tengo d'occhio <b>{len(righe)}</b> cripto:<br>{elenco}<br>Sulle cripto rischio la metà (0,5%): "
+                "si muovono il doppio e di notte e nel weekend non si fermano mai.")
 
     # --- stato e risultati ---
     if ha("come va", "come stai", "stato", "cosa fai", "situazione", "tutto bene"):
