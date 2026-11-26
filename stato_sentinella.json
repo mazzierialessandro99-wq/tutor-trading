@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T09:37+01:00",
+ "ultimo_giro": "2026-11-26T09:46+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -328,71 +328,6 @@
    "nome": "Eni",
    "epic": "ENI",
    "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-29f0-04a0-458c0015549e": {
-   "nome": "Avalanche/USD",
-   "epic": "AVAXUSD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-29de-04a0-458c0015549e": {
-   "nome": "Allianz",
-   "epic": "ALVD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2a12-04a0-458c0015549e": {
-   "nome": "Enel",
-   "epic": "ENEL",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2a28-04a0-458c0015549e": {
-   "nome": "Eni",
-   "epic": "ENI",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2a44-04a0-458c0015549e": {
-   "nome": "Intesa Sanpaolo",
-   "epic": "ISP",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2aa0-04a0-458c0015549e": {
-   "nome": "ChainLink/USD",
-   "epic": "LINKUSD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2aba-04a0-458c0015549e": {
-   "nome": "Natural Gas",
-   "epic": "NATURALGAS",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2acd-04a0-458c0015549e": {
-   "nome": "SAP",
-   "epic": "SAPD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2ad4-04a0-458c0015549e": {
-   "nome": "TotalEnergies SE",
-   "epic": "TTEF",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2ac6-04a0-458c0015549e": {
-   "nome": "Ferrari - EUR",
-   "epic": "RACEM",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2adb-04a0-458c0015549e": {
-   "nome": "Unicredit",
-   "epic": "UCG",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2aea-04a0-458c0015549e": {
-   "nome": "Ethereum/USD",
-   "epic": "ETHUSD",
-   "aperta": "2026-11-26T09:37+01:00"
-  },
-  "00000000-76bb-2af1-04a0-458c0015549e": {
-   "nome": "Germany 40",
-   "epic": "DE40",
-   "aperta": "2026-11-26T09:37+01:00"
   }
  },
  "obiettivo_traccia": {
@@ -403,7 +338,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168294,
  "giri": {
-  "2026-W48": 34
+  "2026-W48": 35
  },
  "storia": [
   [
@@ -541,6 +476,10 @@
   [
    "2026-11-26T09:37+01:00",
    99901.01
+  ],
+  [
+   "2026-11-26T09:46+01:00",
+   99897.41
   ]
  ],
  "posizioni": [
@@ -561,8 +500,8 @@
    "livello": 191.65,
    "stop": 180.04,
    "tp": 214.86,
-   "upl": 68.92,
-   "bid": 192.45
+   "upl": 38.7675,
+   "bid": 192.1
   },
   {
    "nome": "TotalEnergies SE",
@@ -571,8 +510,8 @@
    "livello": 78.24,
    "stop": 75.03,
    "tp": 84.66,
-   "upl": -62.26,
-   "bid": 78.04
+   "upl": -77.825,
+   "bid": 77.99
   },
   {
    "nome": "Eni",
@@ -581,138 +520,8 @@
    "livello": 24.03,
    "stop": 23.0,
    "tp": 26.09,
-   "upl": -87.39,
-   "bid": 23.94
-  },
-  {
-   "nome": "Avalanche/USD",
-   "epic": "AVAXUSD",
-   "size": 64.3,
-   "livello": 6.6506,
-   "stop": null,
-   "tp": null,
-   "upl": -1.01,
-   "bid": 6.6334
-  },
-  {
-   "nome": "Allianz",
-   "epic": "ALVD",
-   "size": 2.5,
-   "livello": 460.0,
-   "stop": null,
-   "tp": null,
-   "upl": -6.0,
-   "bid": 457.6
-  },
-  {
-   "nome": "Enel",
-   "epic": "ENEL",
-   "size": 136,
-   "livello": 9.47,
-   "stop": null,
-   "tp": null,
-   "upl": -1.36,
-   "bid": 9.46
-  },
-  {
-   "nome": "Eni",
-   "epic": "ENI",
-   "size": 40,
-   "livello": 24.03,
-   "stop": null,
-   "tp": null,
-   "upl": -3.6,
-   "bid": 23.94
-  },
-  {
-   "nome": "Intesa Sanpaolo",
-   "epic": "ISP",
-   "size": 162.75,
-   "livello": 5.6525,
-   "stop": null,
-   "tp": null,
-   "upl": -0.81375,
-   "bid": 5.6475
-  },
-  {
-   "nome": "ChainLink/USD",
-   "epic": "LINKUSD",
-   "size": 50,
-   "livello": 9.18303,
-   "stop": null,
-   "tp": null,
-   "upl": -1.17,
-   "bid": 9.15725
-  },
-  {
-   "nome": "Natural Gas",
-   "epic": "NATURALGAS",
-   "size": 135.1,
-   "livello": 3.5338,
-   "stop": null,
-   "tp": null,
-   "upl": -1.97,
-   "bid": 3.5178
-  },
-  {
-   "nome": "SAP",
-   "epic": "SAPD",
-   "size": 4.11,
-   "livello": 191.8,
-   "stop": null,
-   "tp": null,
-   "upl": 2.6715,
-   "bid": 192.45
-  },
-  {
-   "nome": "TotalEnergies SE",
-   "epic": "TTEF",
-   "size": 14.1,
-   "livello": 78.29,
-   "stop": null,
-   "tp": null,
-   "upl": -3.525,
-   "bid": 78.04
-  },
-  {
-   "nome": "Ferrari - EUR",
-   "epic": "RACEM",
-   "size": 2.88,
-   "livello": 372.08,
-   "stop": null,
-   "tp": null,
-   "upl": -2.4768,
-   "bid": 371.22
-  },
-  {
-   "nome": "Unicredit",
-   "epic": "UCG",
-   "size": 10.156,
-   "livello": 75.81,
-   "stop": null,
-   "tp": null,
-   "upl": -1.72652,
-   "bid": 75.64
-  },
-  {
-   "nome": "Ethereum/USD",
-   "epic": "ETHUSD",
-   "size": 1.179,
-   "livello": 1688.51,
-   "stop": null,
-   "tp": null,
-   "upl": 0.41,
-   "bid": 1688.89
-  },
-  {
-   "nome": "Germany 40",
-   "epic": "DE40",
-   "size": 0.057,
-   "livello": 25141.0,
-   "stop": null,
-   "tp": null,
-   "upl": 1.9779,
-   "bid": 25175.7
+   "upl": -58.26,
+   "bid": 23.97
   }
  ],
  "modalita": "automatica",
@@ -776,10 +585,110 @@
    "decisione": "Operazione chiusa",
    "motivo": "risultato non disponibile",
    "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Avalanche/USD",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Allianz",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Enel",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Eni",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Intesa Sanpaolo",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "ChainLink/USD",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Natural Gas",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "SAP",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "TotalEnergies SE",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Ferrari - EUR",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Unicredit",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Ethereum/USD",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
+  },
+  {
+   "ora": "2026-11-26T09:46+01:00",
+   "mercato": "Germany 40",
+   "decisione": "Operazione chiusa",
+   "motivo": "risultato non disponibile",
+   "icona": "🏁"
   }
  ],
  "trend": {
-  "deal": {},
+  "deal": {
+   "00000000-76bb-29f0-04a0-458c0015549e": "AVAX-USD",
+   "00000000-76bb-2a12-04a0-458c0015549e": "ENEL.MI",
+   "00000000-76bb-2a28-04a0-458c0015549e": "ENI.MI",
+   "00000000-76bb-2a44-04a0-458c0015549e": "ISP.MI",
+   "00000000-76bb-2aa0-04a0-458c0015549e": "LINK-USD",
+   "00000000-76bb-2adb-04a0-458c0015549e": "UCG.MI",
+   "00000000-76bb-2aea-04a0-458c0015549e": "ETH-USD",
+   "00000000-76bb-2af1-04a0-458c0015549e": "^GDAXI"
+  },
   "mese": "2026-11",
   "obiettivo": {
    "^GDAXI": 0.0287,
@@ -911,9 +820,115 @@
    "XOM",
    "^IBEX"
   ],
-  "capitale": 50000.0
+  "capitale": 50000.0,
+  "epic": {}
  },
- "posizioni_trend": [],
+ "posizioni_trend": [
+  {
+   "nome": "Avalanche/USD",
+   "epic": "AVAXUSD",
+   "size": 64.3,
+   "livello": 6.6506,
+   "upl": -0.16,
+   "bid": 6.6478
+  },
+  {
+   "nome": "Allianz",
+   "epic": "ALVD",
+   "size": 2.5,
+   "livello": 460.0,
+   "upl": -3.75,
+   "bid": 458.5
+  },
+  {
+   "nome": "Enel",
+   "epic": "ENEL",
+   "size": 136,
+   "livello": 9.47,
+   "upl": -0.68,
+   "bid": 9.465
+  },
+  {
+   "nome": "Eni",
+   "epic": "ENI",
+   "size": 40,
+   "livello": 24.03,
+   "upl": -2.4,
+   "bid": 23.97
+  },
+  {
+   "nome": "Intesa Sanpaolo",
+   "epic": "ISP",
+   "size": 162.75,
+   "livello": 5.6525,
+   "upl": 1.220625,
+   "bid": 5.66
+  },
+  {
+   "nome": "ChainLink/USD",
+   "epic": "LINKUSD",
+   "size": 50,
+   "livello": 9.18303,
+   "upl": 0.23,
+   "bid": 9.18813
+  },
+  {
+   "nome": "Natural Gas",
+   "epic": "NATURALGAS",
+   "size": 135.1,
+   "livello": 3.5338,
+   "upl": -3.94,
+   "bid": 3.5018
+  },
+  {
+   "nome": "SAP",
+   "epic": "SAPD",
+   "size": 4.11,
+   "livello": 191.8,
+   "upl": 1.233,
+   "bid": 192.1
+  },
+  {
+   "nome": "TotalEnergies SE",
+   "epic": "TTEF",
+   "size": 14.1,
+   "livello": 78.29,
+   "upl": -3.948,
+   "bid": 78.01
+  },
+  {
+   "nome": "Ferrari - EUR",
+   "epic": "RACEM",
+   "size": 2.88,
+   "livello": 372.08,
+   "upl": -3.6288,
+   "bid": 370.82
+  },
+  {
+   "nome": "Unicredit",
+   "epic": "UCG",
+   "size": 10.156,
+   "livello": 75.81,
+   "upl": -1.11716,
+   "bid": 75.7
+  },
+  {
+   "nome": "Ethereum/USD",
+   "epic": "ETHUSD",
+   "size": 1.179,
+   "livello": 1688.51,
+   "upl": 4.01,
+   "bid": 1692.24
+  },
+  {
+   "nome": "Germany 40",
+   "epic": "DE40",
+   "size": 0.057,
+   "livello": 25141.0,
+   "upl": 4.0527,
+   "bid": 25212.1
+  }
+ ],
  "chiuse": [
   {
    "nome": "SAP",
@@ -937,6 +952,110 @@
    "palestra": true,
    "aperta": "2026-11-26T09:19+01:00",
    "chiusa": "2026-11-26T09:37+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Avalanche/USD",
+   "epic": "AVAXUSD",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Allianz",
+   "epic": "ALVD",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Enel",
+   "epic": "ENEL",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Eni",
+   "epic": "ENI",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Intesa Sanpaolo",
+   "epic": "ISP",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "ChainLink/USD",
+   "epic": "LINKUSD",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Natural Gas",
+   "epic": "NATURALGAS",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "SAP",
+   "epic": "SAPD",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "TotalEnergies SE",
+   "epic": "TTEF",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Ferrari - EUR",
+   "epic": "RACEM",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Unicredit",
+   "epic": "UCG",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Ethereum/USD",
+   "epic": "ETHUSD",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
+   "euro": null
+  },
+  {
+   "nome": "Germany 40",
+   "epic": "DE40",
+   "palestra": false,
+   "aperta": "2026-11-26T09:37+01:00",
+   "chiusa": "2026-11-26T09:46+01:00",
    "euro": null
   }
  ]
