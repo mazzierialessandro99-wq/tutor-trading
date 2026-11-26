@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-26T20:37+01:00",
+ "ultimo_giro": "2026-11-26T21:07+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -343,7 +343,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168295,
  "giri": {
-  "2026-W48": 63
+  "2026-W48": 64
  },
  "storia": [
   [
@@ -597,6 +597,10 @@
   [
    "2026-11-26T20:37+01:00",
    100253.08
+  ],
+  [
+   "2026-11-26T21:07+01:00",
+   100250.82
   ]
  ],
  "posizioni": [
@@ -956,28 +960,28 @@
    "TTEF": "TTE.PA"
   },
   "attese": {
-   "AAPL": "20:37 AAPL CLOSED",
-   "ABBV": "20:37 ABBV CLOSED",
-   "COST": "20:37 COST CLOSED",
-   "CRM": "20:37 CRM CLOSED",
-   "CVX": "20:37 CVX CLOSED",
-   "DIS": "20:37 DIS CLOSED",
-   "HD": "20:37 HD CLOSED",
-   "JNJ": "20:37 JNJ CLOSED",
-   "JPM": "20:37 JPM CLOSED",
-   "KO": "20:37 KO CLOSED",
-   "LLY": "20:37 LLY CLOSED",
-   "MA": "20:37 MA CLOSED",
-   "MCD": "20:37 MCD CLOSED",
-   "MRK": "20:37 MRK CLOSED",
-   "MSFT": "20:37 MSFT CLOSED",
-   "PEP": "20:37 PEP CLOSED",
-   "PFE": "20:37 PFE CLOSED",
-   "PG": "20:37 PG CLOSED",
-   "V": "20:37 V CLOSED",
-   "WMT": "20:37 WMT CLOSED",
-   "XOM": "20:37 XOM CLOSED",
-   "^IBEX": "20:37 IBEX CLOSED"
+   "AAPL": "21:07 AAPL CLOSED",
+   "ABBV": "21:07 ABBV CLOSED",
+   "COST": "21:07 COST CLOSED",
+   "CRM": "21:07 CRM CLOSED",
+   "CVX": "21:07 CVX CLOSED",
+   "DIS": "21:07 DIS CLOSED",
+   "HD": "21:07 HD CLOSED",
+   "JNJ": "21:07 JNJ CLOSED",
+   "JPM": "21:07 JPM CLOSED",
+   "KO": "21:07 KO CLOSED",
+   "LLY": "21:07 LLY CLOSED",
+   "MA": "21:07 MA CLOSED",
+   "MCD": "21:07 MCD CLOSED",
+   "MRK": "21:07 MRK CLOSED",
+   "MSFT": "21:07 MSFT CLOSED",
+   "PEP": "21:07 PEP CLOSED",
+   "PFE": "21:07 PFE CLOSED",
+   "PG": "21:07 PG CLOSED",
+   "V": "21:07 V CLOSED",
+   "WMT": "21:07 WMT CLOSED",
+   "XOM": "21:07 XOM CLOSED",
+   "^IBEX": "21:07 IBEX CLOSED"
   }
  },
  "posizioni_trend": [
@@ -1008,8 +1012,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": 14.93,
-   "bid": 1702.4
+   "upl": 13.97,
+   "bid": 1701.51
   },
   {
    "nome": "Avalanche/USD",
@@ -1018,8 +1022,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -0.22,
-   "bid": 6.6468
+   "upl": -0.42,
+   "bid": 6.6434
   },
   {
    "nome": "ChainLink/USD",
@@ -1028,8 +1032,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": 3.14,
-   "bid": 9.25187
+   "upl": 2.18,
+   "bid": 9.23085
   },
   {
    "nome": "Eni",
@@ -1108,8 +1112,8 @@
    "livello": 25141.0,
    "stop": 22682.13,
    "tp": 30033.73,
-   "upl": 4.731,
-   "bid": 25224.0
+   "upl": 4.8165,
+   "bid": 25225.5
   }
  ],
  "chiuse": [
