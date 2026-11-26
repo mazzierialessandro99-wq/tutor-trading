@@ -106,7 +106,7 @@ class CapitalDemo:
         return {"epic": ins.get("epic", epic), "nome": ins.get("name", epic), "valuta": ins.get("currency", "USD"),
                 "min_size": val("minDealSize") or 0.01, "passo": val("minSizeIncrement") or val("minDealSize") or 0.01,
                 "max_size": val("maxDealSize") or 1e9, "min_distanza_stop": val("minStopOrProfitDistance"),
-                "aperto": snap.get("marketStatus") == "TRADEABLE",
+                "aperto": snap.get("marketStatus") == "TRADEABLE", "stato": snap.get("marketStatus"),
                 "bid": float(snap.get("bid") or 0), "offer": float(snap.get("offer") or 0)}
 
     def trova(self, ticker: str, nome: str) -> dict | None:

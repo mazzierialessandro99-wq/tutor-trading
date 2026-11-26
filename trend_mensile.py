@@ -121,11 +121,14 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
                 tr["cambi"].append(["esce", t, 0])
             elif w > 0 and not miei:
                 m = broker.trova(t, nomi.get(t, t))
+                if m:
+                    tr.setdefault("attese", {}).pop(t, None)
                 if not m or m["valuta"] not in ("EUR", "USD"):
                     tr["cambi"].append(["saltato", t, w])
                     continue
                 if not m["aperto"]:
                     rimasti.append(t)                       # mercato chiuso: riprovo al prossimo giro
+                    tr.setdefault("attese", {})[t] = f"{ora:%H:%M} {m['epic']} {m.get('stato')}"
                     continue
                 cambio = 1.0 if m["valuta"] == "EUR" else eurusd
                 size = min(C.arrotonda_size(w * capitale * cambio / m["offer"], m["passo"]), m["max_size"])
