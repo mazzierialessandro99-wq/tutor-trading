@@ -104,7 +104,9 @@ def rispondi(testo: str, ctx: dict) -> str:
         ob = float(m.get("obiettivo") or piano.get("obiettivo", 0) or 0)
         att = float(storia[-1][1]) if storia else cap0
         quota = (att - cap0) / (ob - cap0) * 100 if ob > cap0 else 0
-        return (f"Capitale del bot: <b>{_num(att)} €</b> ({_euro(att - cap0)} dall'inizio).<br>"
+        base = (m.get("obiettivo_traccia") or {}).get("base")
+        reale = f"Saldo del conto Demo: <b>{_num(float(base) + att - cap0)} €</b>.<br>" if base else ""
+        return (reale + f"Risultato del bot da quando opera: <b>{_euro(att - cap0)}</b>.<br>"
                 f"Obiettivo: {_num(ob, 0)} € · siamo al <b>{max(quota, 0):.0f}%</b> del percorso.")
     if ha("operazion", "posizion", "aperte", "aperta", "trade"):
         pos = m.get("posizioni") or []

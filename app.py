@@ -460,15 +460,21 @@ def schermata_home():
     occhi = occhi_bot(m, ric)
     st.markdown(f'<div class="top"><div class="top-l">{robot(40, occhi)}<h1>Ciao!</h1></div><span class="pill">● Conto Demo</span></div>',
                 unsafe_allow_html=True)
-    storia = (m or {}).get("storia") or []
     cap0 = float((m or {}).get("capitale_piano") or PIANO.get("capitale", 0))
+    # solo i punti del piano attuale (prima c'era il vecchio piano da 500 €)
+    storia = [x for x in (m or {}).get("storia") or [] if not cap0 or abs(float(x[1]) - cap0) < cap0 * .5]
     attuale = float(storia[-1][1]) if storia else cap0
     diff = attuale - cap0
-    intero, dec = num(attuale).split(",")
-    st.markdown(f'<div class="saldo-k">Capitale del bot</div>'
+    # saldo vero del conto Demo = saldo all'avvio del piano + quello che ha fatto il bot da allora
+    base = ((m or {}).get("obiettivo_traccia") or {}).get("base")
+    reale = float(base) + diff if base else attuale
+    intero, dec = num(reale).split(",")
+    st.markdown(f'<div class="saldo-k">Conto Demo Capital.com</div>'
                 f'<div class="saldo">{intero}<small>,{dec} €</small></div>'
                 f'<div class="var" style="color:{T["su"] if diff >= 0 else T["giu"]}">{"▲" if diff >= 0 else "▼"} '
-                f'{num(abs(diff))} € · {num(abs(diff) / cap0 * 100 if cap0 else 0)}%</div>', unsafe_allow_html=True)
+                f'{num(abs(diff))} € fatti dal bot · {num(abs(diff) / cap0 * 100 if cap0 else 0)}%</div>'
+                + (f'<div class="nota" style="margin-top:2px">Il bot conta da {num(float(base))} €: le operazioni fatte a mano prima '
+                   f'non sono sue.</div>' if base else ""), unsafe_allow_html=True)
     if len(storia) >= 2 and len({round(float(x[1]), 2) for x in storia}) > 1:
         s = pd.Series([float(x[1]) for x in storia], index=pd.to_datetime([x[0] for x in storia], utc=True))
         st.plotly_chart(grafico_linea(s, 160, base=cap0), width="stretch", config={"displayModeBar": False, "staticPlot": True})
