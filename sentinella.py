@@ -565,18 +565,18 @@ def main():
     dati = scarica_tutti(tickers + ["EURUSD=X", "^VIX"] + (["^GSPC"] if "^GSPC" not in tickers else []))
     if not dati:
         sys.exit("Nessun dato scaricato (Yahoo non risponde): riprovo al prossimo giro.")
-    # tensione sui mercati (guerre, crisi...): con il VIX sopra 30 il rischio per operazione si dimezza
+    # tensione sui mercati (guerre, crisi...): con il VIX sopra 30 ti avviso (solo avviso: vedi prova_filtri.py)
     vix = float(dati["^VIX"]["Close"].iloc[-1]) if "^VIX" in dati else None
     tensione = vix is not None and vix > E.VIX_SOGLIA
     if vix is not None:
         if tensione and not stato.get("tensione"):
             messaggi.append(f"🌩️ <b>Mercati in tensione</b>: l'indice della paura (VIX) è a {num(vix, 1)}, sopra {E.VIX_SOGLIA:.0f}. "
-                            "Di solito succede con guerre, crisi o notizie forti. Finché resta così <b>dimezzo il rischio</b> "
-                            "di ogni nuova operazione.")
-            annota(stato, ora, "Mercati", "Tensione: rischio dimezzato", f"VIX a {num(vix, 1)}", "🌩️")
+                            "Di solito succede con guerre, crisi o notizie forti. Il prezzo può muoversi più del solito: "
+                            "le regole restano le stesse (nei test, dimezzare il rischio qui faceva guadagnare meno senza ridurre le discese).")
+            annota(stato, ora, "Mercati", "Mercati in tensione", f"VIX a {num(vix, 1)}", "🌩️")
         elif not tensione and stato.get("tensione"):
-            messaggi.append(f"🌤️ La tensione è scesa (VIX a {num(vix, 1)}): torno al rischio normale.")
-            annota(stato, ora, "Mercati", "Tensione finita: rischio normale", f"VIX a {num(vix, 1)}", "🌤️")
+            messaggi.append(f"🌤️ La tensione è scesa (VIX a {num(vix, 1)}).")
+            annota(stato, ora, "Mercati", "Tensione finita", f"VIX a {num(vix, 1)}", "🌤️")
         stato["tensione"], stato["vix"] = tensione, round(vix, 1)
     eurusd = 1.08 if DEMO or "EURUSD=X" not in dati else float(dati["EURUSD=X"]["Close"].iloc[-1])
 
@@ -707,7 +707,7 @@ def main():
                 motivo = blocco[1]
             elif auto_attivo:
                 try:
-                    op, motivo = prova_ad_aprire(broker, ticker, nome, v, eurusd, posizioni, 0.5 if tensione else 1.0)
+                    op, motivo = prova_ad_aprire(broker, ticker, nome, v, eurusd, posizioni)
                 except C.CapitalErrore as e:
                     op, motivo = None, f"Capital.com ha rifiutato l'ordine ({str(e)[:100]})"
                 if op:

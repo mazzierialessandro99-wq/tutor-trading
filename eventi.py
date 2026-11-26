@@ -3,7 +3,8 @@ EVENTI E NOTIZIE — quello che i prezzi non dicono in anticipo.
 
   • conti trimestrali delle azioni: niente nuove operazioni nei 3 giorni prima (il prezzo può saltare oltre lo stop)
   • decisioni sui tassi della Fed: niente nuove operazioni su indici USA, valute e oro dal giorno prima
-  • tensione sui mercati: con il VIX (l'"indice della paura") sopra 30 il rischio per operazione si dimezza
+  • tensione sui mercati: con il VIX (l'"indice della paura") sopra 30 il bot ti avvisa. Solo avviso: nella prova sul
+    passato (prova_filtri.py) dimezzare il rischio faceva guadagnare meno senza ridurre le discese
   • titoli delle ultime notizie di un mercato, per informarti (NON decidono le operazioni)
 Le date della Fed sono quelle pubblicate dalla Fed: vanno aggiunte a mano ogni anno (quelle del 2027 a dicembre).
 """

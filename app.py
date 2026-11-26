@@ -505,7 +505,7 @@ def schermata_home():
     if (m or {}).get("tensione"):
         st.markdown(f'<div class="avviso" style="--c:{T["giu"]}"><span class="ic">🌩️</span><div class="r-c"><div class="r-t">Mercati in tensione</div>'
                     f'<div class="r-s" style="white-space:normal">L\'indice della paura (VIX) è a {num(float(m.get("vix") or 0), 1)}: '
-                    f'il bot rischia la metà su ogni nuova operazione.</div></div></div>', unsafe_allow_html=True)
+                    f'guerre, crisi o notizie forti muovono i prezzi più del solito.</div></div></div>', unsafe_allow_html=True)
 
     # notifica: l'ultima operazione aperta o chiusa nelle ultime 48 ore
     for d in reversed((m or {}).get("decisioni") or []):
