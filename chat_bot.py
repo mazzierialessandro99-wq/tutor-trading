@@ -11,7 +11,7 @@ import unicodedata
 import logica as L
 
 SUGGERIMENTI = ["Come va?", "Operazioni aperte", "Cosa c'è di verde oggi?", "Perché non operi?",
-                "Come metto lo stop loss?", "Come vanno le cripto?", "Analizza l'oro"]
+                "Come metto lo stop loss?", "Come vanno le cripto?", "Notizie su Tesla", "Analizza l'oro"]
 
 # parole chiave dei mercati (minuscole, senza accenti) -> nome nella lista dei mercati
 ALIAS = {
@@ -66,6 +66,13 @@ def rispondi(testo: str, ctx: dict) -> str:
 
     # --- un mercato preciso ---
     nome = trova_mercato(testo)
+    if nome and ha("notizi", "news", "cosa succede", "novita", "perche sale", "perche scende") and ctx.get("notizie"):
+        lista = ctx["notizie"](nome)
+        if not lista:
+            return f"Non trovo notizie recenti su <b>{nome}</b> in questo momento."
+        righe = "<br>".join(f"• {n['titolo'].replace('<', '&lt;')} <i>({n.get('fonte', '')})</i>" for n in lista[:5])
+        return (f"Ultime notizie su <b>{nome}</b> (di solito in inglese):<br>{righe}<br>"
+                "Ricorda: quando le leggiamo noi, il prezzo di solito si è già mosso. Le uso per evitare guai, non per comprare.")
     if nome:
         a = ctx["analizza"](nome)
         if not a:
@@ -73,6 +80,10 @@ def rispondi(testo: str, ctx: dict) -> str:
         colore = {"VERDE": "🟢 verde", "GIALLO": "🟡 giallo", "ROSSO": "🔴 rosso"}[a["colore"]]
         righe = [f"<b>{nome}</b>: semaforo {colore}. {a['sintesi']}",
                  f"Trend <b>{a['trend']}</b>, momento <b>{a['momento']}</b>, volatilità <b>{a['vol']}</b>."]
+        ticker = (L.ASSET | L.ASSET_EXTRA).get(nome, (None,))[0]
+        ev = ctx["evento"](ticker, __import__("datetime").date.today()) if ctx.get("evento") and ticker else None
+        if ev:
+            righe.append(f"📅 Attenzione: {ev}. Qui per ora non apro operazioni.")
         if a["colore"] == "VERDE":
             righe.append(f"Se entri sul Demo: stop consigliato <b>{a['stop_nome']}</b> a {a['stop']}, "
                          f"take profit a {a['tp']}. Trovi i passi completi in <b>Mercati</b> toccando {nome}.")
@@ -86,7 +97,7 @@ def rispondi(testo: str, ctx: dict) -> str:
                 "<b>cosa c'è di verde</b> oggi, di analizzare un mercato (es. <i>analizza il Nasdaq</i>) "
                 "o di spiegarti stop loss, RSI, leva e gli altri concetti.")
     if ha("aiuto", "cosa sai", "cosa puoi", "help", "comandi"):
-        return ("Ecco cosa so fare:<br>• <b>Come va?</b> · il mio stato di oggi<br>• <b>Operazioni aperte</b><br>"
+        return ("Ecco cosa so fare (chiedimi anche <b>notizie su</b> un mercato):<br>• <b>Come va?</b> · il mio stato di oggi<br>• <b>Operazioni aperte</b><br>"
                 "• <b>Risultati</b> · capitale e obiettivo<br>• <b>Cosa c'è di verde?</b> · i segnali di oggi<br>"
                 "• <b>Analizza l'oro</b> (o qualsiasi mercato della lista)<br>• <b>Perché non operi?</b> · la mia ricerca<br>"
                 "• Spiegazioni: <b>stop loss, take profit, RSI, EMA, ATR, leva, rischio, drawdown</b><br>"

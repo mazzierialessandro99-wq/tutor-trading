@@ -23,6 +23,7 @@ import backtest
 import capital
 import chat_bot
 import coach
+import eventi
 import logica as L
 import sentinella
 
@@ -32,6 +33,7 @@ capital = importlib.reload(capital)
 sentinella = importlib.reload(sentinella)
 backtest = importlib.reload(backtest)
 coach = importlib.reload(coach)
+eventi = importlib.reload(eventi)
 chat_bot = importlib.reload(chat_bot)
 
 st.set_page_config(page_title="Tutor di Trading", page_icon="📈", layout="centered", initial_sidebar_state="collapsed")
@@ -330,6 +332,25 @@ def memoria(nome_file: str = "stato_sentinella.json") -> dict | None:
         return None
 
 
+@st.cache_data(ttl=1800, show_spinner=False)
+def notizie_di(ticker: str) -> list[dict]:
+    if DEMO:
+        return [{"titolo": f"Titolo di prova {i} su {ticker}", "fonte": "Prova", "link": "", "data": pd.Timestamp.now() - pd.Timedelta(hours=3 * i)}
+                for i in range(1, 4)]
+    return eventi.notizie(ticker)
+
+
+def html_notizie(lista: list[dict]) -> str:
+    righe = ""
+    for n in lista:
+        quando = f"{pd.Timestamp(n['data']):%d/%m %H:%M}" if n.get("data") is not None else ""
+        titolo = n["titolo"].replace("<", "&lt;")
+        titolo = f'<a href="{n["link"]}" target="_blank" style="color:var(--testo);text-decoration:none">{titolo}</a>' if n.get("link") else titolo
+        righe += (f'<div class="riga"><div class="r-c"><div class="r-t" style="white-space:normal;font-size:.9rem">{titolo}</div>'
+                  f'<div class="r-s">{n.get("fonte", "")} · {quando}</div></div></div>')
+    return f'<div class="lista-card">{righe}</div>'
+
+
 @st.cache_data(ttl=12 * 3600, show_spinner=False)
 def calcola_backtest(capitale: float) -> dict:
     tickers = [t for t, _ in MERCATI.values()]
@@ -476,9 +497,15 @@ def schermata_home():
                 f'{num(abs(diff))} € fatti dal bot · {num(abs(diff) / cap0 * 100 if cap0 else 0)}%</div>'
                 + (f'<div class="nota" style="margin-top:2px">Il bot conta da {num(float(base))} €: le operazioni fatte a mano prima '
                    f'non sono sue.</div>' if base else ""), unsafe_allow_html=True)
-    if len(storia) >= 2 and len({round(float(x[1]), 2) for x in storia}) > 1:
+    valori = [float(x[1]) for x in storia]
+    if len(storia) >= 2 and max(valori) - min(valori) > max(cap0 * .001, 1):     # solo se si è mosso davvero
         s = pd.Series([float(x[1]) for x in storia], index=pd.to_datetime([x[0] for x in storia], utc=True))
         st.plotly_chart(grafico_linea(s, 160, base=cap0), width="stretch", config={"displayModeBar": False, "staticPlot": True})
+
+    if (m or {}).get("tensione"):
+        st.markdown(f'<div class="avviso" style="--c:{T["giu"]}"><span class="ic">🌩️</span><div class="r-c"><div class="r-t">Mercati in tensione</div>'
+                    f'<div class="r-s" style="white-space:normal">L\'indice della paura (VIX) è a {num(float(m.get("vix") or 0), 1)}: '
+                    f'il bot rischia la metà su ogni nuova operazione.</div></div></div>', unsafe_allow_html=True)
 
     # notifica: l'ultima operazione aperta o chiusa nelle ultime 48 ore
     for d in reversed((m or {}).get("decisioni") or []):
@@ -622,6 +649,15 @@ def dettaglio_mercato(nome: str, ticker: str):
                           ("EMA 200", prezzo(v["ema"]), "il trend"), ("Dalla EMA", f"{(v['close'] / v['ema'] - 1) * 100:+.1f}%".replace(".", ","), "distanza")])
                 + "</div>", unsafe_allow_html=True)
 
+    lista = notizie_di(ticker)
+    ev = eventi.evento_vicino(ticker, pd.Timestamp.now().date())
+    if ev:
+        st.markdown(f'<div class="avviso" style="--c:#f5a524"><span class="ic">📅</span><div class="txt">'
+                    f'<b>Evento in arrivo</b>: {ev}. Il bot qui non apre nuove operazioni.</div></div>', unsafe_allow_html=True)
+    if lista:
+        sezione("Notizie", "per informarti, non decidono le operazioni")
+        st.markdown(html_notizie(lista), unsafe_allow_html=True)
+
     s = coach.analizza(df)
     ric_ok = bool((memoria("ricerca_esito.json") or {}).get("vincitrice"))
     sezione("Il tutor", "cosa fare oggi")
@@ -698,7 +734,8 @@ def schermata_chat():
     if not ss.chat:
         ss.chat = [("bot", f"Ciao! 👋 Sono Sentinella, il tuo bot di trading. {frase}<br>"
                            "Chiedimi pure qualcosa, oppure tocca uno dei suggerimenti.")]
-    ctx = {"memoria": m, "ricerca": ric, "piano": PIANO, "panoramica": panoramica(), "analizza": analizza_per_chat}
+    ctx = {"memoria": m, "ricerca": ric, "piano": PIANO, "panoramica": panoramica(), "analizza": analizza_per_chat,
+           "notizie": lambda nome: notizie_di(MERCATI[nome][0]) if nome in MERCATI else [], "evento": eventi.evento_vicino}
 
     def chiedi(testo: str):
         ss.chat.append(("io", testo.replace("<", "&lt;")))

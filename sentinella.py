@@ -34,6 +34,7 @@ import pandas as pd
 
 import backtest as BT
 import capital as C
+import eventi as E
 import logica as L
 import ricerca as R
 
@@ -415,7 +416,8 @@ def msg_stato(auto_attivo: bool, conto: dict | None, risultati: dict | None, pos
 # ------------------------------------------------------------------------------
 # ESECUZIONE AUTOMATICA (solo DEMO)
 # ------------------------------------------------------------------------------
-def prova_ad_aprire(broker, ticker: str, nome: str, v: dict, eurusd: float, posizioni: list[dict]) -> tuple[dict | None, str]:
+def prova_ad_aprire(broker, ticker: str, nome: str, v: dict, eurusd: float, posizioni: list[dict],
+                    fattore_rischio: float = 1.0) -> tuple[dict | None, str]:
     """Apre un acquisto rispettando il piano. Restituisce (operazione, motivo se non aperta)."""
     if len(posizioni) >= MAX_APERTE:
         return None, f"ci sono già {len(posizioni)} operazioni aperte (massimo {MAX_APERTE} nel tuo piano)"
@@ -439,7 +441,7 @@ def prova_ad_aprire(broker, ticker: str, nome: str, v: dict, eurusd: float, posi
     if m["min_distanza_stop"] and distanza < m["min_distanza_stop"]:
         return None, "lo stop richiesto è più vicino del minimo consentito da Capital.com"
     cambio = 1.0 if m["valuta"] == "EUR" else eurusd
-    rischio_pct = L.rischio_per(ticker, PIANO, RISCHIO)
+    rischio_pct = L.rischio_per(ticker, PIANO, RISCHIO) * fattore_rischio
     rischio_eur = CAPITALE * rischio_pct / 100
     size = C.arrotonda_size(rischio_eur * cambio / distanza, m["passo"])
     if size < m["min_size"]:
@@ -560,9 +562,22 @@ def main():
 
     # ---- 2. prezzi e semafori ----
     tickers = [t for t, _ in L.mercati(PIANO).values()]
-    dati = scarica_tutti(tickers + ["EURUSD=X"] + (["^GSPC"] if "^GSPC" not in tickers else []))
+    dati = scarica_tutti(tickers + ["EURUSD=X", "^VIX"] + (["^GSPC"] if "^GSPC" not in tickers else []))
     if not dati:
         sys.exit("Nessun dato scaricato (Yahoo non risponde): riprovo al prossimo giro.")
+    # tensione sui mercati (guerre, crisi...): con il VIX sopra 30 il rischio per operazione si dimezza
+    vix = float(dati["^VIX"]["Close"].iloc[-1]) if "^VIX" in dati else None
+    tensione = vix is not None and vix > E.VIX_SOGLIA
+    if vix is not None:
+        if tensione and not stato.get("tensione"):
+            messaggi.append(f"🌩️ <b>Mercati in tensione</b>: l'indice della paura (VIX) è a {num(vix, 1)}, sopra {E.VIX_SOGLIA:.0f}. "
+                            "Di solito succede con guerre, crisi o notizie forti. Finché resta così <b>dimezzo il rischio</b> "
+                            "di ogni nuova operazione.")
+            annota(stato, ora, "Mercati", "Tensione: rischio dimezzato", f"VIX a {num(vix, 1)}", "🌩️")
+        elif not tensione and stato.get("tensione"):
+            messaggi.append(f"🌤️ La tensione è scesa (VIX a {num(vix, 1)}): torno al rischio normale.")
+            annota(stato, ora, "Mercati", "Tensione finita: rischio normale", f"VIX a {num(vix, 1)}", "🌤️")
+        stato["tensione"], stato["vix"] = tensione, round(vix, 1)
     eurusd = 1.08 if DEMO or "EURUSD=X" not in dati else float(dati["EURUSD=X"]["Close"].iloc[-1])
 
     # ---- 3. conto Capital.com (solo in modalità automatica) ----
@@ -683,13 +698,16 @@ def main():
             p = L.piano(CAPITALE * cambio, rischio, v["close"], v["atr"])
             motivo = ""
             consentito, perche_no = permesso_cfg(dati, stato, oggi)
+            evento = E.evento_vicino(ticker, ora.date(), stato.setdefault("eventi", {}))
             if not consentito:
                 motivo = f"oggi la ricerca dice di non operare ({perche_no})"
+            elif evento:
+                motivo = evento
             elif auto_attivo and blocco:
                 motivo = blocco[1]
             elif auto_attivo:
                 try:
-                    op, motivo = prova_ad_aprire(broker, ticker, nome, v, eurusd, posizioni)
+                    op, motivo = prova_ad_aprire(broker, ticker, nome, v, eurusd, posizioni, 0.5 if tensione else 1.0)
                 except C.CapitalErrore as e:
                     op, motivo = None, f"Capital.com ha rifiutato l'ordine ({str(e)[:100]})"
                 if op:
