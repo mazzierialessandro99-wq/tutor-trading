@@ -47,9 +47,18 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
              messaggi: list[str], annota) -> None:
     tr = stato.setdefault("trend", {})
     deal = tr.setdefault("deal", {})                       # dealId -> ticker
+    epic_di = tr.setdefault("epic", {})                   # epic Capital.com -> ticker
     vivi = {p["dealId"] for p in pos_trend}
     for d in [d for d in deal if d not in vivi]:          # chiuse da fuori (a mano o dal broker)
         deal.pop(d)
+    for p in pos_trend:                                    # posizioni del trend non ancora collegate al loro mercato
+        if p["dealId"] not in deal:
+            t = epic_di.get(p["epic"]) or next((t for t in nomi if C.EPIC.get(t, t) == p["epic"]
+                                                or t.split(".")[0].replace("-USD", "USD") == p["epic"]), None)
+            if t:
+                deal[p["dealId"]] = t
+            else:
+                print(f"Trend mensile: posizione {p['epic']} senza mercato riconosciuto")
     mese = f"{ora:%Y-%m}"
     if tr.get("mese") != mese:
         tr.update(mese=mese, obiettivo=pesi_obiettivo(dati, list(nomi)), tentativi={}, cambi=[], annunciato=False)
@@ -79,6 +88,7 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
                     continue
                 esito = broker.compra(m["epic"], size)
                 deal[esito["dealId"]] = t
+                epic_di[m["epic"]] = t
                 tr["cambi"].append(["entra", t, w])
         except C.CapitalErrore as e:
             n = tr["tentativi"][t] = tr["tentativi"].get(t, 0) + 1

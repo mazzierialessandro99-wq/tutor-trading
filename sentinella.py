@@ -598,9 +598,11 @@ def main():
                 conto = broker.conto()
                 posizioni = broker.posizioni()
                 # le posizioni del trend mensile hanno la loro gestione: il resto del bot non le tocca
+                # (riconoscibili anche dal fatto che NON hanno stop né take profit: la Palestra li mette sempre)
                 deal_trend = stato.get("trend", {}).get("deal", {})
-                pos_trend = [p for p in posizioni if p["dealId"] in deal_trend]
-                posizioni = [p for p in posizioni if p["dealId"] not in deal_trend]
+                del_trend = lambda p: p["dealId"] in deal_trend or (TREND.get("attivo") and p.get("stop") is None and p.get("tp") is None)
+                pos_trend = [p for p in posizioni if del_trend(p)]
+                posizioni = [p for p in posizioni if not del_trend(p)]
                 risultati = aggiorna_periodi(stato, conto["saldo"] + conto["pl_aperto"], ora)
                 blocco = limite_superato(risultati)
                 attuale = progresso(stato, conto["saldo"])
@@ -748,7 +750,7 @@ def main():
         try:
             TM.gestisci(broker, stato, dati, nomi_t, pos_trend, eurusd, ora, float(TREND.get("capitale", 50000)), messaggi, annota)
             deal_trend = stato["trend"]["deal"]
-            pos_trend = [p for p in broker.posizioni() if p["dealId"] in deal_trend]
+            pos_trend = [p for p in broker.posizioni() if p["dealId"] in deal_trend or (p.get("stop") is None and p.get("tp") is None)]
         except C.CapitalErrore as e:
             print(f"Trend mensile non gestito in questo giro: {e}")
 

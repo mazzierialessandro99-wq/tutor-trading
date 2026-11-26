@@ -145,7 +145,9 @@ class CapitalDemo:
         conf, _ = self._chiama("GET", f"/confirms/{ref}")
         if conf.get("dealStatus") != "ACCEPTED":
             raise CapitalErrore(f"Ordine rifiutato: {conf.get('reason') or conf.get('dealStatus')}")
-        return {"dealId": conf.get("dealId") or (conf.get("affectedDeals") or [{}])[0].get("dealId"),
+        # la POSIZIONE ha il dealId di affectedDeals (quello di "dealId" è dell'ordine, e in /positions non compare)
+        pos_id = next((d.get("dealId") for d in conf.get("affectedDeals") or [] if d.get("dealId")), None)
+        return {"dealId": pos_id or conf.get("dealId"),
                 "livello": conf.get("level"), "size": conf.get("size", size)}
 
     def chiudi(self, deal_id: str):
