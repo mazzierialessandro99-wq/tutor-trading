@@ -128,6 +128,17 @@ def main():
             senza[n] = {"base": a, "mai_visti": b}
             print(f"senza commissioni notturne · {n:<5} mesi | {a['annuo_pct']:>6.1f}%{a['sharpe']:>7.2f}{a['max_dd_pct']:>8.1f}% | "
                   f"{b['annuo_pct']:>6.1f}%{b['sharpe']:>7.2f}{b['max_dd_pct']:>8.1f}%")
+    # versione realistica per un piccolo investitore: titoli/ETF veri, SENZA leva (al massimo il 100% del capitale investito)
+    global LEVA_MAX
+    leva, LEVA_MAX = LEVA_MAX, 1.0
+    senza_leva = {}
+    for n in ("6", "12"):
+        a = misura(simula(gruppi["20 mercati"], n, "solo acquisti"))
+        b = misura(simula(gruppi["mai visti"], n, "solo acquisti"))
+        senza_leva[n] = {"base": a, "mai_visti": b}
+        print(f"senza leva e senza notturne · {n:<3} mesi | {a['annuo_pct']:>6.1f}%{a['sharpe']:>7.2f}{a['max_dd_pct']:>8.1f}% | "
+              f"{b['annuo_pct']:>6.1f}%{b['sharpe']:>7.2f}{b['max_dd_pct']:>8.1f}%")
+    LEVA_MAX = leva
     B.CON_SWAP = True
     promosse = [r for r in righe if r["promossa"]]
     vincitrice = max(promosse, key=lambda r: r["mai_visti"]["sharpe"]) if promosse else None
@@ -139,7 +150,7 @@ def main():
         print("NESSUNA configurazione supera la regola.")
     esito = {"data": pd.Timestamp.now(tz="Europe/Rome").isoformat(timespec="minutes"),
              "regola": f"Sharpe >= {SOGLIA_SHARPE} e rendimento annuo positivo sui 20 mercati e sui mai visti, costi inclusi",
-             "riferimento_sp500": riferimento, "configurazioni": righe, "senza_commissioni_notturne": senza, "vincitrice": vincitrice}
+             "riferimento_sp500": riferimento, "configurazioni": righe, "senza_commissioni_notturne": senza, "senza_leva": senza_leva, "vincitrice": vincitrice}
     with open("ricerca_trend.json", "w", encoding="utf-8") as f:
         json.dump(esito, f, indent=1, ensure_ascii=False)
     print("Esito salvato in ricerca_trend.json")
