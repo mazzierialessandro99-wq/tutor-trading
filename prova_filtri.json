@@ -1,0 +1,77 @@
+{
+ "data": "2026-11-26T08:52+01:00",
+ "risultati": [
+  {
+   "filtri": "nessuno",
+   "gruppo": "20 mercati",
+   "operazioni": 166,
+   "win_rate": 40.4,
+   "profit_factor": 1.034,
+   "rendimento_pct": 3.51,
+   "max_dd_pct": -14.85
+  },
+  {
+   "filtri": "nessuno",
+   "gruppo": "mai visti",
+   "operazioni": 328,
+   "win_rate": 40.2,
+   "profit_factor": 1.089,
+   "rendimento_pct": 18.56,
+   "max_dd_pct": -23.67
+  },
+  {
+   "filtri": "eventi",
+   "gruppo": "20 mercati",
+   "operazioni": 160,
+   "win_rate": 40.6,
+   "profit_factor": 1.051,
+   "rendimento_pct": 5.06,
+   "max_dd_pct": -15.77
+  },
+  {
+   "filtri": "eventi",
+   "gruppo": "mai visti",
+   "operazioni": 321,
+   "win_rate": 40.5,
+   "profit_factor": 1.104,
+   "rendimento_pct": 21.3,
+   "max_dd_pct": -22.73
+  },
+  {
+   "filtri": "tensione",
+   "gruppo": "20 mercati",
+   "operazioni": 166,
+   "win_rate": 40.4,
+   "profit_factor": 1.034,
+   "rendimento_pct": 3.51,
+   "max_dd_pct": -14.85
+  },
+  {
+   "filtri": "tensione",
+   "gruppo": "mai visti",
+   "operazioni": 328,
+   "win_rate": 40.2,
+   "profit_factor": 1.06,
+   "rendimento_pct": 12.51,
+   "max_dd_pct": -23.67
+  },
+  {
+   "filtri": "tutti",
+   "gruppo": "20 mercati",
+   "operazioni": 160,
+   "win_rate": 40.6,
+   "profit_factor": 1.051,
+   "rendimento_pct": 5.06,
+   "max_dd_pct": -15.77
+  },
+  {
+   "filtri": "tutti",
+   "gruppo": "mai visti",
+   "operazioni": 321,
+   "win_rate": 40.5,
+   "profit_factor": 1.075,
+   "rendimento_pct": 15.25,
+   "max_dd_pct": -22.73
+  }
+ ]
+}
