@@ -1,5 +1,5 @@
 {
- "data": "2026-11-25T21:14+01:00",
+ "data": "2026-11-26T10:28+01:00",
  "vincitrice": null,
  "regola": "PF >= 1.2 sui 20 mercati e PF >= 1.2 con risultato positivo sui mercati mai visti",
  "configurazioni": [
@@ -9,81 +9,81 @@
    "pareggio": false,
    "filtro": "sempre",
    "base": {
-    "operazioni": 94,
+    "operazioni": 166,
     "win_rate": 40.4,
-    "profit_factor": 1.059,
-    "rendimento_pct": 3.36,
-    "max_dd_pct": -11.36
+    "profit_factor": 1.034,
+    "rendimento_pct": 3.51,
+    "max_dd_pct": -14.85
    },
    "mai_visti": {
-    "operazioni": 124,
+    "operazioni": 328,
+    "win_rate": 40.2,
+    "profit_factor": 1.089,
+    "rendimento_pct": 18.56,
+    "max_dd_pct": -23.67
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 162,
+    "win_rate": 40.7,
+    "profit_factor": 1.047,
+    "rendimento_pct": 4.73,
+    "max_dd_pct": -15.0
+   },
+   "mai_visti": {
+    "operazioni": 306,
+    "win_rate": 39.2,
+    "profit_factor": 1.056,
+    "rendimento_pct": 11.1,
+    "max_dd_pct": -23.8
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 121,
+    "win_rate": 40.5,
+    "profit_factor": 1.026,
+    "rendimento_pct": 1.91,
+    "max_dd_pct": -15.32
+   },
+   "mai_visti": {
+    "operazioni": 255,
+    "win_rate": 36.9,
+    "profit_factor": 0.913,
+    "rendimento_pct": -15.1,
+    "max_dd_pct": -29.1
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 72,
+    "win_rate": 27.8,
+    "profit_factor": 0.576,
+    "rendimento_pct": -24.03,
+    "max_dd_pct": -32.24
+   },
+   "mai_visti": {
+    "operazioni": 190,
     "win_rate": 36.3,
-    "profit_factor": 0.888,
-    "rendimento_pct": -10.15,
-    "max_dd_pct": -15.62
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "ritracciamento",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "trend",
-   "base": {
-    "operazioni": 89,
-    "win_rate": 41.6,
-    "profit_factor": 1.107,
-    "rendimento_pct": 5.62,
-    "max_dd_pct": -10.25
-   },
-   "mai_visti": {
-    "operazioni": 111,
-    "win_rate": 35.1,
-    "profit_factor": 0.853,
-    "rendimento_pct": -11.75,
-    "max_dd_pct": -17.16
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "ritracciamento",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "trend+calmo",
-   "base": {
-    "operazioni": 77,
-    "win_rate": 40.3,
-    "profit_factor": 1.061,
-    "rendimento_pct": 2.79,
-    "max_dd_pct": -11.15
-   },
-   "mai_visti": {
-    "operazioni": 93,
-    "win_rate": 32.3,
-    "profit_factor": 0.741,
-    "rendimento_pct": -18.32,
-    "max_dd_pct": -18.75
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "ritracciamento",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "fiducia",
-   "base": {
-    "operazioni": 40,
-    "win_rate": 30.0,
-    "profit_factor": 0.692,
-    "rendimento_pct": -8.99,
-    "max_dd_pct": -15.98
-   },
-   "mai_visti": {
-    "operazioni": 72,
-    "win_rate": 33.3,
-    "profit_factor": 0.722,
-    "rendimento_pct": -15.68,
-    "max_dd_pct": -17.87
+    "profit_factor": 0.98,
+    "rendimento_pct": -2.5,
+    "max_dd_pct": -22.07
    },
    "promossa": false
   },
@@ -93,18 +93,18 @@
    "pareggio": false,
    "filtro": "trend+fiducia",
    "base": {
-    "operazioni": 40,
-    "win_rate": 30.0,
-    "profit_factor": 0.692,
-    "rendimento_pct": -8.99,
-    "max_dd_pct": -15.98
-   },
-   "mai_visti": {
     "operazioni": 72,
-    "win_rate": 33.3,
-    "profit_factor": 0.722,
-    "rendimento_pct": -15.68,
-    "max_dd_pct": -17.87
+    "win_rate": 27.8,
+    "profit_factor": 0.576,
+    "rendimento_pct": -24.03,
+    "max_dd_pct": -32.24
+   },
+   "mai_visti": {
+    "operazioni": 190,
+    "win_rate": 36.3,
+    "profit_factor": 0.98,
+    "rendimento_pct": -2.5,
+    "max_dd_pct": -22.07
    },
    "promossa": false
   },
@@ -114,18 +114,18 @@
    "pareggio": true,
    "filtro": "sempre",
    "base": {
-    "operazioni": 113,
-    "win_rate": 33.6,
-    "profit_factor": 0.971,
-    "rendimento_pct": -1.87,
-    "max_dd_pct": -14.87
+    "operazioni": 175,
+    "win_rate": 34.3,
+    "profit_factor": 0.93,
+    "rendimento_pct": -7.3,
+    "max_dd_pct": -19.7
    },
    "mai_visti": {
-    "operazioni": 140,
-    "win_rate": 32.1,
-    "profit_factor": 1.032,
-    "rendimento_pct": 2.55,
-    "max_dd_pct": -12.32
+    "operazioni": 375,
+    "win_rate": 32.0,
+    "profit_factor": 1.13,
+    "rendimento_pct": 24.56,
+    "max_dd_pct": -19.75
    },
    "promossa": false
   },
@@ -135,18 +135,18 @@
    "pareggio": true,
    "filtro": "trend",
    "base": {
-    "operazioni": 107,
-    "win_rate": 34.6,
-    "profit_factor": 1.007,
-    "rendimento_pct": 0.43,
-    "max_dd_pct": -13.7
+    "operazioni": 170,
+    "win_rate": 34.7,
+    "profit_factor": 0.94,
+    "rendimento_pct": -6.04,
+    "max_dd_pct": -19.49
    },
    "mai_visti": {
-    "operazioni": 133,
-    "win_rate": 29.3,
-    "profit_factor": 0.952,
-    "rendimento_pct": -3.58,
-    "max_dd_pct": -17.56
+    "operazioni": 351,
+    "win_rate": 30.8,
+    "profit_factor": 1.057,
+    "rendimento_pct": 10.44,
+    "max_dd_pct": -25.1
    },
    "promossa": false
   },
@@ -156,185 +156,80 @@
    "pareggio": true,
    "filtro": "trend+calmo",
    "base": {
-    "operazioni": 82,
-    "win_rate": 36.6,
-    "profit_factor": 1.098,
-    "rendimento_pct": 4.32,
-    "max_dd_pct": -10.25
-   },
-   "mai_visti": {
-    "operazioni": 117,
-    "win_rate": 27.4,
-    "profit_factor": 0.885,
-    "rendimento_pct": -7.65,
-    "max_dd_pct": -13.51
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "ritracciamento",
-   "rr": 2.0,
-   "pareggio": true,
-   "filtro": "fiducia",
-   "base": {
-    "operazioni": 42,
-    "win_rate": 23.8,
-    "profit_factor": 0.632,
-    "rendimento_pct": -10.05,
-    "max_dd_pct": -13.87
-   },
-   "mai_visti": {
-    "operazioni": 100,
-    "win_rate": 26.0,
-    "profit_factor": 0.768,
-    "rendimento_pct": -14.37,
-    "max_dd_pct": -17.93
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "ritracciamento",
-   "rr": 2.0,
-   "pareggio": true,
-   "filtro": "trend+fiducia",
-   "base": {
-    "operazioni": 42,
-    "win_rate": 23.8,
-    "profit_factor": 0.632,
-    "rendimento_pct": -10.05,
-    "max_dd_pct": -13.87
-   },
-   "mai_visti": {
-    "operazioni": 100,
-    "win_rate": 26.0,
-    "profit_factor": 0.768,
-    "rendimento_pct": -14.37,
-    "max_dd_pct": -17.93
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "sempre",
-   "base": {
-    "operazioni": 116,
-    "win_rate": 42.2,
-    "profit_factor": 1.01,
-    "rendimento_pct": 0.79,
-    "max_dd_pct": -11.61
-   },
-   "mai_visti": {
-    "operazioni": 151,
-    "win_rate": 39.1,
-    "profit_factor": 0.959,
-    "rendimento_pct": -4.45,
-    "max_dd_pct": -22.3
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "trend",
-   "base": {
-    "operazioni": 118,
-    "win_rate": 41.5,
-    "profit_factor": 1.038,
-    "rendimento_pct": 2.95,
-    "max_dd_pct": -11.61
-   },
-   "mai_visti": {
-    "operazioni": 141,
-    "win_rate": 40.4,
-    "profit_factor": 1.012,
-    "rendimento_pct": 1.22,
-    "max_dd_pct": -21.59
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "trend+calmo",
-   "base": {
-    "operazioni": 119,
-    "win_rate": 37.8,
-    "profit_factor": 0.886,
-    "rendimento_pct": -9.6,
-    "max_dd_pct": -18.7
-   },
-   "mai_visti": {
     "operazioni": 123,
-    "win_rate": 41.5,
-    "profit_factor": 1.023,
-    "rendimento_pct": 1.99,
-    "max_dd_pct": -19.05
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "fiducia",
-   "base": {
-    "operazioni": 54,
-    "win_rate": 37.0,
-    "profit_factor": 0.803,
-    "rendimento_pct": -7.82,
-    "max_dd_pct": -16.04
+    "win_rate": 35.0,
+    "profit_factor": 0.948,
+    "rendimento_pct": -3.68,
+    "max_dd_pct": -16.77
    },
    "mai_visti": {
-    "operazioni": 98,
-    "win_rate": 33.7,
-    "profit_factor": 0.759,
-    "rendimento_pct": -18.59,
-    "max_dd_pct": -23.1
+    "operazioni": 294,
+    "win_rate": 27.9,
+    "profit_factor": 0.914,
+    "rendimento_pct": -13.58,
+    "max_dd_pct": -30.33
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
-   "rr": 2.0,
-   "pareggio": false,
-   "filtro": "trend+fiducia",
-   "base": {
-    "operazioni": 54,
-    "win_rate": 37.0,
-    "profit_factor": 0.803,
-    "rendimento_pct": -7.82,
-    "max_dd_pct": -16.04
-   },
-   "mai_visti": {
-    "operazioni": 96,
-    "win_rate": 34.4,
-    "profit_factor": 0.78,
-    "rendimento_pct": -16.51,
-    "max_dd_pct": -21.13
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
+   "strategia": "ritracciamento",
    "rr": 2.0,
    "pareggio": true,
-   "filtro": "sempre",
+   "filtro": "fiducia",
    "base": {
-    "operazioni": 145,
-    "win_rate": 36.6,
-    "profit_factor": 1.144,
-    "rendimento_pct": 11.09,
-    "max_dd_pct": -10.39
+    "operazioni": 62,
+    "win_rate": 22.6,
+    "profit_factor": 0.555,
+    "rendimento_pct": -17.97,
+    "max_dd_pct": -21.78
    },
    "mai_visti": {
-    "operazioni": 164,
-    "win_rate": 32.3,
-    "profit_factor": 0.944,
-    "rendimento_pct": -5.63,
+    "operazioni": 211,
+    "win_rate": 28.4,
+    "profit_factor": 0.966,
+    "rendimento_pct": -3.89,
+    "max_dd_pct": -26.69
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 62,
+    "win_rate": 22.6,
+    "profit_factor": 0.555,
+    "rendimento_pct": -17.97,
+    "max_dd_pct": -21.78
+   },
+   "mai_visti": {
+    "operazioni": 211,
+    "win_rate": 28.4,
+    "profit_factor": 0.966,
+    "rendimento_pct": -3.89,
+    "max_dd_pct": -26.69
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 293,
+    "win_rate": 45.7,
+    "profit_factor": 1.212,
+    "rendimento_pct": 37.2,
+    "max_dd_pct": -16.38
+   },
+   "mai_visti": {
+    "operazioni": 500,
+    "win_rate": 41.8,
+    "profit_factor": 1.129,
+    "rendimento_pct": 40.52,
     "max_dd_pct": -18.52
    },
    "promossa": false
@@ -342,21 +237,126 @@
   {
    "strategia": "rottura",
    "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 288,
+    "win_rate": 44.1,
+    "profit_factor": 1.151,
+    "rendimento_pct": 26.97,
+    "max_dd_pct": -18.89
+   },
+   "mai_visti": {
+    "operazioni": 495,
+    "win_rate": 43.0,
+    "profit_factor": 1.21,
+    "rendimento_pct": 63.0,
+    "max_dd_pct": -19.93
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 282,
+    "win_rate": 42.2,
+    "profit_factor": 1.079,
+    "rendimento_pct": 14.35,
+    "max_dd_pct": -21.64
+   },
+   "mai_visti": {
+    "operazioni": 459,
+    "win_rate": 41.4,
+    "profit_factor": 1.102,
+    "rendimento_pct": 30.33,
+    "max_dd_pct": -26.31
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 137,
+    "win_rate": 35.0,
+    "profit_factor": 0.763,
+    "rendimento_pct": -24.09,
+    "max_dd_pct": -39.75
+   },
+   "mai_visti": {
+    "operazioni": 338,
+    "win_rate": 37.0,
+    "profit_factor": 0.879,
+    "rendimento_pct": -28.63,
+    "max_dd_pct": -38.77
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 137,
+    "win_rate": 35.0,
+    "profit_factor": 0.763,
+    "rendimento_pct": -24.09,
+    "max_dd_pct": -39.75
+   },
+   "mai_visti": {
+    "operazioni": 333,
+    "win_rate": 37.5,
+    "profit_factor": 0.901,
+    "rendimento_pct": -22.95,
+    "max_dd_pct": -33.9
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 308,
+    "win_rate": 34.4,
+    "profit_factor": 1.106,
+    "rendimento_pct": 16.97,
+    "max_dd_pct": -18.24
+   },
+   "mai_visti": {
+    "operazioni": 571,
+    "win_rate": 33.6,
+    "profit_factor": 1.111,
+    "rendimento_pct": 33.72,
+    "max_dd_pct": -15.49
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 2.0,
    "pareggio": true,
    "filtro": "trend",
    "base": {
-    "operazioni": 137,
-    "win_rate": 34.3,
-    "profit_factor": 1.085,
-    "rendimento_pct": 6.31,
-    "max_dd_pct": -10.76
+    "operazioni": 301,
+    "win_rate": 33.2,
+    "profit_factor": 1.056,
+    "rendimento_pct": 9.05,
+    "max_dd_pct": -19.31
    },
    "mai_visti": {
-    "operazioni": 153,
-    "win_rate": 33.3,
-    "profit_factor": 1.0,
-    "rendimento_pct": -0.01,
-    "max_dd_pct": -16.69
+    "operazioni": 569,
+    "win_rate": 34.1,
+    "profit_factor": 1.138,
+    "rendimento_pct": 41.2,
+    "max_dd_pct": -15.53
    },
    "promossa": false
   },
@@ -366,18 +366,18 @@
    "pareggio": true,
    "filtro": "trend+calmo",
    "base": {
-    "operazioni": 133,
-    "win_rate": 30.8,
-    "profit_factor": 0.874,
-    "rendimento_pct": -10.13,
-    "max_dd_pct": -17.96
+    "operazioni": 298,
+    "win_rate": 32.9,
+    "profit_factor": 0.987,
+    "rendimento_pct": -2.1,
+    "max_dd_pct": -26.75
    },
    "mai_visti": {
-    "operazioni": 137,
-    "win_rate": 30.7,
-    "profit_factor": 0.974,
-    "rendimento_pct": -1.98,
-    "max_dd_pct": -17.39
+    "operazioni": 517,
+    "win_rate": 33.5,
+    "profit_factor": 1.095,
+    "rendimento_pct": 26.04,
+    "max_dd_pct": -20.42
    },
    "promossa": false
   },
@@ -387,18 +387,18 @@
    "pareggio": true,
    "filtro": "fiducia",
    "base": {
-    "operazioni": 50,
-    "win_rate": 24.0,
-    "profit_factor": 0.732,
-    "rendimento_pct": -7.32,
-    "max_dd_pct": -13.47
+    "operazioni": 127,
+    "win_rate": 26.8,
+    "profit_factor": 0.85,
+    "rendimento_pct": -9.86,
+    "max_dd_pct": -23.54
    },
    "mai_visti": {
-    "operazioni": 118,
-    "win_rate": 29.7,
-    "profit_factor": 0.858,
-    "rendimento_pct": -10.58,
-    "max_dd_pct": -22.03
+    "operazioni": 344,
+    "win_rate": 31.1,
+    "profit_factor": 0.918,
+    "rendimento_pct": -16.06,
+    "max_dd_pct": -24.68
    },
    "promossa": false
   },
@@ -408,228 +408,732 @@
    "pareggio": true,
    "filtro": "trend+fiducia",
    "base": {
-    "operazioni": 50,
-    "win_rate": 24.0,
-    "profit_factor": 0.732,
-    "rendimento_pct": -7.32,
-    "max_dd_pct": -13.47
+    "operazioni": 127,
+    "win_rate": 26.8,
+    "profit_factor": 0.85,
+    "rendimento_pct": -9.86,
+    "max_dd_pct": -23.54
    },
    "mai_visti": {
+    "operazioni": 339,
+    "win_rate": 31.6,
+    "profit_factor": 0.945,
+    "rendimento_pct": -10.38,
+    "max_dd_pct": -24.68
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 233,
+    "win_rate": 40.3,
+    "profit_factor": 1.339,
+    "rendimento_pct": 52.81,
+    "max_dd_pct": -12.56
+   },
+   "mai_visti": {
+    "operazioni": 380,
+    "win_rate": 33.7,
+    "profit_factor": 1.069,
+    "rendimento_pct": 19.2,
+    "max_dd_pct": -26.88
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 227,
+    "win_rate": 41.0,
+    "profit_factor": 1.366,
+    "rendimento_pct": 55.27,
+    "max_dd_pct": -12.43
+   },
+   "mai_visti": {
+    "operazioni": 376,
+    "win_rate": 34.3,
+    "profit_factor": 1.111,
+    "rendimento_pct": 30.01,
+    "max_dd_pct": -26.37
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 221,
+    "win_rate": 39.4,
+    "profit_factor": 1.336,
+    "rendimento_pct": 50.75,
+    "max_dd_pct": -14.32
+   },
+   "mai_visti": {
+    "operazioni": 340,
+    "win_rate": 34.4,
+    "profit_factor": 1.142,
+    "rendimento_pct": 34.85,
+    "max_dd_pct": -24.43
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 133,
+    "win_rate": 33.8,
+    "profit_factor": 1.034,
+    "rendimento_pct": 3.38,
+    "max_dd_pct": -25.21
+   },
+   "mai_visti": {
+    "operazioni": 286,
+    "win_rate": 36.7,
+    "profit_factor": 1.187,
+    "rendimento_pct": 37.22,
+    "max_dd_pct": -14.02
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 125,
+    "win_rate": 33.6,
+    "profit_factor": 1.047,
+    "rendimento_pct": 4.48,
+    "max_dd_pct": -24.69
+   },
+   "mai_visti": {
+    "operazioni": 281,
+    "win_rate": 37.4,
+    "profit_factor": 1.224,
+    "rendimento_pct": 43.23,
+    "max_dd_pct": -14.02
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": true,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 256,
+    "win_rate": 28.1,
+    "profit_factor": 1.176,
+    "rendimento_pct": 24.87,
+    "max_dd_pct": -13.9
+   },
+   "mai_visti": {
+    "operazioni": 445,
+    "win_rate": 23.6,
+    "profit_factor": 1.035,
+    "rendimento_pct": 8.93,
+    "max_dd_pct": -24.16
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": true,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 251,
+    "win_rate": 27.1,
+    "profit_factor": 1.157,
+    "rendimento_pct": 22.31,
+    "max_dd_pct": -14.15
+   },
+   "mai_visti": {
+    "operazioni": 442,
+    "win_rate": 23.5,
+    "profit_factor": 1.052,
+    "rendimento_pct": 12.96,
+    "max_dd_pct": -21.81
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": true,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 244,
+    "win_rate": 27.0,
+    "profit_factor": 1.117,
+    "rendimento_pct": 16.83,
+    "max_dd_pct": -15.1
+   },
+   "mai_visti": {
+    "operazioni": 398,
+    "win_rate": 23.6,
+    "profit_factor": 1.089,
+    "rendimento_pct": 19.67,
+    "max_dd_pct": -21.77
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": true,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 143,
+    "win_rate": 25.2,
+    "profit_factor": 1.105,
+    "rendimento_pct": 8.27,
+    "max_dd_pct": -13.76
+   },
+   "mai_visti": {
+    "operazioni": 332,
+    "win_rate": 27.4,
+    "profit_factor": 1.157,
+    "rendimento_pct": 30.34,
+    "max_dd_pct": -13.65
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura",
+   "rr": 3.0,
+   "pareggio": true,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 133,
+    "win_rate": 24.8,
+    "profit_factor": 1.168,
+    "rendimento_pct": 12.26,
+    "max_dd_pct": -10.71
+   },
+   "mai_visti": {
+    "operazioni": 326,
+    "win_rate": 27.9,
+    "profit_factor": 1.187,
+    "rendimento_pct": 35.17,
+    "max_dd_pct": -13.05
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 19,
+    "win_rate": 15.8,
+    "profit_factor": 0.201,
+    "rendimento_pct": -11.56,
+    "max_dd_pct": -11.56
+   },
+   "mai_visti": {
+    "operazioni": 187,
+    "win_rate": 30.5,
+    "profit_factor": 0.615,
+    "rendimento_pct": -48.76,
+    "max_dd_pct": -52.56
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 2,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -2.75,
+    "max_dd_pct": -2.75
+   },
+   "mai_visti": {
+    "operazioni": 12,
+    "win_rate": 25.0,
+    "profit_factor": 0.976,
+    "rendimento_pct": -0.14,
+    "max_dd_pct": -4.65
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 24,
+    "win_rate": 12.5,
+    "profit_factor": 0.283,
+    "rendimento_pct": -9.23,
+    "max_dd_pct": -9.23
+   },
+   "mai_visti": {
+    "operazioni": 207,
+    "win_rate": 24.6,
+    "profit_factor": 0.589,
+    "rendimento_pct": -47.34,
+    "max_dd_pct": -51.05
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "ritracciamento_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 2,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -1.71,
+    "max_dd_pct": -1.71
+   },
+   "mai_visti": {
+    "operazioni": 12,
+    "win_rate": 16.7,
+    "profit_factor": 0.699,
+    "rendimento_pct": -1.64,
+    "max_dd_pct": -4.24
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 108,
+    "win_rate": 33.3,
+    "profit_factor": 0.711,
+    "rendimento_pct": -22.13,
+    "max_dd_pct": -36.76
+   },
+   "mai_visti": {
+    "operazioni": 294,
+    "win_rate": 33.7,
+    "profit_factor": 0.678,
+    "rendimento_pct": -65.49,
+    "max_dd_pct": -80.12
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 38,
+    "win_rate": 23.7,
+    "profit_factor": 0.525,
+    "rendimento_pct": -15.44,
+    "max_dd_pct": -21.98
+   },
+   "mai_visti": {
+    "operazioni": 45,
+    "win_rate": 28.9,
+    "profit_factor": 0.625,
+    "rendimento_pct": -12.25,
+    "max_dd_pct": -22.25
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 6,
+    "win_rate": 16.7,
+    "profit_factor": 0.35,
+    "rendimento_pct": -3.65,
+    "max_dd_pct": -4.55
+   },
+   "mai_visti": {
+    "operazioni": 7,
+    "win_rate": 14.3,
+    "profit_factor": 0.281,
+    "rendimento_pct": -4.98,
+    "max_dd_pct": -4.98
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 18,
+    "win_rate": 16.7,
+    "profit_factor": 0.38,
+    "rendimento_pct": -9.58,
+    "max_dd_pct": -13.73
+   },
+   "mai_visti": {
+    "operazioni": 70,
+    "win_rate": 25.7,
+    "profit_factor": 0.33,
+    "rendimento_pct": -36.67,
+    "max_dd_pct": -40.38
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": false,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 16,
+    "win_rate": 6.2,
+    "profit_factor": 0.126,
+    "rendimento_pct": -13.49,
+    "max_dd_pct": -13.73
+   },
+   "mai_visti": {
+    "operazioni": 22,
+    "win_rate": 13.6,
+    "profit_factor": 0.125,
+    "rendimento_pct": -15.79,
+    "max_dd_pct": -16.16
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "sempre",
+   "base": {
     "operazioni": 113,
-    "win_rate": 31.0,
-    "profit_factor": 0.929,
-    "rendimento_pct": -4.91,
+    "win_rate": 22.1,
+    "profit_factor": 0.632,
+    "rendimento_pct": -24.09,
+    "max_dd_pct": -34.52
+   },
+   "mai_visti": {
+    "operazioni": 336,
+    "win_rate": 24.4,
+    "profit_factor": 0.593,
+    "rendimento_pct": -79.62,
+    "max_dd_pct": -97.02
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 40,
+    "win_rate": 22.5,
+    "profit_factor": 0.809,
+    "rendimento_pct": -4.03,
+    "max_dd_pct": -11.21
+   },
+   "mai_visti": {
+    "operazioni": 50,
+    "win_rate": 26.0,
+    "profit_factor": 0.673,
+    "rendimento_pct": -9.08,
     "max_dd_pct": -17.79
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
-   "rr": 3.0,
-   "pareggio": false,
-   "filtro": "sempre",
-   "base": {
-    "operazioni": 104,
-    "win_rate": 31.7,
-    "profit_factor": 0.838,
-    "rendimento_pct": -13.51,
-    "max_dd_pct": -20.4
-   },
-   "mai_visti": {
-    "operazioni": 119,
-    "win_rate": 29.4,
-    "profit_factor": 0.884,
-    "rendimento_pct": -11.67,
-    "max_dd_pct": -26.91
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 3.0,
-   "pareggio": false,
-   "filtro": "trend",
-   "base": {
-    "operazioni": 97,
-    "win_rate": 29.9,
-    "profit_factor": 0.801,
-    "rendimento_pct": -15.92,
-    "max_dd_pct": -22.62
-   },
-   "mai_visti": {
-    "operazioni": 114,
-    "win_rate": 31.6,
-    "profit_factor": 0.988,
-    "rendimento_pct": -1.15,
-    "max_dd_pct": -18.06
-   },
-   "promossa": false
-  },
-  {
-   "strategia": "rottura",
-   "rr": 3.0,
-   "pareggio": false,
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
    "filtro": "trend+calmo",
    "base": {
-    "operazioni": 99,
-    "win_rate": 30.3,
-    "profit_factor": 0.929,
-    "rendimento_pct": -5.82,
-    "max_dd_pct": -13.59
+    "operazioni": 6,
+    "win_rate": 16.7,
+    "profit_factor": 0.513,
+    "rendimento_pct": -1.87,
+    "max_dd_pct": -2.78
    },
    "mai_visti": {
-    "operazioni": 99,
-    "win_rate": 29.3,
-    "profit_factor": 0.883,
-    "rendimento_pct": -9.62,
-    "max_dd_pct": -18.36
+    "operazioni": 7,
+    "win_rate": 14.3,
+    "profit_factor": 0.335,
+    "rendimento_pct": -3.88,
+    "max_dd_pct": -3.88
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
-   "rr": 3.0,
-   "pareggio": false,
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
    "filtro": "fiducia",
    "base": {
-    "operazioni": 52,
-    "win_rate": 23.1,
-    "profit_factor": 0.413,
-    "rendimento_pct": -29.04,
-    "max_dd_pct": -32.04
+    "operazioni": 8,
+    "win_rate": 37.5,
+    "profit_factor": 1.876,
+    "rendimento_pct": 2.74,
+    "max_dd_pct": -2.04
    },
    "mai_visti": {
-    "operazioni": 83,
-    "win_rate": 32.5,
-    "profit_factor": 0.982,
+    "operazioni": 76,
+    "win_rate": 13.2,
+    "profit_factor": 0.242,
+    "rendimento_pct": -41.08,
+    "max_dd_pct": -45.45
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 2.0,
+   "pareggio": true,
+   "filtro": "trend+fiducia",
+   "base": {
+    "operazioni": 6,
+    "win_rate": 16.7,
+    "profit_factor": 0.625,
     "rendimento_pct": -1.17,
-    "max_dd_pct": -14.23
+    "max_dd_pct": -2.08
+   },
+   "mai_visti": {
+    "operazioni": 23,
+    "win_rate": 13.0,
+    "profit_factor": 0.134,
+    "rendimento_pct": -14.62,
+    "max_dd_pct": -14.9
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "sempre",
+   "base": {
+    "operazioni": 90,
+    "win_rate": 23.3,
+    "profit_factor": 0.522,
+    "rendimento_pct": -34.68,
+    "max_dd_pct": -47.84
+   },
+   "mai_visti": {
+    "operazioni": 241,
+    "win_rate": 28.2,
+    "profit_factor": 0.631,
+    "rendimento_pct": -64.78,
+    "max_dd_pct": -75.51
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "trend",
+   "base": {
+    "operazioni": 31,
+    "win_rate": 9.7,
+    "profit_factor": 0.261,
+    "rendimento_pct": -23.89,
+    "max_dd_pct": -27.07
+   },
+   "mai_visti": {
+    "operazioni": 38,
+    "win_rate": 18.4,
+    "profit_factor": 0.572,
+    "rendimento_pct": -13.29,
+    "max_dd_pct": -19.27
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "trend+calmo",
+   "base": {
+    "operazioni": 6,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -6.75,
+    "max_dd_pct": -6.75
+   },
+   "mai_visti": {
+    "operazioni": 7,
+    "win_rate": 14.3,
+    "profit_factor": 0.425,
+    "rendimento_pct": -3.99,
+    "max_dd_pct": -3.99
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
+   "rr": 3.0,
+   "pareggio": false,
+   "filtro": "fiducia",
+   "base": {
+    "operazioni": 6,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -6.2,
+    "max_dd_pct": -6.2
+   },
+   "mai_visti": {
+    "operazioni": 56,
+    "win_rate": 7.1,
+    "profit_factor": 0.054,
+    "rendimento_pct": -48.63,
+    "max_dd_pct": -48.63
+   },
+   "promossa": false
+  },
+  {
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": false,
    "filtro": "trend+fiducia",
    "base": {
-    "operazioni": 47,
-    "win_rate": 19.1,
-    "profit_factor": 0.347,
-    "rendimento_pct": -29.99,
-    "max_dd_pct": -32.98
+    "operazioni": 6,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -6.2,
+    "max_dd_pct": -6.2
    },
    "mai_visti": {
-    "operazioni": 81,
-    "win_rate": 33.3,
-    "profit_factor": 1.015,
-    "rendimento_pct": 0.96,
-    "max_dd_pct": -14.23
+    "operazioni": 20,
+    "win_rate": 10.0,
+    "profit_factor": 0.022,
+    "rendimento_pct": -16.16,
+    "max_dd_pct": -16.52
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": true,
    "filtro": "sempre",
    "base": {
-    "operazioni": 120,
-    "win_rate": 24.2,
-    "profit_factor": 0.867,
-    "rendimento_pct": -9.77,
-    "max_dd_pct": -18.2
+    "operazioni": 96,
+    "win_rate": 13.5,
+    "profit_factor": 0.463,
+    "rendimento_pct": -32.06,
+    "max_dd_pct": -40.15
    },
    "mai_visti": {
-    "operazioni": 151,
-    "win_rate": 21.9,
-    "profit_factor": 0.846,
-    "rendimento_pct": -15.66,
-    "max_dd_pct": -33.11
+    "operazioni": 290,
+    "win_rate": 16.9,
+    "profit_factor": 0.523,
+    "rendimento_pct": -84.02,
+    "max_dd_pct": -95.89
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": true,
    "filtro": "trend",
    "base": {
-    "operazioni": 118,
-    "win_rate": 25.4,
-    "profit_factor": 1.035,
-    "rendimento_pct": 2.52,
-    "max_dd_pct": -15.32
+    "operazioni": 33,
+    "win_rate": 9.1,
+    "profit_factor": 0.426,
+    "rendimento_pct": -11.36,
+    "max_dd_pct": -14.7
    },
    "mai_visti": {
-    "operazioni": 139,
-    "win_rate": 23.7,
-    "profit_factor": 0.965,
-    "rendimento_pct": -3.12,
-    "max_dd_pct": -20.87
+    "operazioni": 46,
+    "win_rate": 17.4,
+    "profit_factor": 0.714,
+    "rendimento_pct": -8.3,
+    "max_dd_pct": -16.01
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": true,
    "filtro": "trend+calmo",
    "base": {
-    "operazioni": 114,
-    "win_rate": 21.9,
-    "profit_factor": 0.904,
-    "rendimento_pct": -6.96,
-    "max_dd_pct": -15.66
+    "operazioni": 6,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -3.92,
+    "max_dd_pct": -3.92
    },
    "mai_visti": {
-    "operazioni": 120,
-    "win_rate": 20.8,
-    "profit_factor": 0.911,
-    "rendimento_pct": -6.41,
-    "max_dd_pct": -20.36
+    "operazioni": 7,
+    "win_rate": 14.3,
+    "profit_factor": 0.506,
+    "rendimento_pct": -2.88,
+    "max_dd_pct": -3.07
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": true,
    "filtro": "fiducia",
    "base": {
-    "operazioni": 68,
-    "win_rate": 20.6,
-    "profit_factor": 0.789,
-    "rendimento_pct": -8.19,
-    "max_dd_pct": -16.15
+    "operazioni": 4,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -2.1,
+    "max_dd_pct": -2.1
    },
    "mai_visti": {
-    "operazioni": 106,
-    "win_rate": 25.5,
-    "profit_factor": 0.98,
-    "rendimento_pct": -1.46,
-    "max_dd_pct": -23.51
+    "operazioni": 59,
+    "win_rate": 6.8,
+    "profit_factor": 0.119,
+    "rendimento_pct": -35.63,
+    "max_dd_pct": -38.46
    },
    "promossa": false
   },
   {
-   "strategia": "rottura",
+   "strategia": "rottura_ribasso",
    "rr": 3.0,
    "pareggio": true,
    "filtro": "trend+fiducia",
    "base": {
-    "operazioni": 62,
-    "win_rate": 17.7,
-    "profit_factor": 0.784,
-    "rendimento_pct": -7.88,
-    "max_dd_pct": -15.86
+    "operazioni": 4,
+    "win_rate": 0.0,
+    "profit_factor": 0.0,
+    "rendimento_pct": -2.1,
+    "max_dd_pct": -2.1
    },
    "mai_visti": {
-    "operazioni": 101,
-    "win_rate": 26.7,
-    "profit_factor": 1.032,
-    "rendimento_pct": 2.27,
-    "max_dd_pct": -23.51
+    "operazioni": 21,
+    "win_rate": 9.5,
+    "profit_factor": 0.022,
+    "rendimento_pct": -16.24,
+    "max_dd_pct": -16.52
    },
    "promossa": false
   }
