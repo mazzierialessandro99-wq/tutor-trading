@@ -83,7 +83,7 @@ def main():
     originale = S.scarica_tutti
     S.scarica_tutti = lambda tickers, periodo="730d": originale(tickers, periodo="730d", intervallo="1h")
     R.simula = simula
-    R.CONFIGURAZIONI = [c for c in R.CONFIGURAZIONI if "fiducia" not in c[3]]   # il filtro "fiducia" è troppo lento su ore
+    R.CONFIGURAZIONI = [c for c in R.CONFIGURAZIONI if "fiducia" not in c[3] and not R.ribasso(c[0])]   # il filtro "fiducia" è troppo lento su ore
     B.ANNI = 2
     qui = Path.cwd()
     lavoro = tempfile.mkdtemp()

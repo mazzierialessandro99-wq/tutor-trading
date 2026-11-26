@@ -3,6 +3,7 @@ RICERCA — il bot studia quali regole funzionano e QUANDO operare, senza ingann
 
 Confronta, con costi e commissioni notturne inclusi:
   STRATEGIE   ritracciamento (attuale: EMA 200 + RSI) · rottura dei massimi a 55 giorni (con TP 1:2 e 1:3)
+              e le stesse AL RIBASSO (vendita allo scoperto nei mercati in discesa): solo studiate, il bot non le usa
   GESTIONE    stop fisso · stop spostato a pareggio quando l'operazione guadagna quanto rischia
   QUANDO      sempre · solo con il mercato USA in trend positivo (S&P 500 sopra la sua EMA 200)
               · e volatilità non estrema · solo quando le ultime 20 occasioni studiate hanno reso (fiducia)
@@ -40,12 +41,32 @@ def segnali(df: pd.DataFrame, strategia: str) -> np.ndarray:
         sopra = (df["Close"] > massimo) & (df["Close"] > df["EMA200"])
         nuovo = sopra & ~sopra.shift(1, fill_value=False)
         return np.flatnonzero(nuovo.to_numpy())
+    if strategia == "ritracciamento_ribasso":       # specchio: sotto la EMA 200, RSI risalito a 55-70 che riscende
+        rsi, rsi_ieri = df["RSI"], df["RSI"].shift(1)
+        sotto = (df["EMA200"] - df["Close"] >= L.DIST_MIN_EMA_ATR * df["ATR"])
+        ok = sotto & rsi.between(100 - L.RSI_MAX, 100 - L.RSI_MIN) & (rsi < rsi_ieri)
+        nuovo = ok & ~ok.shift(1, fill_value=False)
+        return np.flatnonzero(nuovo.to_numpy())
+    if strategia == "rottura_ribasso":              # specchio: chiusura sotto il minimo di 55 giorni, sotto la EMA 200
+        minimo = df["Low"].shift(1).rolling(ROTTURA_GIORNI).min()
+        sotto = (df["Close"] < minimo) & (df["Close"] < df["EMA200"])
+        nuovo = sotto & ~sotto.shift(1, fill_value=False)
+        return np.flatnonzero(nuovo.to_numpy())
     raise ValueError(strategia)
 
 
-def simula(df: pd.DataFrame, i: int, rr: float, pareggio: bool, ticker: str) -> dict | None:
+def ribasso(strategia: str) -> bool:
+    return strategia.endswith("_ribasso")
+
+
+def simula(df: pd.DataFrame, i: int, rr: float, pareggio: bool, ticker: str, corto: bool = False) -> dict | None:
     if i + 1 >= len(df):
         return None
+    if corto:                                        # vendita allo scoperto = acquisto sul prezzo "capovolto"
+        cap = df.copy()
+        cap["Open"], cap["Close"] = -df["Open"], -df["Close"]
+        cap["High"], cap["Low"] = -df["Low"], -df["High"]
+        return simula(cap, i, rr, pareggio, ticker)
     ingresso = df["Open"].iloc[i + 1]
     distanza = L.STOP_ATR * df["ATR"].iloc[i]
     stop, tp = ingresso - distanza, ingresso + rr * distanza
@@ -69,8 +90,8 @@ def simula(df: pd.DataFrame, i: int, rr: float, pareggio: bool, ticker: str) -> 
             return None                                  # ancora aperta: non si conta
         uscita, esito = df["Close"].iloc[fine], "tempo scaduto"
     giorni = max(1, (df.index[j_fine] - df.index[i + 1]).days)
-    r = (uscita - ingresso) / distanza - B.COSTO_PCT * ingresso / distanza \
-        - ingresso * B.swap_annuo(ticker) / 365 * giorni / distanza
+    r = (uscita - ingresso) / distanza - B.COSTO_PCT * abs(ingresso) / distanza \
+        - abs(ingresso) * B.swap_annuo(ticker) / 365 * giorni / distanza   # anche le vendite pagano spread e notturne
     return {"entrata": df.index[i + 1], "uscita": df.index[j_fine], "esito": esito, "R": r}
 
 
@@ -87,17 +108,19 @@ def regime(spx: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def permesso(reg: pd.DataFrame, giorno, filtro: str) -> bool:
+def permesso(reg: pd.DataFrame, giorno, filtro: str, corto: bool = False) -> bool:
+    """Per le vendite allo scoperto il "trend" giusto è quello negativo (S&P 500 sotto la sua EMA 200)."""
     if filtro in ("sempre", "fiducia"):
         return True
     prima = reg.loc[:giorno - pd.Timedelta(days=1)]     # decisione presa con i dati fino al giorno prima
     if prima.empty:
         return False
     r = prima.iloc[-1]
+    trend = bool(r["trend"]) != corto
     if filtro == "trend":
-        return bool(r["trend"])
+        return trend
     if filtro in ("trend+calmo", "trend+fiducia"):
-        return bool(r["trend"]) and (filtro == "trend+fiducia" or bool(r["calmo"]))
+        return trend and (filtro == "trend+fiducia" or bool(r["calmo"]))
     raise ValueError(filtro)
 
 
@@ -114,7 +137,7 @@ def prova(indicatori: dict, reg: pd.DataFrame, piano: dict, strategia: str, rr: 
         for i in segnali(df, strategia):
             if i < L.EMA_PERIODO or df.index[i] < limite:
                 continue
-            o = simula(df, i, rr, pareggio, t)
+            o = simula(df, i, rr, pareggio, t, corto=True) if ribasso(strategia) else simula(df, i, rr, pareggio, t)
             if o:
                 o.update({"ticker": t, "mercato": nomi.get(t, t), "rischio_pct": L.rischio_per(t, piano)})
                 candidati.append(o)
@@ -123,7 +146,7 @@ def prova(indicatori: dict, reg: pd.DataFrame, piano: dict, strategia: str, rr: 
     max_aperte = int(piano.get("max_posizioni_aperte", 3))
     aperte, operazioni = [], []
     for c in candidati:
-        if not permesso(reg, c["entrata"], filtro):
+        if not permesso(reg, c["entrata"], filtro, ribasso(strategia)):
             continue
         if "fiducia" in filtro:
             passate = [s["R"] for s in studiati if s["uscita"] < c["entrata"]][-FIDUCIA_N:]
@@ -139,7 +162,8 @@ def prova(indicatori: dict, reg: pd.DataFrame, piano: dict, strategia: str, rr: 
 
 
 CONFIGURAZIONI = [(s, rr, be, f)
-                  for s, rr in (("ritracciamento", 2.0), ("rottura", 2.0), ("rottura", 3.0))
+                  for s, rr in (("ritracciamento", 2.0), ("rottura", 2.0), ("rottura", 3.0),
+                                ("ritracciamento_ribasso", 2.0), ("rottura_ribasso", 2.0), ("rottura_ribasso", 3.0))
                   for be in (False, True)
                   for f in ("sempre", "trend", "trend+calmo", "fiducia", "trend+fiducia")]
 
@@ -173,7 +197,8 @@ def main():
         print(f"{s:<15}{rr:>4.0f} {('sì' if be else 'no'):<9}{f:<15}| {a['n']:>4}{a['win_rate']:>6.0f}%{a['profit_factor']:>6.2f}"
               f"{a['rendimento_pct']:>7.1f}%{a['max_dd_pct']:>6.1f}% | {b['n']:>4}{b['win_rate']:>6.0f}%{b['profit_factor']:>6.2f}"
               f"{b['rendimento_pct']:>7.1f}%{b['max_dd_pct']:>6.1f}% | {'✅ PROMOSSA' if promossa else '—'}")
-    promosse = [r for r in righe if r[6]]
+    promosse = [r for r in righe if r[6] and not ribasso(r[0])]       # il bot oggi sa solo comprare
+    promosse_ribasso = [r for r in righe if r[6] and ribasso(r[0])]
     print()
     riassunto = lambda x: {"operazioni": int(x["n"]), "win_rate": round(float(x["win_rate"]), 1),
                            "profit_factor": round(float(min(x["profit_factor"], 99)), 3),
@@ -182,6 +207,13 @@ def main():
              "regola": f"PF >= {SOGLIA_PF} sui 20 mercati e PF >= {SOGLIA_PF} con risultato positivo sui mercati mai visti",
              "configurazioni": [{"strategia": s, "rr": rr, "pareggio": be, "filtro": f, "base": riassunto(a),
                                  "mai_visti": riassunto(b), "promossa": bool(p)} for s, rr, be, f, a, b, p in righe]}
+    if promosse_ribasso:                       # NON la usa il bot: prima va insegnato a vendere allo scoperto, insieme
+        s, rr, be, f, a, b, _ = max(promosse_ribasso, key=lambda r: r[5]["profit_factor"])
+        esito["vincitrice_ribasso"] = {"strategia": s, "rr": float(rr), "pareggio": bool(be), "filtro": f,
+                                       "base": riassunto(a), "mai_visti": riassunto(b)}
+        print(f"PROMOSSA AL RIBASSO (da discutere, il bot non la usa ancora): {s} · TP 1:{rr:.0f} · quando: {f}")
+    else:
+        print("Nessuna strategia AL RIBASSO supera la regola.")
     if promosse:
         s, rr, be, f, a, b, _ = max(promosse, key=lambda r: r[5]["profit_factor"])
         esito["vincitrice"] = {"strategia": s, "rr": float(rr), "pareggio": bool(be), "filtro": f,
