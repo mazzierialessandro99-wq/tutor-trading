@@ -43,14 +43,14 @@
    "colore": "GIALLO"
   },
   "MSFT": {
-   "colore": "GIALLO",
-   "avvisato": "2026-11-23"
+   "colore": "VERDE",
+   "avvisato": "2026-11-27"
   },
   "NVDA": {
    "colore": "ROSSO"
   },
   "AMZN": {
-   "colore": "ROSSO"
+   "colore": "GIALLO"
   },
   "GOOGL": {
    "colore": "ROSSO"
@@ -131,7 +131,8 @@
    "colore": "ROSSO"
   },
   "XOM": {
-   "colore": "GIALLO"
+   "colore": "VERDE",
+   "avvisato": "2026-11-27"
   },
   "JNJ": {
    "colore": "GIALLO"
@@ -203,10 +204,10 @@
    "colore": "ROSSO"
   },
   "IBM": {
-   "colore": "ROSSO"
+   "colore": "GIALLO"
   },
   "QCOM": {
-   "colore": "ROSSO"
+   "colore": "GIALLO"
   },
   "PFE": {
    "colore": "GIALLO"
@@ -219,7 +220,7 @@
   },
   "SAP.DE": {
    "avvisato": "2026-11-27",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ASML.AS": {
    "colore": "ROSSO"
@@ -231,8 +232,8 @@
    "colore": "ROSSO"
   },
   "TTE.PA": {
-   "avvisato": "2026-11-26",
-   "colore": "GIALLO"
+   "avvisato": "2026-11-27",
+   "colore": "VERDE"
   },
   "ALV.DE": {
    "colore": "GIALLO"
@@ -254,7 +255,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-27T15:07+01:00",
+ "ultimo_giro": "2026-11-27T15:37+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -288,6 +289,14 @@
    "stop": 23.0,
    "tp": 26.09,
    "data": "2026-11-26T09:19+01:00"
+  },
+  {
+   "nome": "ExxonMobil",
+   "size": 142.5,
+   "livello": 160.74,
+   "stop": 153.09,
+   "tp": 176.13,
+   "data": "2026-11-27T15:37+01:00"
   }
  ],
  "periodi": {
@@ -328,6 +337,14 @@
    "nome": "SAP",
    "epic": "SAPD",
    "aperta": "2026-11-26T09:37+01:00"
+  },
+  "00000000-7714-0944-04a0-458c0015549e": {
+   "nome": "ExxonMobil",
+   "epic": "XOM",
+   "aperta": "2026-11-27T15:37+01:00",
+   "livello": 160.74,
+   "distanza": 7.680517016959121,
+   "palestra": true
   }
  },
  "obiettivo_traccia": {
@@ -347,7 +364,7 @@
  "riepilogo": "2026-11-27",
  "telegram_offset": 626168296,
  "giri": {
-  "2026-W48": 107
+  "2026-W48": 108
  },
  "storia": [
   [
@@ -777,6 +794,10 @@
   [
    "2026-11-27T15:07+01:00",
    100612.97
+  ],
+  [
+   "2026-11-27T15:37+01:00",
+   100555.97
   ]
  ],
  "posizioni": [
@@ -787,8 +808,8 @@
    "livello": 499.31,
    "stop": 465.4,
    "tp": 567.22,
-   "upl": -0.27,
-   "bid": 497.45
+   "upl": -0.52,
+   "bid": 495.75
   },
   {
    "nome": "TotalEnergies SE",
@@ -807,8 +828,8 @@
    "livello": 24.03,
    "stop": 23.0,
    "tp": 26.09,
-   "upl": 359.27,
-   "bid": 24.4
+   "upl": 330.14,
+   "bid": 24.37
   },
   {
    "nome": "SAP",
@@ -817,27 +838,35 @@
    "livello": 191.65,
    "stop": 180.04,
    "tp": 214.86,
-   "upl": 189.53,
-   "bid": 193.85
+   "upl": 150.7625,
+   "bid": 193.4
   }
  ],
  "modalita": "automatica",
  "capitale_piano": 100000.0,
  "obiettivo": 200000.0,
  "tensione": false,
- "vix": 25.4,
+ "vix": 25.9,
  "eventi": {
   "SAP.DE": {
    "giorno": "2026-11-27",
    "conti": "2027-01-28"
   },
   "TTE.PA": {
-   "giorno": "2026-11-26",
+   "giorno": "2026-11-27",
    "conti": "2027-02-10"
   },
   "ENI.MI": {
    "giorno": "2026-11-26",
    "conti": null
+  },
+  "MSFT": {
+   "giorno": "2026-11-27",
+   "conti": "2027-01-27"
+  },
+  "XOM": {
+   "giorno": "2026-11-27",
+   "conti": "2027-01-29"
   }
  },
  "decisioni": [
@@ -987,6 +1016,27 @@
    "decisione": "Ribilanciamento di 11/2026",
    "motivo": "35 mercati tenuti, 35 nuovi, 0 usciti",
    "icona": "📅"
+  },
+  {
+   "ora": "2026-11-27T15:37+01:00",
+   "mercato": "Microsoft",
+   "decisione": "Segnale, non apro",
+   "motivo": "c'è già un'operazione aperta su questo mercato",
+   "icona": "⏸️"
+  },
+  {
+   "ora": "2026-11-27T15:37+01:00",
+   "mercato": "ExxonMobil",
+   "decisione": "Operazione aperta (palestra)",
+   "motivo": "142 contratti a 160,74, stop 153,09, take profit 176,13",
+   "icona": "✅"
+  },
+  {
+   "ora": "2026-11-27T15:37+01:00",
+   "mercato": "TotalEnergies",
+   "decisione": "Segnale, non apro",
+   "motivo": "c'è già un'operazione aperta su questo mercato",
+   "icona": "⏸️"
   }
  ],
  "trend": {
@@ -1290,8 +1340,8 @@
    "livello": 19219.1,
    "stop": 17245.83,
    "tp": 23165.63,
-   "upl": 8.9957,
-   "bid": 19345.8
+   "upl": 7.4905,
+   "bid": 19324.6
   },
   {
    "nome": "Allianz",
@@ -1300,8 +1350,8 @@
    "livello": 460.0,
    "stop": 402.09,
    "tp": 571.63,
-   "upl": 3.25,
-   "bid": 461.3
+   "upl": 5.0,
+   "bid": 462.0
   },
   {
    "nome": "Enel",
@@ -1310,8 +1360,8 @@
    "livello": 9.47,
    "stop": 8.44431,
    "tp": 11.51922,
-   "upl": 18.36,
-   "bid": 9.605
+   "upl": 21.08,
+   "bid": 9.625
   },
   {
    "nome": "Ethereum/USD",
@@ -1320,8 +1370,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": 36.26,
-   "bid": 1722.18
+   "upl": 12.08,
+   "bid": 1699.73
   },
   {
    "nome": "Walt Disney Co",
@@ -1330,8 +1380,8 @@
    "livello": 126.4,
    "stop": 108.72,
    "tp": 161.76,
-   "upl": -6.28,
-   "bid": 125.6
+   "upl": 0.63,
+   "bid": 126.48
   },
   {
    "nome": "Home Depot",
@@ -1340,8 +1390,8 @@
    "livello": 364.68,
    "stop": 301.79,
    "tp": 490.46,
-   "upl": -7.65,
-   "bid": 361.22
+   "upl": -9.46,
+   "bid": 360.4
   },
   {
    "nome": "Johnson & Johnson",
@@ -1350,8 +1400,8 @@
    "livello": 275.15,
    "stop": 235.39,
    "tp": 354.67,
-   "upl": -7.89,
-   "bid": 272.9
+   "upl": -3.4,
+   "bid": 274.18
   },
   {
    "nome": "AbbVie",
@@ -1360,8 +1410,8 @@
    "livello": 296.63,
    "stop": 259.7,
    "tp": 370.5,
-   "upl": -17.23,
-   "bid": 292.05
+   "upl": -21.64,
+   "bid": 290.88
   },
   {
    "nome": "Apple Inc",
@@ -1370,8 +1420,8 @@
    "livello": 357.54,
    "stop": 310.97,
    "tp": 450.68,
-   "upl": 2.28,
-   "bid": 358.3
+   "upl": -2.55,
+   "bid": 356.69
   },
   {
    "nome": "Costco Wholesale Corporation",
@@ -1380,8 +1430,8 @@
    "livello": 1089.33,
    "stop": 970.76,
    "tp": 1326.47,
-   "upl": -5.45,
-   "bid": 1084.67
+   "upl": 4.44,
+   "bid": 1093.13
   },
   {
    "nome": "Salesforce Inc",
@@ -1390,8 +1440,8 @@
    "livello": 199.15,
    "stop": 154.65,
    "tp": 288.15,
-   "upl": -5.66,
-   "bid": 197.35
+   "upl": -5.43,
+   "bid": 197.42
   },
   {
    "nome": "Chevron",
@@ -1400,8 +1450,8 @@
    "livello": 211.94,
    "stop": 181.78,
    "tp": 272.26,
-   "upl": 4.21,
-   "bid": 212.85
+   "upl": 10.56,
+   "bid": 214.22
   },
   {
    "nome": "Coca-Cola Co",
@@ -1410,8 +1460,8 @@
    "livello": 98.06,
    "stop": 88.16,
    "tp": 117.85,
-   "upl": -16.74,
-   "bid": 96.87
+   "upl": -19.97,
+   "bid": 96.64
   },
   {
    "nome": "JPMorgan Chase & Co",
@@ -1420,8 +1470,8 @@
    "livello": 320.12,
    "stop": 279.07,
    "tp": 402.23,
-   "upl": 5.86,
-   "bid": 321.85
+   "upl": 8.4,
+   "bid": 322.6
   },
   {
    "nome": "Eli Lilly & Co",
@@ -1430,8 +1480,8 @@
    "livello": 1400.42,
    "stop": 1162.04,
    "tp": 1877.18,
-   "upl": -10.11,
-   "bid": 1382.85
+   "upl": -4.13,
+   "bid": 1393.24
   },
   {
    "nome": "Mastercard Inc",
@@ -1440,8 +1490,8 @@
    "livello": 663.05,
    "stop": 575.13,
    "tp": 838.89,
-   "upl": -2.61,
-   "bid": 661.4
+   "upl": -3.02,
+   "bid": 661.14
   },
   {
    "nome": "McDonald's",
@@ -1450,8 +1500,8 @@
    "livello": 284.15,
    "stop": 243.99,
    "tp": 364.46,
-   "upl": -7.18,
-   "bid": 282.08
+   "upl": -6.07,
+   "bid": 282.4
   },
   {
    "nome": "Merck & Co Inc - USD",
@@ -1460,8 +1510,8 @@
    "livello": 141.94,
    "stop": 117.95,
    "tp": 189.91,
-   "upl": -11.58,
-   "bid": 139.95
+   "upl": -5.93,
+   "bid": 140.92
   },
   {
    "nome": "Microsoft Corp",
@@ -1470,8 +1520,8 @@
    "livello": 495.1,
    "stop": 414.37,
    "tp": 656.56,
-   "upl": 4.06,
-   "bid": 497.45
+   "upl": 0.62,
+   "bid": 495.46
   },
   {
    "nome": "Pepsi",
@@ -1480,8 +1530,8 @@
    "livello": 144.31,
    "stop": 125.14,
    "tp": 182.65,
-   "upl": -10.88,
-   "bid": 142.81
+   "upl": -1.67,
+   "bid": 144.08
   },
   {
    "nome": "Pfizer Inc",
@@ -1490,8 +1540,8 @@
    "livello": 28.53,
    "stop": 25.08,
    "tp": 35.43,
-   "upl": -11.65,
-   "bid": 28.24
+   "upl": -1.21,
+   "bid": 28.5
   },
   {
    "nome": "Procter & Gamble",
@@ -1500,8 +1550,8 @@
    "livello": 174.65,
    "stop": 153.56,
    "tp": 216.83,
-   "upl": -18.33,
-   "bid": 171.87
+   "upl": -14.18,
+   "bid": 172.5
   },
   {
    "nome": "Visa Inc",
@@ -1510,8 +1560,8 @@
    "livello": 427.33,
    "stop": 371.41,
    "tp": 539.17,
-   "upl": -4.19,
-   "bid": 425.65
+   "upl": -2.07,
+   "bid": 426.5
   },
   {
    "nome": "Wal-Mart Stores Inc",
@@ -1520,8 +1570,8 @@
    "livello": 131.99,
    "stop": 114.88,
    "tp": 166.33,
-   "upl": -2.73,
-   "bid": 131.65
+   "upl": -0.32,
+   "bid": 131.95
   },
   {
    "nome": "Exxon Mobil Corp",
@@ -1530,8 +1580,8 @@
    "livello": 159.15,
    "stop": 134.38,
    "tp": 208.69,
-   "upl": 2.01,
-   "bid": 159.51
+   "upl": 7.02,
+   "bid": 160.41
   },
   {
    "nome": "Avalanche/USD",
@@ -1540,8 +1590,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": 6.95,
-   "bid": 6.769
+   "upl": 1.23,
+   "bid": 6.6715
   },
   {
    "nome": "ChainLink/USD",
@@ -1550,8 +1600,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": 13.15,
-   "bid": 9.47105
+   "upl": 7.35,
+   "bid": 9.34409
   },
   {
    "nome": "Eni",
@@ -1560,8 +1610,8 @@
    "livello": 24.03,
    "stop": 20.57,
    "tp": 30.81,
-   "upl": 14.8,
-   "bid": 24.4
+   "upl": 13.6,
+   "bid": 24.37
   },
   {
    "nome": "Intesa Sanpaolo",
@@ -1570,8 +1620,8 @@
    "livello": 5.6525,
    "stop": 4.73278,
    "tp": 7.44663,
-   "upl": 8.544375,
-   "bid": 5.705
+   "upl": 6.51,
+   "bid": 5.6925
   },
   {
    "nome": "Natural Gas",
@@ -1580,8 +1630,8 @@
    "livello": 3.5338,
    "stop": 2.40807,
    "tp": 5.77904,
-   "upl": -20.73,
-   "bid": 3.3658
+   "upl": -18.63,
+   "bid": 3.3828
   },
   {
    "nome": "SAP",
@@ -1590,8 +1640,8 @@
    "livello": 191.8,
    "stop": 158.0,
    "tp": 259.32,
-   "upl": 8.22,
-   "bid": 193.8
+   "upl": 6.7815,
+   "bid": 193.45
   },
   {
    "nome": "TotalEnergies SE",
@@ -1610,8 +1660,8 @@
    "livello": 372.08,
    "stop": 324.35,
    "tp": 467.36,
-   "upl": 8.1792,
-   "bid": 374.92
+   "upl": 3.2832,
+   "bid": 373.22
   },
   {
    "nome": "Unicredit",
@@ -1620,8 +1670,8 @@
    "livello": 75.81,
    "stop": 60.74,
    "tp": 104.08,
-   "upl": 9.34352,
-   "bid": 76.73
+   "upl": 10.05444,
+   "bid": 76.8
   },
   {
    "nome": "Germany 40",
@@ -1630,8 +1680,8 @@
    "livello": 25141.0,
    "stop": 22682.13,
    "tp": 30033.73,
-   "upl": 11.2062,
-   "bid": 25337.6
+   "upl": 10.5393,
+   "bid": 25325.9
   }
  ],
  "chiuse": [
