@@ -670,11 +670,14 @@ def main():
 
     if attuale is not None and OBIETTIVO > CAPITALE:
         tappe = stato["obiettivo_traccia"].setdefault("tappe", [])
-        for t in range(int(CAPITALE) + 100, int(OBIETTIVO) + 1, 100):
-            if attuale >= t and t not in tappe:
-                tappe.append(t)
-                fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= OBIETTIVO else ""
-                messaggi.append(f"🎉 Tappa superata: il tuo capitale del piano ha raggiunto <b>{num(t, 0)} €</b>.\n{barra(attuale)}{fine}")
+        # tappe ogni 5% del percorso (con 100.000 → 200.000: ogni 5.000 €), al massimo UN messaggio per giro
+        passo = max(100, round((OBIETTIVO - CAPITALE) / 20, -2))
+        nuove = [t for t in range(int(CAPITALE + passo), int(OBIETTIVO) + 1, int(passo)) if attuale >= t and t not in tappe]
+        if nuove:
+            tappe.extend(nuove)
+            t = max(nuove)
+            fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= OBIETTIVO else ""
+            messaggi.append(f"🎉 Tappa superata: il tuo capitale del piano ha raggiunto <b>{num(t, 0)} €</b>.\n{barra(attuale)}{fine}")
 
     if broker is not None and auto_attivo and CFG and CFG.get("pareggio"):
         gestisci_pareggio(broker, stato, posizioni, messaggi)

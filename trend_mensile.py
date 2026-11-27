@@ -34,6 +34,18 @@ def quota_stop(dati: dict, t: str) -> float:
     return min(max(STOP_SIGMA_MESE * v / np.sqrt(12), 0.05), 0.5)
 
 
+def orario_buono(t: str, ora) -> bool:
+    """Si compra solo nelle ore di borsa normali (fuori orario gli spread sono larghi). Le cripto sempre."""
+    hm = f"{ora:%H:%M}"
+    if t.endswith("-USD") and "=" not in t:
+        return True
+    if not (t.startswith("^") or "=" in t or "." in t):          # azioni USA: 15:35-21:55 ora italiana
+        return "15:35" <= hm <= "21:55" and ora.weekday() < 5
+    if "." in t or t in ("^GDAXI", "^STOXX50E", "^FCHI", "^AEX", "^IBEX", "FTSEMIB.MI"):
+        return "09:05" <= hm <= "17:25" and ora.weekday() < 5   # borse europee
+    return "08:00" <= hm <= "22:00" and ora.weekday() < 5       # indici USA, materie prime, valute
+
+
 def livelli(prezzo: float, quota: float, min_distanza: float = 0.0) -> tuple[float, float]:
     """(stop, take profit) per un acquisto a questo prezzo."""
     distanza = max(prezzo * quota, min_distanza or 0.0)
@@ -126,7 +138,7 @@ def gestisci(broker, stato: dict, dati: dict, nomi: dict, pos_trend: list[dict],
                 if not m or m["valuta"] not in ("EUR", "USD"):
                     tr["cambi"].append(["saltato", t, w])
                     continue
-                if not m["aperto"]:
+                if not m["aperto"] or not orario_buono(t, ora):
                     rimasti.append(t)                       # mercato chiuso: riprovo al prossimo giro
                     tr.setdefault("attese", {})[t] = f"{ora:%H:%M} {m['epic']} {m.get('stato')}"
                     continue
