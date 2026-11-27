@@ -303,15 +303,32 @@ def progresso(stato: dict, valore_conto: float) -> float:
     ob = stato.get("obiettivo_traccia")
     if not ob or ob.get("capitale") != CAPITALE:
         ob = stato["obiettivo_traccia"] = {"capitale": CAPITALE, "base": valore_conto, "tappe": []}
+    global BASE_REALE
+    BASE_REALE = ob["base"]
     return CAPITALE + (valore_conto - ob["base"])
+
+
+BASE_REALE = None          # saldo VERO del conto quando è partito il piano (le cifre mostrate sono sempre quelle vere)
+
+
+def reale(attuale: float) -> float:
+    """Dal capitale 'del piano' ai soldi che ci sono davvero sul conto."""
+    return attuale - CAPITALE + BASE_REALE if BASE_REALE else attuale
+
+
+def obiettivo_reale() -> float:
+    """Stesso obiettivo in percentuale (es. +100%), ma partendo dal saldo vero."""
+    return BASE_REALE * OBIETTIVO / CAPITALE if BASE_REALE and CAPITALE else OBIETTIVO
 
 
 def barra(attuale: float) -> str:
     if not OBIETTIVO or OBIETTIVO <= CAPITALE:
         return ""
-    quota = max(0.0, min(1.0, (attuale - CAPITALE) / (OBIETTIVO - CAPITALE)))
+    vero, ob = reale(attuale), obiettivo_reale()
+    partenza = BASE_REALE or CAPITALE
+    quota = max(0.0, min(1.0, (vero - partenza) / (ob - partenza)))
     pieni = round(quota * 10)
-    return f"🎯 Obiettivo: {num(attuale, 0)} € / {num(OBIETTIVO, 0)} €  {'▰' * pieni}{'▱' * (10 - pieni)} {quota * 100:.0f}%"
+    return f"🎯 Conto: {num(vero, 0)} € · obiettivo {num(ob, 0)} €  {'▰' * pieni}{'▱' * (10 - pieni)} {quota * 100:.0f}%"
 
 
 # Valori attesi dal backtest reale (3 anni, 20 mercati): servono per il confronto nel resoconto
@@ -670,14 +687,18 @@ def main():
 
     if attuale is not None and OBIETTIVO > CAPITALE:
         tappe = stato["obiettivo_traccia"].setdefault("tappe", [])
-        # tappe ogni 5% del percorso (con 100.000 → 200.000: ogni 5.000 €), al massimo UN messaggio per giro
-        passo = max(100, round((OBIETTIVO - CAPITALE) / 20, -2))
-        nuove = [t for t in range(int(CAPITALE + passo), int(OBIETTIVO) + 1, int(passo)) if attuale >= t and t not in tappe]
+        # tappe ogni 5% del percorso, sui soldi VERI del conto, al massimo UN messaggio per giro
+        partenza, ob = BASE_REALE or CAPITALE, obiettivo_reale()
+        passo = (ob - partenza) / 20
+        vero = reale(attuale)
+        nuove = [round(partenza + k * passo) for k in range(1, 21)
+                 if vero >= partenza + k * passo and round(partenza + k * passo) not in tappe]
         if nuove:
             tappe.extend(nuove)
             t = max(nuove)
-            fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= OBIETTIVO else ""
-            messaggi.append(f"🎉 Tappa superata: il tuo capitale del piano ha raggiunto <b>{num(t, 0)} €</b>.\n{barra(attuale)}{fine}")
+            fine = " 🏆 <b>Obiettivo raggiunto!</b> Ora rivediamo insieme il piano." if t >= round(ob) else ""
+            messaggi.append(f"🎉 Tappa superata: sul conto ci sono ora più di <b>{num(t, 0)} €</b> "
+                            f"(+{(t / partenza - 1) * 100:.0f}% dall'inizio del piano).\n{barra(attuale)}{fine}")
 
     if broker is not None and auto_attivo and CFG and CFG.get("pareggio"):
         gestisci_pareggio(broker, stato, posizioni, messaggi)

@@ -534,7 +534,9 @@ def schermata_home():
     ob = float((m or {}).get("obiettivo") or PIANO.get("obiettivo", 0) or 0)
     if ob > cap0:
         q = max(0.0, min(1.0, (attuale - cap0) / (ob - cap0)))
-        card(f'<div style="display:flex;justify-content:space-between"><span class="t">Obiettivo +{(ob / cap0 - 1) * 100:.0f}%</span>'
+        perc = (ob / cap0 - 1) * 100
+        ob = float(base) * ob / cap0 if base else ob             # in soldi veri: stessa percentuale dal saldo di partenza
+        card(f'<div style="display:flex;justify-content:space-between"><span class="t">Obiettivo +{perc:.0f}%</span>'
              f'<span class="nota">{num(ob, 0)} €</span></div>'
              f'<div style="height:8px;border-radius:99px;background:var(--surf2);margin:10px 0 6px;overflow:hidden">'
              f'<div style="width:{max(q * 100, 2):.1f}%;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2))"></div></div>'
