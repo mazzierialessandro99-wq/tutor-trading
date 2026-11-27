@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-27T01:37+01:00",
+ "ultimo_giro": "2026-11-27T02:07+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -343,7 +343,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168295,
  "giri": {
-  "2026-W48": 74
+  "2026-W48": 75
  },
  "storia": [
   [
@@ -641,6 +641,10 @@
   [
    "2026-11-27T01:37+01:00",
    100225.5
+  ],
+  [
+   "2026-11-27T02:07+01:00",
+   100234.64
   ]
  ],
  "posizioni": [
@@ -651,8 +655,8 @@
    "livello": 499.31,
    "stop": 465.4,
    "tp": 567.22,
-   "upl": -1.14,
-   "bid": 491.5
+   "upl": -0.83,
+   "bid": 493.65
   },
   {
    "nome": "TotalEnergies SE",
@@ -853,7 +857,28 @@
    "00000000-76bb-2aba-04a0-458c0015549e": "NG=F",
    "00000000-76bb-2acd-04a0-458c0015549e": "SAP.DE",
    "00000000-76bb-2ad4-04a0-458c0015549e": "TTE.PA",
-   "00000000-76bb-2ac6-04a0-458c0015549e": "RACE.MI"
+   "00000000-76bb-2ac6-04a0-458c0015549e": "RACE.MI",
+   "00000000-770e-42ee-04a0-458c0015549e": "AAPL",
+   "00000000-770e-42fd-04a0-458c0015549e": "ABBV",
+   "00000000-770e-4324-04a0-458c0015549e": "COST",
+   "00000000-770e-4346-04a0-458c0015549e": "CRM",
+   "00000000-770e-4366-04a0-458c0015549e": "CVX",
+   "00000000-770e-438a-04a0-458c0015549e": "DIS",
+   "00000000-770e-43a8-04a0-458c0015549e": "HD",
+   "00000000-770e-43bb-04a0-458c0015549e": "JNJ",
+   "00000000-770e-43ca-04a0-458c0015549e": "JPM",
+   "00000000-770e-43d9-04a0-458c0015549e": "KO",
+   "00000000-770e-43ef-04a0-458c0015549e": "LLY",
+   "00000000-770e-4403-04a0-458c0015549e": "MA",
+   "00000000-770e-4412-04a0-458c0015549e": "MCD",
+   "00000000-770e-4430-04a0-458c0015549e": "MRK",
+   "00000000-770e-443f-04a0-458c0015549e": "MSFT",
+   "00000000-770e-4467-04a0-458c0015549e": "PEP",
+   "00000000-770e-4481-04a0-458c0015549e": "PFE",
+   "00000000-770e-44a2-04a0-458c0015549e": "PG",
+   "00000000-770e-44b1-04a0-458c0015549e": "V",
+   "00000000-770e-44cf-04a0-458c0015549e": "WMT",
+   "00000000-770e-44f0-04a0-458c0015549e": "XOM"
   },
   "mese": "2026-11",
   "obiettivo": {
@@ -959,31 +984,115 @@
     "entra",
     "^GDAXI",
     0.0287
+   ],
+   [
+    "entra",
+    "AAPL",
+    0.0214
+   ],
+   [
+    "entra",
+    "ABBV",
+    0.0223
+   ],
+   [
+    "entra",
+    "COST",
+    0.0256
+   ],
+   [
+    "entra",
+    "CRM",
+    0.0125
+   ],
+   [
+    "entra",
+    "CVX",
+    0.0196
+   ],
+   [
+    "entra",
+    "DIS",
+    0.0199
+   ],
+   [
+    "entra",
+    "HD",
+    0.0161
+   ],
+   [
+    "entra",
+    "JNJ",
+    0.0193
+   ],
+   [
+    "entra",
+    "JPM",
+    0.0217
+   ],
+   [
+    "entra",
+    "KO",
+    0.0276
+   ],
+   [
+    "entra",
+    "LLY",
+    0.0163
+   ],
+   [
+    "entra",
+    "MA",
+    0.021
+   ],
+   [
+    "entra",
+    "MCD",
+    0.0197
+   ],
+   [
+    "entra",
+    "MRK",
+    0.0165
+   ],
+   [
+    "entra",
+    "MSFT",
+    0.0171
+   ],
+   [
+    "entra",
+    "PEP",
+    0.0209
+   ],
+   [
+    "entra",
+    "PFE",
+    0.023
+   ],
+   [
+    "entra",
+    "PG",
+    0.023
+   ],
+   [
+    "entra",
+    "V",
+    0.0213
+   ],
+   [
+    "entra",
+    "WMT",
+    0.0214
+   ],
+   [
+    "entra",
+    "XOM",
+    0.0179
    ]
   ],
   "annunciato": false,
   "da_fare": [
-   "AAPL",
-   "ABBV",
-   "COST",
-   "CRM",
-   "CVX",
-   "DIS",
-   "HD",
-   "JNJ",
-   "JPM",
-   "KO",
-   "LLY",
-   "MA",
-   "MCD",
-   "MRK",
-   "MSFT",
-   "PEP",
-   "PFE",
-   "PG",
-   "V",
-   "WMT",
-   "XOM",
    "^IBEX"
   ],
   "capitale": 50000.0,
@@ -997,31 +1106,31 @@
    "NATURALGAS": "NG=F",
    "RACEM": "RACE.MI",
    "SAPD": "SAP.DE",
-   "TTEF": "TTE.PA"
+   "TTEF": "TTE.PA",
+   "AAPL": "AAPL",
+   "ABBV": "ABBV",
+   "COST": "COST",
+   "CRM": "CRM",
+   "CVX": "CVX",
+   "DIS": "DIS",
+   "HD": "HD",
+   "JNJ": "JNJ",
+   "JPM": "JPM",
+   "KO": "KO",
+   "LLY": "LLY",
+   "MA": "MA",
+   "MCD": "MCD",
+   "MRK": "MRK",
+   "MSFT": "MSFT",
+   "PEP": "PEP",
+   "PFE": "PFE",
+   "PG": "PG",
+   "V": "V",
+   "WMT": "WMT",
+   "XOM": "XOM"
   },
   "attese": {
-   "AAPL": "01:37 AAPL CLOSED",
-   "ABBV": "01:37 ABBV CLOSED",
-   "COST": "01:37 COST CLOSED",
-   "CRM": "01:37 CRM CLOSED",
-   "CVX": "01:37 CVX CLOSED",
-   "DIS": "01:37 DIS CLOSED",
-   "HD": "01:37 HD CLOSED",
-   "JNJ": "01:37 JNJ CLOSED",
-   "JPM": "01:37 JPM CLOSED",
-   "KO": "01:37 KO CLOSED",
-   "LLY": "01:37 LLY CLOSED",
-   "MA": "01:37 MA CLOSED",
-   "MCD": "01:37 MCD CLOSED",
-   "MRK": "01:37 MRK CLOSED",
-   "MSFT": "01:37 MSFT CLOSED",
-   "PEP": "01:37 PEP CLOSED",
-   "PFE": "01:37 PFE CLOSED",
-   "PG": "01:37 PG CLOSED",
-   "V": "01:37 V CLOSED",
-   "WMT": "01:37 WMT CLOSED",
-   "XOM": "01:37 XOM CLOSED",
-   "^IBEX": "01:37 IBEX CLOSED"
+   "^IBEX": "02:07 IBEX CLOSED"
   }
  },
  "posizioni_trend": [
@@ -1052,8 +1161,218 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": 3.49,
-   "bid": 1691.76
+   "upl": 12.15,
+   "bid": 1699.81
+  },
+  {
+   "nome": "Walt Disney Co",
+   "epic": "DIS",
+   "size": 8.6,
+   "livello": 126.4,
+   "stop": 108.72,
+   "tp": 161.76,
+   "upl": -4.31,
+   "bid": 125.85
+  },
+  {
+   "nome": "Home Depot",
+   "epic": "HD",
+   "size": 2.42,
+   "livello": 364.68,
+   "stop": 301.79,
+   "tp": 490.46,
+   "upl": -7.64,
+   "bid": 361.22
+  },
+  {
+   "nome": "Johnson & Johnson",
+   "epic": "JNJ",
+   "size": 3.84,
+   "livello": 275.15,
+   "stop": 235.39,
+   "tp": 354.67,
+   "upl": -4.34,
+   "bid": 273.91
+  },
+  {
+   "nome": "AbbVie",
+   "epic": "ABBV",
+   "size": 4.12,
+   "livello": 296.63,
+   "stop": 259.7,
+   "tp": 370.5,
+   "upl": -6.69,
+   "bid": 294.85
+  },
+  {
+   "nome": "Apple Inc",
+   "epic": "AAPL",
+   "size": 3.28,
+   "livello": 357.54,
+   "stop": 310.97,
+   "tp": 450.68,
+   "upl": -2.06,
+   "bid": 356.85
+  },
+  {
+   "nome": "Costco Wholesale Corporation",
+   "epic": "COST",
+   "size": 1.28,
+   "livello": 1089.33,
+   "stop": 970.76,
+   "tp": 1326.47,
+   "upl": -3.11,
+   "bid": 1086.67
+  },
+  {
+   "nome": "Salesforce Inc",
+   "epic": "CRM",
+   "size": 3.44,
+   "livello": 199.15,
+   "stop": 154.65,
+   "tp": 288.15,
+   "upl": -2.51,
+   "bid": 198.35
+  },
+  {
+   "nome": "Chevron",
+   "epic": "CVX",
+   "size": 5.07,
+   "livello": 211.94,
+   "stop": 181.78,
+   "tp": 272.26,
+   "upl": -4.21,
+   "bid": 211.03
+  },
+  {
+   "nome": "Coca-Cola Co",
+   "epic": "KO",
+   "size": 15.4,
+   "livello": 98.06,
+   "stop": 88.16,
+   "tp": 117.85,
+   "upl": -4.49,
+   "bid": 97.74
+  },
+  {
+   "nome": "JPMorgan Chase & Co",
+   "epic": "JPM",
+   "size": 3.71,
+   "livello": 320.12,
+   "stop": 279.07,
+   "tp": 402.23,
+   "upl": -7,
+   "bid": 318.05
+  },
+  {
+   "nome": "Eli Lilly & Co",
+   "epic": "LLY",
+   "size": 0.63,
+   "livello": 1400.42,
+   "stop": 1162.04,
+   "tp": 1877.18,
+   "upl": -1.34,
+   "bid": 1398.08
+  },
+  {
+   "nome": "Mastercard Inc",
+   "epic": "MA",
+   "size": 1.73,
+   "livello": 663.05,
+   "stop": 575.13,
+   "tp": 838.89,
+   "upl": -2.76,
+   "bid": 661.3
+  },
+  {
+   "nome": "McDonald's",
+   "epic": "MCD",
+   "size": 3.8,
+   "livello": 284.15,
+   "stop": 243.99,
+   "tp": 364.46,
+   "upl": -1.8,
+   "bid": 283.63
+  },
+  {
+   "nome": "Merck & Co Inc - USD",
+   "epic": "MRK",
+   "size": 6.37,
+   "livello": 141.94,
+   "stop": 117.95,
+   "tp": 189.91,
+   "upl": -8.42,
+   "bid": 140.49
+  },
+  {
+   "nome": "Microsoft Corp",
+   "epic": "MSFT",
+   "size": 1.89,
+   "livello": 495.1,
+   "stop": 414.37,
+   "tp": 656.56,
+   "upl": -1.33,
+   "bid": 494.33
+  },
+  {
+   "nome": "Pepsi",
+   "epic": "PEP",
+   "size": 7.94,
+   "livello": 144.31,
+   "stop": 125.14,
+   "tp": 182.65,
+   "upl": -3.26,
+   "bid": 143.86
+  },
+  {
+   "nome": "Pfizer Inc",
+   "epic": "PFE",
+   "size": 44,
+   "livello": 28.53,
+   "stop": 25.08,
+   "tp": 35.43,
+   "upl": -4.41,
+   "bid": 28.42
+  },
+  {
+   "nome": "Procter & Gamble",
+   "epic": "PG",
+   "size": 7.22,
+   "livello": 174.65,
+   "stop": 153.56,
+   "tp": 216.83,
+   "upl": -15.15,
+   "bid": 172.35
+  },
+  {
+   "nome": "Visa Inc",
+   "epic": "V",
+   "size": 2.73,
+   "livello": 427.33,
+   "stop": 371.41,
+   "tp": 539.17,
+   "upl": -3.71,
+   "bid": 425.84
+  },
+  {
+   "nome": "Wal-Mart Stores Inc",
+   "epic": "WMT",
+   "size": 8.8,
+   "livello": 131.99,
+   "stop": 114.88,
+   "tp": 166.33,
+   "upl": -4.9,
+   "bid": 131.38
+  },
+  {
+   "nome": "Exxon Mobil Corp",
+   "epic": "XOM",
+   "size": 6.1,
+   "livello": 159.15,
+   "stop": 134.38,
+   "tp": 208.69,
+   "upl": -6.01,
+   "bid": 158.07
   },
   {
    "nome": "Avalanche/USD",
@@ -1062,8 +1381,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -3.91,
-   "bid": 6.584
+   "upl": -2.34,
+   "bid": 6.6107
   },
   {
    "nome": "ChainLink/USD",
@@ -1072,8 +1391,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": 5.55,
-   "bid": 9.30474
+   "upl": 6.75,
+   "bid": 9.33104
   },
   {
    "nome": "Eni",
@@ -1102,8 +1421,8 @@
    "livello": 3.5338,
    "stop": 2.40807,
    "tp": 5.77904,
-   "upl": -6.16,
-   "bid": 3.4838
+   "upl": -9.36,
+   "bid": 3.4578
   },
   {
    "nome": "SAP",
@@ -1152,8 +1471,8 @@
    "livello": 25141.0,
    "stop": 22682.13,
    "tp": 30033.73,
-   "upl": 5.2554,
-   "bid": 25233.2
+   "upl": 5.8824,
+   "bid": 25244.2
   }
  ],
  "chiuse": [
@@ -1286,5 +1605,15 @@
    "euro": null
   }
  ],
- "stop_garantito": {}
+ "stop_garantito": {
+  "fatto": true,
+  "accettato": true,
+  "ticker": "AAPL",
+  "nome": "Apple",
+  "dealId": "00000000-770e-42ee-04a0-458c0015549e",
+  "stop": 310.97,
+  "prezzo": 357.54,
+  "size": 3.28,
+  "data": "2026-11-27 02:07"
+ }
 }
