@@ -25,7 +25,7 @@
    "colore": "ROSSO"
   },
   "CL=F": {
-   "colore": "ROSSO"
+   "colore": "GIALLO"
   },
   "EURUSD=X": {
    "colore": "ROSSO"
@@ -219,7 +219,7 @@
   },
   "SAP.DE": {
    "avvisato": "2026-11-26",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ASML.AS": {
    "colore": "ROSSO"
@@ -232,14 +232,14 @@
   },
   "TTE.PA": {
    "avvisato": "2026-11-26",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ALV.DE": {
    "colore": "GIALLO"
   },
   "ENI.MI": {
    "avvisato": "2026-11-26",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ENEL.MI": {
    "colore": "GIALLO"
@@ -254,7 +254,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-27T06:37+01:00",
+ "ultimo_giro": "2026-11-27T07:07+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -343,7 +343,7 @@
  "riepilogo": "2026-11-26",
  "telegram_offset": 626168295,
  "giri": {
-  "2026-W48": 85
+  "2026-W48": 86
  },
  "storia": [
   [
@@ -685,6 +685,10 @@
   [
    "2026-11-27T06:37+01:00",
    100229.05
+  ],
+  [
+   "2026-11-27T07:07+01:00",
+   100217.6
   ]
  ],
  "posizioni": [
@@ -695,8 +699,8 @@
    "livello": 499.31,
    "stop": 465.4,
    "tp": 567.22,
-   "upl": 0.14,
-   "bid": 500.24
+   "upl": 0.06,
+   "bid": 499.75
   },
   {
    "nome": "TotalEnergies SE",
@@ -1170,7 +1174,7 @@
    "XOM": "XOM"
   },
   "attese": {
-   "^IBEX": "06:37 IBEX CLOSED"
+   "^IBEX": "07:07 IBEX CLOSED"
   }
  },
  "posizioni_trend": [
@@ -1201,8 +1205,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": 54.96,
-   "bid": 1739.71
+   "upl": 52.8,
+   "bid": 1737.67
   },
   {
    "nome": "Walt Disney Co",
@@ -1231,8 +1235,8 @@
    "livello": 275.15,
    "stop": 235.39,
    "tp": 354.67,
-   "upl": -6.43,
-   "bid": 273.31
+   "upl": -6.86,
+   "bid": 273.19
   },
   {
    "nome": "AbbVie",
@@ -1251,8 +1255,8 @@
    "livello": 357.54,
    "stop": 310.97,
    "tp": 450.68,
-   "upl": 3.31,
-   "bid": 358.65
+   "upl": 2.99,
+   "bid": 358.54
   },
   {
    "nome": "Costco Wholesale Corporation",
@@ -1261,8 +1265,8 @@
    "livello": 1089.33,
    "stop": 970.76,
    "tp": 1326.47,
-   "upl": -3.85,
-   "bid": 1086.03
+   "upl": -4.27,
+   "bid": 1085.67
   },
   {
    "nome": "Salesforce Inc",
@@ -1281,8 +1285,8 @@
    "livello": 211.94,
    "stop": 181.78,
    "tp": 272.26,
-   "upl": -3.65,
-   "bid": 211.15
+   "upl": -5.03,
+   "bid": 210.85
   },
   {
    "nome": "Coca-Cola Co",
@@ -1291,8 +1295,8 @@
    "livello": 98.06,
    "stop": 88.16,
    "tp": 117.85,
-   "upl": -16.83,
-   "bid": 96.86
+   "upl": -17.96,
+   "bid": 96.78
   },
   {
    "nome": "JPMorgan Chase & Co",
@@ -1301,8 +1305,8 @@
    "livello": 320.12,
    "stop": 279.07,
    "tp": 402.23,
-   "upl": -2.36,
-   "bid": 319.42
+   "upl": -2.6,
+   "bid": 319.35
   },
   {
    "nome": "Eli Lilly & Co",
@@ -1311,8 +1315,8 @@
    "livello": 1400.42,
    "stop": 1162.04,
    "tp": 1877.18,
-   "upl": 0.66,
-   "bid": 1401.57
+   "upl": -1.06,
+   "bid": 1398.57
   },
   {
    "nome": "Mastercard Inc",
@@ -1321,8 +1325,8 @@
    "livello": 663.05,
    "stop": 575.13,
    "tp": 838.89,
-   "upl": -1.18,
-   "bid": 662.3
+   "upl": -1.97,
+   "bid": 661.8
   },
   {
    "nome": "McDonald's",
@@ -1331,8 +1335,8 @@
    "livello": 284.15,
    "stop": 243.99,
    "tp": 364.46,
-   "upl": -10.62,
-   "bid": 281.08
+   "upl": -8.07,
+   "bid": 281.82
   },
   {
    "nome": "Merck & Co Inc - USD",
@@ -1351,8 +1355,8 @@
    "livello": 495.1,
    "stop": 414.37,
    "tp": 656.56,
-   "upl": 8.85,
-   "bid": 500.24
+   "upl": 8.01,
+   "bid": 499.75
   },
   {
    "nome": "Pepsi",
@@ -1361,8 +1365,8 @@
    "livello": 144.31,
    "stop": 125.14,
    "tp": 182.65,
-   "upl": -7.95,
-   "bid": 143.21
+   "upl": -7.81,
+   "bid": 143.23
   },
   {
    "nome": "Pfizer Inc",
@@ -1371,8 +1375,8 @@
    "livello": 28.53,
    "stop": 25.08,
    "tp": 35.43,
-   "upl": -2,
-   "bid": 28.48
+   "upl": -2.81,
+   "bid": 28.46
   },
   {
    "nome": "Procter & Gamble",
@@ -1381,7 +1385,7 @@
    "livello": 174.65,
    "stop": 153.56,
    "tp": 216.83,
-   "upl": -15.12,
+   "upl": -15.13,
    "bid": 172.35
   },
   {
@@ -1391,8 +1395,8 @@
    "livello": 427.33,
    "stop": 371.41,
    "tp": 539.17,
-   "upl": -7.41,
-   "bid": 424.35
+   "upl": -7.21,
+   "bid": 424.43
   },
   {
    "nome": "Wal-Mart Stores Inc",
@@ -1401,8 +1405,8 @@
    "livello": 131.99,
    "stop": 114.88,
    "tp": 166.33,
-   "upl": -3.53,
-   "bid": 131.55
+   "upl": -4.17,
+   "bid": 131.47
   },
   {
    "nome": "Exxon Mobil Corp",
@@ -1411,8 +1415,8 @@
    "livello": 159.15,
    "stop": 134.38,
    "tp": 208.69,
-   "upl": -0.78,
-   "bid": 159.01
+   "upl": -0.56,
+   "bid": 159.05
   },
   {
    "nome": "Avalanche/USD",
@@ -1421,8 +1425,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": 5.39,
-   "bid": 6.7426
+   "upl": 5.9,
+   "bid": 6.7513
   },
   {
    "nome": "ChainLink/USD",
@@ -1431,8 +1435,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": 20.32,
-   "bid": 9.62931
+   "upl": 21.85,
+   "bid": 9.66285
   },
   {
    "nome": "Eni",
@@ -1461,8 +1465,8 @@
    "livello": 3.5338,
    "stop": 2.40807,
    "tp": 5.77904,
-   "upl": -2.83,
-   "bid": 3.5108
+   "upl": -5.91,
+   "bid": 3.4858
   },
   {
    "nome": "SAP",
@@ -1511,8 +1515,8 @@
    "livello": 25141.0,
    "stop": 22682.13,
    "tp": 30033.73,
-   "upl": 14.7459,
-   "bid": 25399.7
+   "upl": 14.4894,
+   "bid": 25395.2
   }
  ],
  "chiuse": [
