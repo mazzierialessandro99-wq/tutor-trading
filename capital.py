@@ -30,8 +30,11 @@ EPIC = {
     "^STOXX50E": "EU50", "GC=F": "GOLD", "SI=F": "SILVER", "CL=F": "OIL_CRUDE",
     "EURUSD=X": "EURUSD", "GBPUSD=X": "GBPUSD", "BTC-USD": "BTCUSD", "ETH-USD": "ETHUSD", "SOL-USD": "SOLUSD", "XRP-USD": "XRPUSD", "BNB-USD": "BNBUSD", "ADA-USD": "ADAUSD", "DOGE-USD": "DOGEUSD", "LTC-USD": "LTCUSD", "AVAX-USD": "AVAXUSD", "DOT-USD": "DOTUSD", "LINK-USD": "LINKUSD",
     "AAPL": "AAPL", "MSFT": "MSFT", "NVDA": "NVDA", "AMZN": "AMZN", "GOOGL": "GOOGL",
-    "META": "META", "TSLA": "TSLA", "^IBEX": "ES35", "^FCHI": "FR40", "^AEX": "NL25",
+    "META": "META", "TSLA": "TSLA",
 }
+
+# nomi con cui cercare su Capital.com gli strumenti che non hanno un codice sicuro
+CERCA = {"^IBEX": "Spain 35", "^FCHI": "France 40", "^AEX": "Netherlands 25", "^RUT": "US Russell 2000"}
 
 
 class CapitalErrore(Exception):
@@ -113,12 +116,20 @@ class CapitalDemo:
         m = self.mercato(EPIC.get(ticker, ticker))
         if m:
             return m
-        dati, _ = self._chiama("GET", "/markets?searchTerm=" + urllib.request.quote(nome.split(" (")[0]))
-        for x in dati.get("markets", [])[:3]:
-            m = self.mercato(x.get("epic"))
-            if m:
-                return m
-        return None
+        # ricerca per nome: tra i risultati preferisco quello che si può negoziare adesso (un nome uguale può
+        # indicare uno strumento vecchio o chiuso, come succedeva con "IBEX")
+        trovati = []
+        for termine in [CERCA.get(ticker), nome.split(" (")[0]]:
+            if not termine:
+                continue
+            dati, _ = self._chiama("GET", "/markets?searchTerm=" + urllib.request.quote(termine))
+            for x in dati.get("markets", [])[:5]:
+                m = self.mercato(x.get("epic"))
+                if m and m["aperto"]:
+                    return m
+                if m:
+                    trovati.append(m)
+        return trovati[0] if trovati else None
 
     # ---- ordini ----
     def sposta_stop(self, deal_id: str, stop: float, tp: float | None = None):
