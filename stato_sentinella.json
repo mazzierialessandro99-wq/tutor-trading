@@ -219,8 +219,8 @@
    "colore": "GIALLO"
   },
   "SAP.DE": {
-   "avvisato": "2026-11-27",
-   "colore": "GIALLO"
+   "avvisato": "2026-11-28",
+   "colore": "VERDE"
   },
   "ASML.AS": {
    "colore": "ROSSO"
@@ -239,8 +239,8 @@
    "colore": "GIALLO"
   },
   "ENI.MI": {
-   "avvisato": "2026-11-26",
-   "colore": "GIALLO"
+   "avvisato": "2026-11-28",
+   "colore": "VERDE"
   },
   "ENEL.MI": {
    "colore": "GIALLO"
@@ -255,7 +255,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-28T06:37+01:00",
+ "ultimo_giro": "2026-11-28T07:07+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -364,7 +364,7 @@
  "riepilogo": "2026-11-27",
  "telegram_offset": 626168296,
  "giri": {
-  "2026-W48": 140
+  "2026-W48": 141
  },
  "storia": [
   [
@@ -926,6 +926,10 @@
   [
    "2026-11-28T06:37+01:00",
    100631.89
+  ],
+  [
+   "2026-11-28T07:07+01:00",
+   100628.52
   ]
  ],
  "posizioni": [
@@ -987,7 +991,7 @@
  "vix": 23.8,
  "eventi": {
   "SAP.DE": {
-   "giorno": "2026-11-27",
+   "giorno": "2026-11-28",
    "conti": "2027-01-28"
   },
   "TTE.PA": {
@@ -995,7 +999,7 @@
    "conti": "2027-02-10"
   },
   "ENI.MI": {
-   "giorno": "2026-11-26",
+   "giorno": "2026-11-28",
    "conti": null
   },
   "MSFT": {
@@ -1172,6 +1176,20 @@
   {
    "ora": "2026-11-27T15:37+01:00",
    "mercato": "TotalEnergies",
+   "decisione": "Segnale, non apro",
+   "motivo": "c'è già un'operazione aperta su questo mercato",
+   "icona": "⏸️"
+  },
+  {
+   "ora": "2026-11-28T07:07+01:00",
+   "mercato": "SAP",
+   "decisione": "Segnale, non apro",
+   "motivo": "c'è già un'operazione aperta su questo mercato",
+   "icona": "⏸️"
+  },
+  {
+   "ora": "2026-11-28T07:07+01:00",
+   "mercato": "ENI",
    "decisione": "Segnale, non apro",
    "motivo": "c'è già un'operazione aperta su questo mercato",
    "icona": "⏸️"
@@ -1488,8 +1506,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": -36.13,
-   "bid": 1655.0
+   "upl": -37.72,
+   "bid": 1653.52
   },
   {
    "nome": "Home Depot",
@@ -1708,8 +1726,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -7.57,
-   "bid": 6.5219
+   "upl": -8.83,
+   "bid": 6.5005
   },
   {
    "nome": "ChainLink/USD",
@@ -1718,8 +1736,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": -1.91,
-   "bid": 9.14132
+   "upl": -2.39,
+   "bid": 9.1308
   },
   {
    "nome": "Spain 35",
