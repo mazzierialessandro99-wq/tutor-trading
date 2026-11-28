@@ -220,7 +220,7 @@
   },
   "SAP.DE": {
    "avvisato": "2026-11-28",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ASML.AS": {
    "colore": "ROSSO"
@@ -240,7 +240,7 @@
   },
   "ENI.MI": {
    "avvisato": "2026-11-28",
-   "colore": "VERDE"
+   "colore": "GIALLO"
   },
   "ENEL.MI": {
    "colore": "GIALLO"
@@ -255,7 +255,7 @@
    "colore": "GIALLO"
   }
  },
- "ultimo_giro": "2026-11-28T09:07+01:00",
+ "ultimo_giro": "2026-11-28T09:37+01:00",
  "avviso_credenziali": "2026-11-23",
  "registro": [
   {
@@ -364,7 +364,7 @@
  "riepilogo": "2026-11-28",
  "telegram_offset": 626168296,
  "giri": {
-  "2026-W48": 145
+  "2026-W48": 146
  },
  "storia": [
   [
@@ -946,6 +946,10 @@
   [
    "2026-11-28T09:07+01:00",
    100630.34
+  ],
+  [
+   "2026-11-28T09:37+01:00",
+   100624.82
   ]
  ],
  "posizioni": [
@@ -1522,8 +1526,8 @@
    "livello": 1688.51,
    "stop": 1279.53,
    "tp": 2506.64,
-   "upl": -36.81,
-   "bid": 1654.37
+   "upl": -40.72,
+   "bid": 1650.74
   },
   {
    "nome": "Home Depot",
@@ -1742,8 +1746,8 @@
    "livello": 6.6506,
    "stop": 4.28486,
    "tp": 11.36684,
-   "upl": -8.48,
-   "bid": 6.5064
+   "upl": -9.56,
+   "bid": 6.488
   },
   {
    "nome": "ChainLink/USD",
@@ -1752,8 +1756,8 @@
    "livello": 9.18303,
    "stop": 6.16216,
    "tp": 15.22559,
-   "upl": -1.89,
-   "bid": 9.1418
+   "upl": -1.96,
+   "bid": 9.14025
   },
   {
    "nome": "Spain 35",
